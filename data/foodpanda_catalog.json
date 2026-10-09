@@ -1,0 +1,158 @@
+[
+  {
+    "restaurant_id": "fp_01",
+    "restaurant_name": "Kababjees Grill",
+    "delivery_url": "https://www.foodpanda.pk/restaurant/s1re/kababjees",
+    "items": [
+      {
+        "item_id": "item_101",
+        "name": "Chicken Tikka (Breast)",
+        "price_pkr": 550,
+        "protein_g": 48,
+        "carbs_g": 2,
+        "fat_g": 14,
+        "sodium_mg": 480,
+        "glycemic_index": "Low",
+        "tags": ["chicken", "tikka", "grilled", "kebab", "kabab"]
+      },
+      {
+        "item_id": "item_102",
+        "name": "Creamy Butter Chicken Curry",
+        "price_pkr": 850,
+        "protein_g": 28,
+        "carbs_g": 18,
+        "fat_g": 52,
+        "sodium_mg": 1150,
+        "glycemic_index": "Medium",
+        "tags": ["chicken", "curry", "butter"]
+      },
+      {
+        "item_id": "item_103",
+        "name": "Grilled Chicken Kabab Platter",
+        "price_pkr": 720,
+        "protein_g": 42,
+        "carbs_g": 8,
+        "fat_g": 18,
+        "sodium_mg": 620,
+        "glycemic_index": "Low",
+        "tags": ["chicken", "kabab", "kebab", "grilled"]
+      }
+    ]
+  },
+  {
+    "restaurant_id": "fp_02",
+    "restaurant_name": "Student Biryani",
+    "delivery_url": "https://www.foodpanda.pk/restaurant/s3st/student-biryani",
+    "items": [
+      {
+        "item_id": "item_201",
+        "name": "Chicken Biryani",
+        "price_pkr": 430,
+        "protein_g": 24,
+        "carbs_g": 68,
+        "fat_g": 16,
+        "sodium_mg": 890,
+        "glycemic_index": "High",
+        "tags": ["chicken", "biryani", "rice", "pulao"]
+      },
+      {
+        "item_id": "item_202",
+        "name": "Chicken Pulao",
+        "price_pkr": 390,
+        "protein_g": 22,
+        "carbs_g": 62,
+        "fat_g": 12,
+        "sodium_mg": 760,
+        "glycemic_index": "Medium",
+        "tags": ["chicken", "pulao", "rice"]
+      }
+    ]
+  },
+  {
+    "restaurant_id": "fp_03",
+    "restaurant_name": "Salt'n Pepper",
+    "delivery_url": "https://www.foodpanda.pk/restaurant/s4sp/salt-n-pepper",
+    "items": [
+      {
+        "item_id": "item_301",
+        "name": "Grilled Fish with Vegetables",
+        "price_pkr": 980,
+        "protein_g": 36,
+        "carbs_g": 10,
+        "fat_g": 14,
+        "sodium_mg": 540,
+        "glycemic_index": "Low",
+        "tags": ["fish", "grilled", "vegetable"]
+      },
+      {
+        "item_id": "item_302",
+        "name": "Chicken Shashlik",
+        "price_pkr": 790,
+        "protein_g": 34,
+        "carbs_g": 16,
+        "fat_g": 18,
+        "sodium_mg": 670,
+        "glycemic_index": "Low",
+        "tags": ["chicken", "shashlik", "grilled"]
+      }
+    ]
+  },
+  {
+    "restaurant_id": "fp_04",
+    "restaurant_name": "Butt Karahi",
+    "delivery_url": "https://www.foodpanda.pk/restaurant/s5bk/butt-karahi",
+    "items": [
+      {
+        "item_id": "item_401",
+        "name": "Chicken Karahi",
+        "price_pkr": 1100,
+        "protein_g": 38,
+        "carbs_g": 12,
+        "fat_g": 28,
+        "sodium_mg": 820,
+        "glycemic_index": "Low",
+        "tags": ["chicken", "karahi"]
+      },
+      {
+        "item_id": "item_402",
+        "name": "Daal Mash with Tandoori Roti",
+        "price_pkr": 320,
+        "protein_g": 18,
+        "carbs_g": 42,
+        "fat_g": 10,
+        "sodium_mg": 510,
+        "glycemic_index": "Medium",
+        "tags": ["daal", "dal", "roti", "lentil", "vegetarian"]
+      }
+    ]
+  },
+  {
+    "restaurant_id": "fp_05",
+    "restaurant_name": "Bundu Khan",
+    "delivery_url": "https://www.foodpanda.pk/restaurant/s6bk/bundu-khan",
+    "items": [
+      {
+        "item_id": "item_501",
+        "name": "Egg White Omelette",
+        "price_pkr": 280,
+        "protein_g": 20,
+        "carbs_g": 4,
+        "fat_g": 8,
+        "sodium_mg": 390,
+        "glycemic_index": "Low",
+        "tags": ["egg", "omelette", "breakfast"]
+      },
+      {
+        "item_id": "item_502",
+        "name": "Chana Chaat",
+        "price_pkr": 250,
+        "protein_g": 12,
+        "carbs_g": 28,
+        "fat_g": 6,
+        "sodium_mg": 430,
+        "glycemic_index": "Medium",
+        "tags": ["chana", "chaat", "snack", "vegetarian"]
+      }
+    ]
+  }
+]

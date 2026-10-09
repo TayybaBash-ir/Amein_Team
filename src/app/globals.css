@@ -1,0 +1,121 @@
+﻿@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+@layer base {
+  :root {
+    /* Dark theme (ClimaDiet clinical decision support) */
+    --background: #1A1D1E;
+    --foreground: #fafafa;
+    --card: #24282a;
+    --card-foreground: #fafafa;
+    --popover: #24282a;
+    --popover-foreground: #fafafa;
+    --primary: #fafafa;
+    --primary-foreground: #1c2022;
+    --secondary: #2c3133;
+    --secondary-foreground: #fafafa;
+    --muted: #2c3133;
+    --muted-foreground: #a1a1aa;
+    --accent: #2c3133;
+    --accent-foreground: #fafafa;
+    --destructive: #7f1d1d;
+    --destructive-foreground: #fafafa;
+    --border: #2c3133;
+    --input: #2c3133;
+    --ring: #4a7c59;
+    --radius: 0.75rem;
+
+    /* Extra tokens still referenced by tailwind.config.ts */
+    --bg: #1A1D1E;
+    --surface: #24282a;
+    --surface-2: #2c3133;
+    --forest: #4a7c59;
+    --sage: #4a7c59;
+    --climate: #5c9270;
+    --heat: #e09438;
+    --success: #4a7c59;
+    --text: #fafafa;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+@keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+.animate-marquee { animation: marquee 30s linear infinite; }
+details > summary { list-style: none; }
+details > summary::-webkit-details-marker { display: none; }
+details[open] .chev { transform: rotate(180deg); }
+
+@keyframes fade-up { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+.fade-up { opacity: 0; animation: fade-up .6s cubic-bezier(.2,.7,.2,1) forwards; }
+
+html { scroll-behavior: smooth; color-scheme: dark; background: #1A1D1E; }
+
+/* Shared form / card helpers (clinical dark styling) */
+.clinical-input {
+  @apply w-full rounded-xl border border-white/[0.08] bg-white/[0.04] px-4 py-3 text-sm text-white outline-none transition focus:border-[#4a7c59] focus:ring-4 focus:ring-[#4a7c59]/15 placeholder:text-neutral-500 [&>option]:bg-[#1A1D1E];
+}
+.clinical-label {
+  @apply mb-1.5 block text-xs font-semibold uppercase tracking-wide text-neutral-400;
+}
+.clinical-card {
+  @apply rounded-3xl border border-white/[0.08] bg-[#24282a] p-5 sm:p-7 shadow-xl shadow-black/20;
+}
+.editorial-title {
+  @apply font-sans font-extrabold tracking-tight text-white;
+}
+
+/* Hide scrollbar but keep functionality */
+/* fixed scrollbar-hide display */
+.scrollbar-hide, .scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
+.scrollbar-hide::-webkit-scrollbar, .scrollbar-none::-webkit-scrollbar { display: none; }
+
+/* Subtle image hover zoom */
+.image-zoom-hover { @apply transition-transform duration-500 hover:scale-[1.03]; }
+
+@media print {
+  body {
+    background: white !important;
+    color: black !important;
+  }
+  .clinical-card, .bg-[#111113], .bg-white\/\\[0\.04\\] {
+    background: white !important;
+    border: 1px solid #ddd !important;
+    color: black !important;
+  }
+  .text-white {
+    color: black !important;
+  }
+  .text-neutral-400, .text-neutral-500 {
+    color: #444 !important;
+  }
+  .border-white\/10 {
+    border-color: #ddd !important;
+  }
+  button, .no-print, nav, header {
+    display: none !important;
+  }
+  /* Ensure the grid of meals looks good */
+  .grid-cols-2, .md\\:grid-cols-4, .lg\\:grid-cols-4 {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 10px !important;
+  }
+  .page-break {
+    page-break-before: always;
+  }
+}

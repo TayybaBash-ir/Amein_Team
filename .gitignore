@@ -1,0 +1,9 @@
+.env
+test_api*
+__pycache__/
+
+node_modules/
+.next/
+.env*
+api/__pycache__/
+.vercel
