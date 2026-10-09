@@ -39,6 +39,8 @@ export type PatientIntake = {
   age: number; weight: number; height: number; gender: string; activity: string;
   conditions: string[]; allergies: string[];
   goal: string; goal_amount: string; dietary_restrictions: string[];
+  city?: string;
+  country?: string;
   allow_external_dining?: boolean;
   preferences?: { cuisine: string; carb: string; snack: string; strictness: string; };
 };
