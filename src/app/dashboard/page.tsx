@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
@@ -11,12 +11,13 @@ import MealPlanView from "@/components/clima/MealPlanView";
 import { RestaurantRecommendationCard } from "@/components/clima/RestaurantRecommendationCard";
 import { type PlanResponse, type IntakeData } from "@/lib/mock";
 import { ACCENT } from "@/lib/theme";
+import HomeHero from "@/components/clima/HomeHero";
 
-type ScreenStep = "input" | "loading" | "results";
+type ScreenStep = "home" | "input" | "loading" | "results";
 type AppTab = "generate" | "restaurants";
 
 export default function Dashboard() {
-  const [step, setStep] = useState<ScreenStep>("input");
+  const [step, setStep] = useState<ScreenStep>("home");
   const [activeTab, setActiveTab] = useState<AppTab>("generate");
   const [plan, setPlan] = useState<PlanResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -223,6 +224,10 @@ const handleGenerate = async (data: IntakeData) => {
 
           {activeTab === "generate" && (
             <motion.div key="generate" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+              {step === "home" && (
+                <HomeHero onGetStarted={() => setStep("input")} />
+              )}
+
               {step === "input" && (
                 <motion.div key="input" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="mx-auto max-w-3xl">
                   
@@ -263,7 +268,7 @@ const handleGenerate = async (data: IntakeData) => {
                       <button onClick={() => window.print()} className="flex items-center gap-2 rounded-xl bg-white/10 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-white/20">
                         Print PDF
                       </button>
-                      <button onClick={() => setStep("input")} className="flex items-center gap-2 rounded-xl bg-[#4a7c59] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#3d6849]">
+                      <button onClick={() => setStep("home")} className="flex items-center gap-2 rounded-xl bg-[#4a7c59] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#3d6849]">
                         Start Over
                       </button>
                     </div>
