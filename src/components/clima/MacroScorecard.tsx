@@ -14,9 +14,9 @@ const MACROS = [
 export default function MacroScorecard({ plan }: { plan: PlanResponse }) {
   const { nutrition, patient } = plan;
   const metrics = [
-    { label: "BMI", value: nutrition.bmi.toFixed(1), detail: nutrition.bmi_category, icon: Activity },
-    { label: "BMR", value: `${nutrition.bmr}`, detail: "kcal at rest", icon: HeartPulse },
-    { label: "Maintenance (TDEE)", value: `${nutrition.tdee}`, detail: "kcal per day", icon: Activity },
+    { label: "BMI", value: nutrition.bmi.toFixed(1), detail: nutrition.bmi_category, icon: MdDirectionsRun },
+    { label: "BMR", value: `${nutrition.bmr}`, detail: "kcal at rest", icon: MdFavorite },
+    { label: "Maintenance (TDEE)", value: `${nutrition.tdee}`, detail: "kcal per day", icon: MdDirectionsRun },
   ];
 
   const [on, setOn] = useState(false);
@@ -25,7 +25,7 @@ export default function MacroScorecard({ plan }: { plan: PlanResponse }) {
   const R = 54, C = 2 * Math.PI * R;
   let offset = 0;
 
-  const tile = (label: string, value: string, detail: string, Icon: typeof Activity, isDouble: boolean = false) => (
+  const tile = (label: string, value: string, detail: string, Icon: any, isDouble: boolean = false) => (
     <div key={label} className={`rounded-3xl border border-white/[0.03] bg-white/[0.03] p-4 transition-transform hover:scale-[1.02] ${isDouble ? "col-span-2 sm:col-span-1" : ""}`}>
       <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-wide text-neutral-400">
         <Icon size={14} style={{ color: ACCENT }} /> {label}
