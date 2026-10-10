@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
@@ -58,7 +58,7 @@ export default function Dashboard() {
     }
   }, []);
 
-const handleGenerate = async (data: IntakeData) => {
+  const handleGenerate = async (data: IntakeData) => {
     setStep("loading");
     setError(null);
     try {
@@ -165,7 +165,6 @@ const handleGenerate = async (data: IntakeData) => {
     <div className="min-h-screen bg-background text-foreground selection:bg-[#4a7c59]/30">
       <nav className="sticky top-0 z-50 flex items-center justify-between border-b border-border bg-background/85 px-4 py-3 backdrop-blur-xl print:hidden sm:px-8">
         <div className="flex items-center gap-3">
-          {/* Back arrow - shown when not on home screen */}
           {step !== "home" && activeTab === "generate" && (
             <button
               onClick={() => { setStep("home"); }}
@@ -221,17 +220,14 @@ const handleGenerate = async (data: IntakeData) => {
         <Link href="/plans" className="px-4 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground">Saved Plans</Link>
       </div>
 
-
       <main className="mx-auto max-w-5xl p-4 sm:p-8">
         {(savedProfile?.is_post_discharge || savedProfile?.spice_tolerance === "Bland") && (
           <div role="status" className="mb-6 flex items-center gap-3 rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm font-semibold text-amber-200">
-            <span aria-hidden="true">ðŸ¥</span>
-            <span>Active Protocol: Post-Discharge Recovery (Bland &amp; Soft Foods Enforced)</span>
+            <span aria-hidden="true">🏥</span>
+            <span>Active Protocol: Post-Discharge Recovery (Bland & Soft Foods Enforced)</span>
           </div>
         )}
         <AnimatePresence mode="wait">
-          
-
           {activeTab === "restaurants" && (
             <motion.div key="restaurants" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="pt-4">
               <h2 className="text-2xl font-bold text-foreground mb-2">Local Restaurant Matches</h2>
@@ -241,7 +237,9 @@ const handleGenerate = async (data: IntakeData) => {
                 <div className="text-center py-20 border border-dashed border-border rounded-3xl bg-surface">
                   <MdRestaurantMenu size={32} className="mx-auto text-neutral-600 mb-4" />
                   <h3 className="text-lg font-bold text-muted-foreground">No restaurants matched</h3>
-                  <p className="text-sm text-muted-foreground mt-2 max-w-sm mx-auto">Generate a new clinical meal plan first. If any meals match our Foodpanda catalog, they will appear here!</p>
+                  <p className="text-sm text-muted-foreground mt-2 max-w-sm mx-auto">
+                    Generate a meal plan to discover health-safe dishes available from local delivery partners near you.
+                  </p>
                   <button onClick={() => setActiveTab("generate")} className="mt-6 rounded-lg bg-[#4a7c59] px-6 py-2 text-sm font-medium text-white hover:bg-[#3d6849]">
                     <MdAdd size={16} className="inline mr-2 -mt-0.5" />
                     Generate Plan
@@ -275,7 +273,6 @@ const handleGenerate = async (data: IntakeData) => {
 
               {step === "input" && (
                 <motion.div key="input" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="mx-auto max-w-3xl">
-                  
                   {error && (
                     <div className="mb-6 rounded-xl border border-orange-500/20 bg-orange-500/10 p-4 text-sm text-orange-400">
                       {error}
@@ -298,10 +295,9 @@ const handleGenerate = async (data: IntakeData) => {
                     <MdEco size={32} className="animate-pulse text-[#4a7c59]" />
                   </div>
                   <h3 className="editorial-title text-2xl font-bold text-white mb-2">Preparing Your Custom Meal Plan...</h3>
-<p className="text-sm text-slate-400 animate-pulse">
-  Tailoring health-safe dishes to your local weather and personal profile...
-</p>
-                  </div>
+                  <p className="text-sm text-slate-400 animate-pulse">
+                    Tailoring health-safe dishes to your local weather and personal profile...
+                  </p>
                 </motion.div>
               )}
 
@@ -311,7 +307,7 @@ const handleGenerate = async (data: IntakeData) => {
                     <div>
                       <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight text-foreground mb-1">Your Health Overview</h2>
                       <p className="text-xs sm:text-sm text-muted-foreground">
-                        Perfectly balanced for {plan.patient.age}y {plan.patient.gender} Ã¢â‚¬Â¢ {plan.patient.goal}
+                        Perfectly balanced for {plan.patient.age}y {plan.patient.gender} • {plan.patient.goal}
                       </p>
                     </div>
                     <div className="flex items-center gap-2">
@@ -334,6 +330,3 @@ const handleGenerate = async (data: IntakeData) => {
     </div>
   );
 }
-
-
-
