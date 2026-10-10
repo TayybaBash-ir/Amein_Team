@@ -85,6 +85,7 @@ export default function MealDetail({
 
   return (
     <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md" data-no-page-swipe>
+      <style>{`nav[aria-label="Main navigation"] { display: none !important; }`}</style>
       <div
         className="relative w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-3xl p-6 shadow-2xl border border-border"
         style={{ backgroundColor: "#18181b", color: "#f4f4f5" }}

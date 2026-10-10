@@ -271,6 +271,7 @@ export default function DashboardBento({
             transition={{ duration: 0.2 }}
             data-no-page-swipe
           >
+              <style>{`nav[aria-label="Main navigation"] { display: none !important; }`}</style>
             <header className="sticky top-0 z-10 flex items-center justify-between border-b border-border bg-background/95 px-4 py-3 backdrop-blur-xl sm:px-8">
               <div className="min-w-0">
                 <p className="text-[10px] font-bold uppercase tracking-wider text-brand">Day {dayIdx + 1}</p>
