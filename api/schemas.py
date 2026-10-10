@@ -25,6 +25,7 @@ class PatientIntake(BaseModel):
     spice_tolerance: Optional[str] = "Normal"
     goal: Optional[str] = "Maintain"
     metabolic_modifier: float = 1.0
+    macro_tweak: Optional[str] = ""
     goal_amount: str = ""
     city: Optional[str] = "Lahore"
     country: Optional[str] = "Pakistan"
@@ -134,3 +135,9 @@ class SwapRequest(BaseModel):
 
 class SwapResponse(BaseModel):
     alternatives: List[Meal]
+
+
+class CheckInRequest(BaseModel):
+    patient: PatientIntake
+    feedback_text: str
+    new_weight: float

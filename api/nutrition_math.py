@@ -4,6 +4,7 @@ from typing import Any, Dict
 def get_nutritional_targets(
     plan_mode: str = "standard",
     metabolic_modifier: float = 1.0,
+    macro_tweak: str = "",
     weight_kg: float,
     height_cm: float,
     age: int,
@@ -58,6 +59,25 @@ def get_nutritional_targets(
     protein_g = weight_kg * 2.0
     fat_g = (target_calories * 0.25) / 9.0
     carbs_g = max(0.0, (target_calories - (protein_g * 4.0) - (fat_g * 9.0)) / 4.0)
+
+    # Apply True ML logic tweaks based on natural language feedback
+    if macro_tweak == "higher_protein":
+        shift = target_calories * 0.10
+        protein_g += shift / 4.0
+        carbs_g = max(0.0, carbs_g - (shift / 4.0))
+    elif macro_tweak == "higher_fat":
+        shift = target_calories * 0.10
+        fat_g += shift / 9.0
+        carbs_g = max(0.0, carbs_g - (shift / 4.0))
+    elif macro_tweak == "higher_carb":
+        shift = target_calories * 0.10
+        carbs_g += shift / 4.0
+        fat_g = max(0.0, fat_g - (shift / 9.0))
+    elif macro_tweak == "lower_carb":
+        shift = target_calories * 0.15
+        carbs_g = max(0.0, carbs_g - (shift / 4.0))
+        protein_g += (shift / 2.0) / 4.0
+        fat_g += (shift / 2.0) / 9.0
 
     return {
         "bmi": bmi,

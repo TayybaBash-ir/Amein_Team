@@ -288,11 +288,12 @@ export default function DashboardBento({
             return JSON.parse(localStorage.getItem("clima_patient_profile") || "{}");
           } catch { return {}; }
         })()}
-        onComplete={(newWeight: number, newModifier: number) => {
+        onComplete={(newWeight: number, newModifier: number, macroTweak: string) => {
           try {
             const profile = JSON.parse(localStorage.getItem("clima_patient_profile") || "{}");
             profile.weight = newWeight;
             profile.metabolic_modifier = newModifier;
+            profile.macro_tweak = macroTweak;
             localStorage.setItem("clima_patient_profile", JSON.stringify(profile));
             setCheckInOpen(false);
             window.location.reload();
@@ -307,11 +308,12 @@ export default function DashboardBento({
             return JSON.parse(localStorage.getItem("clima_patient_profile") || "{}");
           } catch { return {}; }
         })()}
-        onComplete={(newWeight: number, newModifier: number) => {
+        onComplete={(newWeight: number, newModifier: number, macroTweak: string) => {
           try {
             const profile = JSON.parse(localStorage.getItem("clima_patient_profile") || "{}");
             profile.weight = newWeight;
             profile.metabolic_modifier = newModifier;
+            profile.macro_tweak = macroTweak;
             localStorage.setItem("clima_patient_profile", JSON.stringify(profile));
             setCheckInOpen(false);
             window.location.reload();

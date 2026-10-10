@@ -10,6 +10,7 @@ from pydantic import BaseModel
 
 from typing import List
 from api.schemas import (
+    CheckInRequest,
     PatientIntake, PlanResponse, Meal, NutritionTargets,
     WeatherInfo, DailyTotals, ValidationInfo, DayPlan, MealPlan,
     SwapRequest, SwapResponse, ExternalDiningRecommendation
@@ -17,6 +18,7 @@ from api.schemas import (
 from api.nutrition_math import get_nutritional_targets
 from api.meal_validator import validate_meals, structure_day_plans
 from api.llm_classifier import analyze_clinical_conditions, RECOVERY_FORBIDDEN_TERMS
+from api.ml_feedback import analyze_feedback
 
 env_path = pathlib.Path('.') / '.env.local'
 load_dotenv(dotenv_path=env_path)
@@ -314,6 +316,7 @@ def generate_meal_plan(patient: PatientIntake):
     targets = get_nutritional_targets(
         plan_mode=str(patient.plan_mode),
         metabolic_modifier=float(patient.metabolic_modifier),
+        macro_tweak=str(getattr(patient, "macro_tweak", "") or ""),
         weight_kg=float(patient.weight),
         height_cm=float(patient.height),
         age=int(patient.age),
@@ -745,3 +748,23 @@ def get_plan(plan_id: str):
         return res.data[0]['plan_data']
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/checkin")
+def process_checkin(req: CheckInRequest):
+    try:
+        weight_change = req.new_weight - req.patient.weight
+        ai_analysis = analyze_feedback(req.feedback_text, req.patient.goal or "maintain", weight_change)
+        
+        # update the modifier
+        new_modifier = req.patient.metabolic_modifier * ai_analysis.get("recommended_tdee_multiplier", 1.0)
+        # bound the modifier
+        new_modifier = max(0.6, min(1.5, new_modifier))
+        
+        return {
+            "new_weight": req.new_weight,
+            "new_modifier": round(new_modifier, 3),
+            "macro_tweak": ai_analysis.get("macro_tweak", "none"),
+            "explanation": ai_analysis.get("explanation", "Adjusted based on feedback.")
+        }
+    except Exception as e:
+        return {"error": str(e)}
