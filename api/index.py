@@ -715,6 +715,13 @@ def swap_meal(req: SwapRequest):
         for item in cand['items']:
             ingredients.extend(item.get('ingredient_names', []))
             
+        safe_ingredients = []
+        for ing in set(ingredients):
+            ing_str = str(ing)
+            if not ing_str or '<' in ing_str or '{' in ing_str or '}' in ing_str or not any(c.isalpha() for c in ing_str): continue
+            safe_ingredients.append(ing_str)
+        ingredients = safe_ingredients
+            
         cals = sum(item.get('calories', 0) for item in cand['items']) * multiplier
         pro = sum(item.get('protein_g', 0) for item in cand['items']) * multiplier
         carb = sum(item.get('carbs_g', 0) for item in cand['items']) * multiplier
