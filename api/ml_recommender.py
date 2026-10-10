@@ -2,7 +2,8 @@ import json
 import os
 from collections import defaultdict
 
-INTERACTIONS_FILE = "ml_interactions.jsonl"
+import os
+INTERACTIONS_FILE = "/tmp/ml_interactions.jsonl" if os.environ.get("VERCEL") else "ml_interactions.jsonl"
 
 def parse_interactions():
     """

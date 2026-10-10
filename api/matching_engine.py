@@ -354,7 +354,7 @@ def find_best_meal_plan(categorized, target_macros, preferences=None, iterations
         
     return best_plan, best_mult
 
-def get_alternative_meals(categorized, slot, target_meal_macros, previously_selected=None, num_options=5, daily_budget=None, strict_pantry_mode=False):
+def get_alternative_meals(categorized, slot, target_meal_macros, previously_selected=None, num_options=5, daily_budget=None, strict_pantry_mode=False, ml_prefs=None):
     if previously_selected is None:
         previously_selected = set()
         
