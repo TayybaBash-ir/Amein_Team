@@ -14,11 +14,13 @@ export default function MealPlanView({
   onGoToRestaurant,
   hideHeading = false,
   compactActions = false,
+  isTracking = false,
 }: {
   plan: PlanResponse;
   onGoToRestaurant?: (r: string, mealId?: string) => void;
   hideHeading?: boolean;
   compactActions?: boolean;
+  isTracking?: boolean;
 }) {
     const [plan, setPlan] = useState(initialPlan);
   const [foodLog, setFoodLog] = useState<Record<string, any>>({});
@@ -101,15 +103,15 @@ export default function MealPlanView({
       {/* INTERACTIVE WEB LAYOUT */}
       <div className="flex flex-col gap-5 w-full print:hidden">
 
-        {/* FOOD LOG SUMMARY */}
+        {/* SUMMARY BLOCK (DYNAMIC BASED ON ISTRACKING) */}
         <div className="mb-2 p-4 rounded-2xl bg-surface-2 border border-border">
-          <h3 className="text-sm font-bold mb-2">Today's Intake</h3>
+          <h3 className="text-sm font-bold mb-2">{isTracking ? "Today's Intake (Tracked)" : "Daily Plan Totals"}</h3>
           <div className="flex gap-4 text-xs font-mono">
             {(() => {
               let cals = 0, pro = 0, carb = 0, fat = 0;
               currentDay.meals.forEach(m => {
                 const log = foodLog[m.id];
-                if (log?.status === 'logged') {
+                if (!isTracking || log?.status === 'logged') {
                   cals += m.calories || 0;
                   pro += (m as any).protein_g || m.protein || 0;
                   carb += (m as any).carbs_g || m.carbs || 0;

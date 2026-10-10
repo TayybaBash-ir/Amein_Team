@@ -488,11 +488,11 @@ def get_alternative_meals(categorized, slot, target_meal_macros, previously_sele
     # Sort by best macro match
     valid_candidates.sort(key=lambda x: x['score'])
     
-    # Deduplicate by base name
+    # Deduplicate by base main ingredient (ignore sides after 'with')
     seen_names = set()
     final_options = []
     for vc in valid_candidates:
-        base_name = vc['candidate']['name'].replace(' (Home-style)', '').replace(' (Dum Cooked)', '').strip()
+        base_name = vc['candidate']['name'].lower().split(' with ')[0].replace(' (home-style)', '').replace(' (dum cooked)', '').strip()
         if base_name not in seen_names:
             seen_names.add(base_name)
             final_options.append(vc)
@@ -502,7 +502,7 @@ def get_alternative_meals(categorized, slot, target_meal_macros, previously_sele
     # If we couldn't find enough, try ignoring variety penalty
     if len(final_options) < num_options:
         for cand in candidates:
-            base_name = cand['name'].replace(' (Home-style)', '').replace(' (Dum Cooked)', '').strip()
+            base_name = cand['name'].lower().split(' with ')[0].replace(' (home-style)', '').replace(' (dum cooked)', '').strip()
             if base_name in seen_names: continue
             base_cals = cand['calories']
             if base_cals <= 0: continue

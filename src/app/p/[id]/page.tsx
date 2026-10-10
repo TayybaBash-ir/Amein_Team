@@ -24,7 +24,7 @@ export default async function SharedPlanPage({ params }: { params: { id: string 
   return (
     <div className="min-h-screen bg-background text-foreground">
       <div className="mx-auto max-w-7xl p-4 md:p-8">
-        <MealPlanView plan={plan} />
+        <MealPlanView plan={plan} hideHeading={true} />
       </div>
     </div>
   );

@@ -286,7 +286,7 @@ export default function DashboardBento({
               </button>
             </header>
             <main className="mx-auto max-w-6xl px-4 py-5 pb-10 sm:px-8 sm:py-8">
-              <MealPlanView plan={todayPlanResponse} onGoToRestaurant={onGoToRestaurant} />
+              <MealPlanView plan={todayPlanResponse} onGoToRestaurant={onGoToRestaurant} isTracking={true} hideHeading={true} />
             </main>
           </motion.div>
         )}
