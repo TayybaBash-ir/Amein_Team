@@ -274,6 +274,10 @@ export default function Dashboard() {
 
               {step === "input" && (
                 <motion.div key="input" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="mx-auto max-w-3xl">
+                  <div className="mb-8 text-center">
+                    <h2 className="text-3xl font-bold tracking-tight text-foreground mb-2">Create Your Daily Meal Plan</h2>
+                    <p className="text-muted-foreground">Tell us about yourself so we can curate meals tailored to your health and weather.</p>
+                  </div>
                   {error && (
                     <div className="mb-6 rounded-xl border border-orange-500/20 bg-orange-500/10 p-4 text-sm text-orange-400">
                       {error}
@@ -295,9 +299,9 @@ export default function Dashboard() {
                     <div className="absolute inset-0 animate-ping rounded-full border-2 border-brand opacity-20" />
                     <MdEco size={32} className="animate-pulse text-brand" />
                   </div>
-                  <h3 className="editorial-title text-2xl font-bold text-white mb-2">Preparing Your Custom Meal Plan...</h3>
+                  <h3 className="editorial-title text-2xl font-bold text-foreground mb-2">Preparing Your Custom Meal Plan...</h3>
                   <p className="text-sm text-muted-foreground animate-pulse">
-                    Tailoring health-safe dishes to your local weather and personal profile...
+                    Tailoring health-safe dishes to your weather and medical profile...
                   </p>
                 </motion.div>
               )}
@@ -307,9 +311,11 @@ export default function Dashboard() {
                   <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-4 print:hidden">
                     <div>
                       <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight text-foreground mb-1">Your Health Overview</h2>
-                      <p className="text-xs sm:text-sm text-muted-foreground">
-                        Perfectly balanced for {plan.patient.age}y {plan.patient.gender} • {plan.patient.goal}
-                      </p>
+                      <p className="flex items-center gap-1.5 text-xs sm:text-sm text-muted-foreground mt-1">
+                          <span>Personalized nutrition plan tailored</span>
+                          <span className="text-brand text-lg leading-none">&bull;</span>
+                          <span>Goal: {savedProfile?.goal || plan.patient?.goal || "Improve health"}</span>
+                        </p>
                     </div>
                     <div className="flex items-center gap-2">
                       <button onClick={() => window.print()} className="flex items-center gap-2 rounded-xl bg-surface-2 px-4 py-2 text-sm font-semibold text-foreground transition-colors hover:bg-surface-2">
