@@ -629,6 +629,19 @@ def generate_meal_plan(patient: PatientIntake):
 def health_check():
     return {"status": "ok"}
 
+@app.post("/api/interaction")
+def log_interaction(log: InteractionLog):
+    import time
+    import json
+    record = log.dict()
+    record['timestamp'] = time.time()
+    try:
+        with open("ml_interactions.jsonl", "a", encoding="utf-8") as f:
+            f.write(json.dumps(record) + "\n")
+    except Exception as e:
+        print("Failed to log:", e)
+    return {"status": "recorded"}
+
 @app.post("/api/swap-meal", response_model=SwapResponse)
 def swap_meal(req: SwapRequest):
     allergies = req.patient.allergies or []

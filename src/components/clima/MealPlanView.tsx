@@ -34,10 +34,23 @@ export default function MealPlanView({
     }
   });
 
-  const updateLog = (mealId: string, status: string, customText?: string) => {
+  const updateLog = (mealId: string, status: string, customText?: string, dishName?: string) => {
     const newLog = { ...foodLog, [mealId]: { status, customText } };
     setFoodLog(newLog);
     localStorage.setItem("clima_food_log", JSON.stringify(newLog));
+    
+    // Log for ML training
+    fetch("/api/interaction", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        user_id: "anon",
+        action: status,
+        meal_id: mealId,
+        dish_name: dishName || "Unknown",
+        context: { customText }
+      })
+    }).catch(console.error);
   };
 
   const [swapMealInfo, setSwapMealInfo] = useState<{meal: Meal, dayIdx: number, mealIdx: number} | null>(null);
