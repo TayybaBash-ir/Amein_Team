@@ -76,7 +76,12 @@ export default function DashboardBento({
       todayPlan = days[dayIdx];
       totalKcal = todayPlan.daily_totals?.calories || todayPlan.meals.reduce((sum: number, meal: Meal) => sum + (meal.calories || 0), 0);
       const weight = activePlan.plan.patient?.weight || 70;
-      cupsGoal = Math.min(20, Math.max(8, Math.round((weight * 35) / 250)));
+      let extraCups = 0;
+      const weatherText = JSON.stringify(activePlan.plan.weather || "").toLowerCase();
+      if (weatherText.includes("hot") || weatherText.includes("warm") || weatherText.includes("sunny")) {
+        extraCups = 3;
+      }
+      cupsGoal = Math.min(20, Math.max(8, Math.round((weight * 35) / 250) + extraCups));
     }
   }
 
@@ -278,6 +283,26 @@ export default function DashboardBento({
           } catch {}
         }}
       />
+      <CheckInModal 
+        isOpen={checkInOpen} 
+        onClose={() => setCheckInOpen(false)} 
+        userProfile={(() => {
+          try {
+            return JSON.parse(localStorage.getItem("clima_patient_profile") || "{}");
+          } catch { return {}; }
+        })()}
+        onComplete={(newWeight: number, newModifier: number) => {
+          try {
+            const profile = JSON.parse(localStorage.getItem("clima_patient_profile") || "{}");
+            profile.weight = newWeight;
+            profile.metabolic_modifier = newModifier;
+            localStorage.setItem("clima_patient_profile", JSON.stringify(profile));
+            setCheckInOpen(false);
+            window.location.reload();
+          } catch {}
+        }}
+      />
     </div>
+
   );
 }
