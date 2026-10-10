@@ -39,12 +39,12 @@ export default function MealPlanView({ plan: initialPlan }: { plan: PlanResponse
     <>
       {/* RECOVERY ADVICE BANNER */}
       {plan.recovery_advice && (
-        <div className="mb-6 rounded-2xl border border-indigo-500/20 bg-indigo-500/10 p-5 shadow-lg shadow-indigo-500/5 print:hidden">
-          <h3 className="mb-2 text-sm font-bold text-indigo-400 uppercase tracking-widest">Recovery & Sickness Advice</h3>
-          <p className="mb-4 text-sm text-indigo-100">{plan.recovery_advice.advice}</p>
+        <div className="mb-6 rounded-2xl border border-[#4a7c59]/20 bg-[#4a7c59]/10 p-5 shadow-lg shadow-emerald-500/5 print:hidden">
+          <h3 className="mb-2 text-sm font-bold text-emerald-400 uppercase tracking-widest">Recovery & Sickness Advice</h3>
+          <p className="mb-4 text-sm text-emerald-100">{plan.recovery_advice.advice}</p>
           {plan.recovery_advice.avoid.length > 0 && (
             <div className="flex flex-wrap items-center gap-2">
-              <span className="text-xs font-bold text-indigo-400">Strictly Avoid:</span>
+              <span className="text-xs font-bold text-emerald-400">Strictly Avoid:</span>
               {plan.recovery_advice.avoid.map((item, i) => (
                 <span key={i} className="rounded-full bg-red-500/20 border border-red-500/30 px-2.5 py-1 text-xs font-semibold text-red-300">
                   {item}

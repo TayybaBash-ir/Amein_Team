@@ -71,7 +71,7 @@ function toProfile(stored: Record<string, unknown>): Profile {
   };
 }
 
-const inputClass = "w-full rounded-xl border border-border bg-card px-4 py-3 text-sm text-foreground outline-none transition focus:border-indigo-500/60 focus:ring-2 focus:ring-indigo-500/20 placeholder:text-neutral-600 [&>option]:bg-background";
+const inputClass = "w-full rounded-xl border border-border bg-card px-4 py-3 text-sm text-foreground outline-none transition focus:border-[#4a7c59]/60 focus:ring-2 focus:ring-[#4a7c59]/20 placeholder:text-neutral-600 [&>option]:bg-background";
 const labelClass = "mb-1.5 block text-xs font-semibold uppercase tracking-wider text-muted-foreground";
 
 export default function ProfilePage() {
@@ -129,7 +129,7 @@ export default function ProfilePage() {
             <MdArrowBack size={18} />
           </Link>
           <Link href="/dashboard" className="group flex items-center gap-2">
-            <div className="grid h-8 w-8 place-items-center rounded-xl bg-gradient-to-br from-indigo-500 to-indigo-700 shadow-lg shadow-indigo-500/20 transition-transform group-hover:scale-105">
+            <div className="grid h-8 w-8 place-items-center rounded-xl bg-gradient-to-br from-[#4a7c59] to-[#3d6849] shadow-lg shadow-emerald-500/20 transition-transform group-hover:scale-105">
               <MdEco size={16} className="text-foreground" />
             </div>
             <span className="font-sans text-lg font-bold tracking-tight text-foreground">ClimaDiet</span>
@@ -145,7 +145,7 @@ export default function ProfilePage() {
           className="mb-8 flex items-start justify-between"
         >
           <div>
-            <div className="mb-2 inline-flex items-center gap-2 rounded-full border border-indigo-500/20 bg-indigo-500/10 px-3 py-1 text-xs font-semibold text-indigo-400">
+            <div className="mb-2 inline-flex items-center gap-2 rounded-full border border-[#4a7c59]/20 bg-[#4a7c59]/10 px-3 py-1 text-xs font-semibold text-emerald-400">
               <MdPerson size={12} /> Medical Profile
             </div>
             <h1 className="text-3xl font-bold tracking-tight text-foreground">
@@ -159,7 +159,7 @@ export default function ProfilePage() {
             onClick={() => isEditing ? handleSave() : setIsEditing(true)}
             className={`flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition-all ${
               isEditing
-                ? "bg-indigo-500 text-foreground hover:bg-indigo-600 shadow-lg shadow-indigo-500/25"
+                ? "bg-[#4a7c59] text-foreground hover:bg-[#3d6849] shadow-lg shadow-emerald-500/25"
                 : "bg-surface text-foreground hover:bg-surface-2 border border-border"
             }`}
           >
@@ -246,7 +246,7 @@ export default function ProfilePage() {
                 onClick={() => toggleCondition(c)}
                 className={`rounded-full border px-3.5 py-1.5 text-xs font-semibold transition-all ${
                   profile.conditions.includes(c)
-                    ? "border-indigo-500/50 bg-indigo-500/15 text-indigo-300"
+                    ? "border-[#4a7c59]/50 bg-[#4a7c59]/15 text-emerald-300"
                     : isEditing
                       ? "border-border bg-surface text-muted-foreground hover:border-border hover:text-foreground"
                       : "border-border bg-surface text-neutral-600"
@@ -318,7 +318,7 @@ export default function ProfilePage() {
             <motion.button
               initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
               onClick={handleSave}
-              className="w-full rounded-2xl bg-indigo-500 py-4 text-sm font-bold text-white shadow-lg shadow-indigo-500/25 hover:bg-indigo-600 transition-all mb-8"
+              className="w-full rounded-2xl bg-[#4a7c59] py-4 text-sm font-bold text-white shadow-lg shadow-emerald-500/25 hover:bg-[#3d6849] transition-all mb-8"
             >
               <MdSave size={16} className="inline mr-2 -mt-0.5" /> Save Profile
             </motion.button>

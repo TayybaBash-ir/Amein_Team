@@ -90,7 +90,7 @@ export default function ClinicalIntakeForm({
     localStorage.setItem("patientProfile", JSON.stringify(d));
   }, [d]);
 
-  const inputClass = "w-full rounded-2xl border border-border bg-surface px-4 py-3 text-sm text-foreground outline-none transition-all placeholder:text-muted-foreground hover:bg-surface-2 focus:border-indigo-500 focus:bg-surface-2 md:text-base";
+  const inputClass = "w-full rounded-2xl border border-border bg-surface px-4 py-3 text-sm text-foreground outline-none transition-all placeholder:text-muted-foreground hover:bg-surface-2 focus:border-[#4a7c59] focus:bg-surface-2 md:text-base";
   const labelClass = "mb-2 ml-1 block text-[13px] font-medium text-muted-foreground";
   const sectionClass = "rounded-[2rem] border border-border bg-card p-5 shadow-xl sm:p-7 md:p-8";
 

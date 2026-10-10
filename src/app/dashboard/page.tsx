@@ -158,11 +158,11 @@ const handleGenerate = async (data: IntakeData) => {
 
   const navItemClass = (tab: AppTab, label: string) =>
     `flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-      activeTab === tab ? "bg-indigo-500/20 text-indigo-300" : "text-muted-foreground hover:text-foreground hover:bg-surface-2"
+      activeTab === tab ? "bg-[#4a7c59]/20 text-emerald-300" : "text-muted-foreground hover:text-foreground hover:bg-surface-2"
     }`;
 
   return (
-    <div className="min-h-screen bg-background text-foreground selection:bg-indigo-500/30">
+    <div className="min-h-screen bg-background text-foreground selection:bg-[#4a7c59]/30">
       <nav className="sticky top-0 z-50 flex items-center justify-between border-b border-border bg-background/85 px-4 py-3 backdrop-blur-xl print:hidden sm:px-8">
         <div className="flex items-center gap-3">
           {/* Back arrow â€” shown when not on home screen */}
@@ -176,7 +176,7 @@ const handleGenerate = async (data: IntakeData) => {
             </button>
           )}
           <Link href="/" className="group flex items-center gap-2">
-            <div className="grid h-8 w-8 place-items-center rounded-xl bg-gradient-to-br from-indigo-500 to-indigo-700 shadow-lg shadow-indigo-500/20 transition-transform group-hover:scale-105">
+            <div className="grid h-8 w-8 place-items-center rounded-xl bg-gradient-to-br from-[#4a7c59] to-[#3d6849] shadow-lg shadow-emerald-500/20 transition-transform group-hover:scale-105">
               <MdEco size={16} className="text-foreground" />
             </div>
             <span className="font-sans text-lg font-bold tracking-tight text-foreground">ClimaDiet</span>
@@ -282,9 +282,9 @@ const handleGenerate = async (data: IntakeData) => {
                     </div>
                   )}
                   {planMode === "recovery" && (
-                    <div className="mb-6 rounded-xl border border-indigo-500/20 bg-indigo-500/10 p-4">
-                      <h3 className="text-sm font-bold text-indigo-400 mb-1 flex items-center gap-2"><MdPerson size={16}/> Sickness & Recovery Mode</h3>
-                      <p className="text-xs text-indigo-300/80">Tell us what you're feeling and we will generate a fast 3-day recovery meal plan with foods to eat and avoid. Budget filtering is disabled to prioritize your health.</p>
+                    <div className="mb-6 rounded-xl border border-[#4a7c59]/20 bg-[#4a7c59]/10 p-4">
+                      <h3 className="text-sm font-bold text-emerald-400 mb-1 flex items-center gap-2"><MdPerson size={16}/> Sickness & Recovery Mode</h3>
+                      <p className="text-xs text-emerald-300/80">Tell us what you're feeling and we will generate a fast 3-day recovery meal plan with foods to eat and avoid. Budget filtering is disabled to prioritize your health.</p>
                     </div>
                   )}
                   <ClinicalIntakeForm onSubmit={handleGenerate} loading={false} planMode={planMode} onInputChange={() => {}} />

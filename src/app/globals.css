@@ -1,4 +1,4 @@
-@tailwind base;
+﻿@tailwind base;
 @tailwind components;
 @tailwind utilities;
 
@@ -10,7 +10,7 @@
 
 @layer base {
   :root {
-    /* ✨ Dark Theme: Premium deep slate ✨ */
+    /* âœ¨ Dark Theme: Premium deep slate âœ¨ */
     --background: #0F1117;
     --foreground: #f0f0f5;
     --card: #161922;
@@ -29,7 +29,7 @@
     --destructive-foreground: #f0f0f5;
     --border: rgba(255,255,255,0.08);
     --input: #1e2130;
-    --ring: #6366f1;
+    --ring: #4a7c59;
     --radius: 0.85rem;
     --bg: #0F1117;
     --surface: #161922;
@@ -40,25 +40,25 @@
     --heat: #e09438;
     --success: #22c55e;
     --text: #f0f0f5;
-    --brand: #6366f1;
-    --brand-dark: #4f46e5;
+    --brand: #4a7c59;
+    --brand-dark: #3d6849;
   }
 }
 
-/* ✨ Light Theme: Apple-style clean white ✨ */
+/* âœ¨ Light Theme: User Palette âœ¨ */
 html.light {
-  --background: #ffffff;
-  --foreground: #111111;
-  --card: #f5f5f7;
-  --card-foreground: #111111;
-  --border: rgba(0,0,0,0.08);
-  --input: #f5f5f7;
-  --muted: #e8e8ed;
-  --muted-foreground: #6e6e73;
-  --surface: #f5f5f7;
-  --surface-2: #e8e8ed;
-  --brand: #111111;
-  --brand-dark: #333333;
+  --background: #E9ECE6;
+  --foreground: #545B5A;
+  --card: #D0DFD9;
+  --card-foreground: #545B5A;
+  --border: #AAB8B6;
+  --input: #D0DFD9;
+  --muted: #BCCBC9;
+  --muted-foreground: #545B5A;
+  --surface: #D0DFD9;
+  --surface-2: #BCCBC9;
+  --brand: #545B5A;
+  --brand-dark: #3F4444;
   color-scheme: light;
 }
 
@@ -79,7 +79,7 @@ details[open] .chev { transform: rotate(180deg); }
 
 /* Shared form / card helpers (clinical dark styling) */
 .clinical-input {
-  @apply w-full rounded-xl border border-border bg-input px-4 py-3 text-sm text-foreground outline-none transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/15 placeholder:text-muted-foreground [&>option]:bg-background;
+  @apply w-full rounded-xl border border-border bg-input px-4 py-3 text-sm text-foreground outline-none transition focus:border-[#4a7c59] focus:ring-4 focus:ring-[#4a7c59]/15 placeholder:text-muted-foreground [&>option]:bg-background;
 }
 .clinical-label {
   @apply mb-1.5 block text-xs font-semibold uppercase tracking-wide text-muted-foreground;
