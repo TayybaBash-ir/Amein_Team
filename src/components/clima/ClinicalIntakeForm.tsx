@@ -1,25 +1,26 @@
-
 "use client";
-import { useState, useEffect } from "react";
-import { MdAutorenew, MdAdd, MdClose, MdFavorite, MdDirectionsRun, MdHome } from "react-icons/md";
+
+import { useEffect, useState } from "react";
+import { MdAutorenew, MdFavorite, MdDirectionsRun, MdHome, MdExpandLess, MdExpandMore } from "react-icons/md";
+import { motion, AnimatePresence } from "framer-motion";
 import { type IntakeData } from "@/lib/mock";
 import { ACCENT } from "@/lib/theme";
-import { motion, AnimatePresence } from "framer-motion";
 
-const CONDITIONS_PRESET = ["Diabetes", "Hypertension", "PCOS"];
-const RESTRICTIONS_PRESET = ["Halal", "Vegan", "Low Sodium"];
-const ALLERGIES_PRESET = ["Peanuts", "Shellfish", "Dairy"];
+const CONDITIONS_PRESET = ["Low BP", "Hypertension", "Diabetes", "Gastritis / GORD", "Kidney Disease", "High Cholesterol", "PCOS"];
+const RESTRICTIONS_PRESET = ["Halal", "Vegetarian", "Vegan", "Low Sodium"];
+const ALLERGIES_PRESET = ["Nuts", "Dairy", "Peanuts", "Shellfish"];
 
 export default function ClinicalIntakeForm({
   onSubmit,
   loading,
   onInputChange,
 }: {
-  onSubmit: (d: IntakeData) => void;
+  onSubmit: (data: IntakeData) => void;
   loading: boolean;
   onInputChange: () => void;
 }) {
   const [d, setD] = useState<IntakeData>({
+    name: "Patient",
     age: 32,
     weight: 85,
     height: 175,
@@ -27,281 +28,194 @@ export default function ClinicalIntakeForm({
     activity: "sedentary",
     goal: "Lose weight",
     goal_amount: "5kg",
-    weekly_budget: "No Limit",
-    acute_illness: "",
     conditions: [],
     allergies: [],
     dietary_restrictions: [],
+    medical_history_notes: "",
+    is_post_discharge: false,
+    recovery_type: "None",
+    spice_tolerance: "Normal",
     pantry_items: [],
     pantry_input: "",
     strict_pantry_mode: false,
     city: "Lahore",
     country: "Pakistan",
+    weekly_budget: "No Limit",
+    acute_illness: "",
+    allow_external_dining: true,
+    preferences: { cuisine: "Balanced Mix", carb: "Surprise Me", snack: "Savory & Salty", strictness: "Very Strict" },
   });
   const [customCond, setCustomCond] = useState("");
   const [customDiet, setCustomDiet] = useState("");
   const [customAllergy, setCustomAllergy] = useState("");
-  const [customPantryItem, setCustomPantryItem] = useState("");
   const [showIllness, setShowIllness] = useState(false);
 
   useEffect(() => {
     const savedIntake = localStorage.getItem("patientProfile");
     const savedMedicalProfile = localStorage.getItem("clima_patient_profile");
+    const asList = (value: unknown): string[] => Array.isArray(value)
+      ? value.filter((item): item is string => typeof item === "string")
+      : typeof value === "string" ? value.split(",").map((item) => item.trim()).filter(Boolean) : [];
+
     try {
       const intake = savedIntake ? JSON.parse(savedIntake) : {};
       const medical = savedMedicalProfile ? JSON.parse(savedMedicalProfile) : {};
-      const asList = (value: unknown): string[] => Array.isArray(value)
-        ? value.filter((item): item is string => typeof item === "string")
-        : typeof value === "string" ? value.split(",").map((item) => item.trim()).filter(Boolean) : [];
-      const unique = (...values: unknown[]) => Array.from(new Set(values.flatMap(asList)));
-
-      setD(prev => ({
-        ...prev,
+      setD((current) => ({
+        ...current,
         ...intake,
-        medical_history_notes: medical.medical_history_notes || prev.medical_history_notes,
-        is_post_discharge: medical.is_post_discharge || prev.is_post_discharge,
-        recovery_type: medical.recovery_type || prev.recovery_type,
-        spice_tolerance: medical.spice_tolerance || prev.spice_tolerance,
-        conditions: unique(intake.conditions, medical.conditions),
-        allergies: unique(intake.allergies, medical.allergies),
+        name: medical.name || intake.name || current.name,
+        age: Number(medical.age ?? intake.age ?? current.age),
+        weight: Number(medical.weight ?? intake.weight ?? current.weight),
+        height: Number(medical.height ?? intake.height ?? current.height),
+        gender: String(medical.gender ?? intake.gender ?? current.gender).toLowerCase(),
+        conditions: Array.from(new Set([...asList(medical.conditions), ...asList(intake.conditions)])),
+        allergies: Array.from(new Set([...asList(medical.allergies), ...asList(intake.allergies)])),
+        dietary_restrictions: Array.from(new Set([...asList(medical.dietary_restrictions), ...asList(intake.dietary_restrictions)])),
+        medical_history_notes: medical.medical_history_notes ?? intake.medical_history_notes ?? current.medical_history_notes,
+        is_post_discharge: Boolean(medical.is_post_discharge ?? intake.is_post_discharge ?? current.is_post_discharge),
+        recovery_type: medical.recovery_type ?? intake.recovery_type ?? current.recovery_type,
+        spice_tolerance: medical.spice_tolerance ?? intake.spice_tolerance ?? current.spice_tolerance,
+        pantry_items: Array.isArray(intake.pantry_items) ? intake.pantry_items : [],
+        strict_pantry_mode: Boolean(intake.strict_pantry_mode),
+        allow_external_dining: Boolean(intake.allow_external_dining ?? current.allow_external_dining),
       }));
-    } catch (e) {
-      console.error("Failed to parse saved profiles", e);
+    } catch (error) {
+      console.error("Failed to parse saved profiles", error);
     }
   }, []);
 
-  useEffect(() => { onInputChange(); }, [d, onInputChange]);
-  const set = (k: keyof IntakeData, v: any) => setD({ ...d, [k]: v });
-  const toggle = (list: string[], val: string, key: keyof IntakeData) => set(key, list.includes(val) ? list.filter((x) => x !== val) : [...list, val]);
-  const includePending = (list: string[], val: string) => val.trim() && !list.includes(val.trim()) ? [...list, val.trim()] : list;
+  useEffect(() => {
+    localStorage.setItem("patientProfile", JSON.stringify(d));
+  }, [d]);
 
-  const handleAddPantryItem = () => {
-    const item = customPantryItem.trim();
-    if (!item || (d.pantry_items || []).some((existing) => existing.toLowerCase() === item.toLowerCase())) return;
-    set("pantry_items", [...(d.pantry_items || []), item]);
-    setCustomPantryItem("");
+  const inputClass = "w-full rounded-2xl border border-white/5 bg-white/5 px-4 py-3 text-sm text-white outline-none transition-all placeholder:text-neutral-500 hover:bg-white/[0.07] focus:border-white/20 focus:bg-white/10 md:text-base";
+  const labelClass = "mb-2 ml-1 block text-[13px] font-medium text-neutral-400";
+  const sectionClass = "rounded-[2rem] border border-white/[0.06] bg-white/[0.025] p-5 shadow-xl backdrop-blur-2xl sm:p-7 md:p-8";
+
+  const set = (key: keyof IntakeData, value: unknown) => {
+    setD((current) => ({ ...current, [key]: value }));
+    onInputChange();
   };
 
-  // Apple-like inputs
-  const inputClass = "w-full bg-white/5 border border-white/5 focus:bg-white/10 focus:border-white/20 hover:bg-white/[0.07] rounded-2xl px-4 py-3 outline-none text-white transition-all placeholder:text-neutral-500 text-sm md:text-base";
-  const labelClass = "block text-[13px] font-medium text-neutral-400 mb-2 ml-1";
-  const sectionClass = "rounded-[2rem] border border-white/[0.04] bg-white/[0.02] p-5 sm:p-7 md:p-8 backdrop-blur-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)]";
+  const toggle = (key: "conditions" | "allergies" | "dietary_restrictions", value: string) => {
+    const selected = d[key].includes(value);
+    set(key, selected ? d[key].filter((item) => item !== value) : [...d[key], value]);
+  };
+
+  const includePending = (items: string[], pending: string) => {
+    const value = pending.trim();
+    return value && !items.includes(value) ? [...items, value] : items;
+  };
+
+  const addCustom = (key: "conditions" | "allergies" | "dietary_restrictions", value: string, clear: (value: string) => void) => {
+    if (!value.trim() || d[key].includes(value.trim())) return;
+    set(key, [...d[key], value.trim()]);
+    clear("");
+  };
+
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const pantryFromText = (d.pantry_input || "").split(/[,\n]/).map((item) => item.trim()).filter(Boolean);
+    const submitted: IntakeData = {
+      ...d,
+      conditions: includePending(d.conditions, customCond),
+      dietary_restrictions: includePending(d.dietary_restrictions, customDiet),
+      allergies: includePending(d.allergies, customAllergy),
+      pantry_items: Array.from(new Set([...(d.pantry_items || []), ...pantryFromText])),
+      strict_pantry_mode: Boolean(d.strict_pantry_mode),
+    };
+    setD(submitted);
+    setCustomCond("");
+    setCustomDiet("");
+    setCustomAllergy("");
+    onSubmit(submitted);
+  };
+
+  const listField = (
+    title: string,
+    key: "conditions" | "dietary_restrictions" | "allergies",
+    presets: string[],
+    draft: string,
+    setDraft: (value: string) => void,
+    placeholder: string,
+  ) => (
+    <div>
+      <label className={labelClass}>{title}</label>
+      <div className="mb-3 flex flex-wrap gap-2">
+        {presets.map((item) => {
+          const active = d[key].includes(item);
+          return <button key={item} type="button" aria-pressed={active} onClick={() => toggle(key, item)} className={`rounded-full border px-4 py-2 text-sm font-medium transition-all ${active ? "border-emerald-400/50 bg-emerald-400/15 text-emerald-200" : "border-white/10 bg-white/[0.04] text-neutral-300 hover:bg-white/10"}`}>{item}</button>;
+        })}
+        {d[key].filter((item) => !presets.includes(item)).map((item) => <button key={item} type="button" onClick={() => toggle(key, item)} className="rounded-full border border-emerald-400/40 bg-emerald-400/10 px-4 py-2 text-sm font-medium text-emerald-200">{item} ×</button>)}
+      </div>
+      <div className="flex gap-2">
+        <input className={inputClass} value={draft} onChange={(event) => setDraft(event.target.value)} onKeyDown={(event) => event.key === "Enter" && (event.preventDefault(), addCustom(key, draft, setDraft))} placeholder={placeholder} />
+        <button type="button" onClick={() => addCustom(key, draft, setDraft)} className="rounded-xl border border-white/10 bg-white/5 px-4 text-neutral-300 hover:bg-white/10">Add</button>
+      </div>
+    </div>
+  );
 
   return (
-    <form
-      onSubmit={(e) => {
-        e.preventDefault();
-        const submitted = {
-          ...d,
-          conditions: includePending(d.conditions, customCond),
-          dietary_restrictions: includePending(d.dietary_restrictions, customDiet),
-          allergies: includePending(d.allergies, customAllergy),
-          pantry_items: includePending(d.pantry_items || [], customPantryItem),
-          strict_pantry_mode: Boolean(d.strict_pantry_mode),
-        };
-        setD(submitted);
-        setCustomCond("");
-        setCustomDiet("");
-        setCustomAllergy("");
-        setCustomPantryItem("");
-        onSubmit(submitted);
-      }}
-      className="flex flex-col gap-6 sm:gap-8 pb-12 font-sans max-w-4xl mx-auto"
-    >
-      <div className="text-center mb-2">
-        <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight text-white mb-3">Tailor your plan.</h1>
-        <p className="text-neutral-400 text-sm sm:text-base">Tell us about your body, your goals, and whatΓÇÖs in your kitchen.</p>
+    <form onSubmit={handleSubmit} className="mx-auto flex max-w-4xl flex-col gap-6 pb-12 font-sans sm:gap-8">
+      <div className="mb-2 text-center">
+        <h2 className="mb-3 text-3xl font-semibold tracking-tight text-white sm:text-4xl">Tailor your plan.</h2>
+        <p className="text-sm text-neutral-400 sm:text-base">Tell us about your health, your goals, and what&apos;s in your kitchen.</p>
       </div>
 
-      {/* About You */}
       <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className={sectionClass}>
-        <div className="flex items-center gap-3 mb-6">
-          <div className="p-2 bg-blue-500/10 rounded-xl text-blue-400"><MdDirectionsRun size={20} /></div>
-          <h2 className="text-xl font-semibold text-white tracking-tight">About You</h2>
+        <div className="mb-6 flex items-center gap-3">
+          <div className="rounded-xl bg-blue-500/10 p-2 text-blue-400"><MdDirectionsRun size={20} /></div>
+          <h2 className="text-xl font-semibold tracking-tight text-white">1. Personal Information</h2>
         </div>
-        
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div>
-            <label className={labelClass}>Age</label>
-            <input className={inputClass} type="number" value={d.age} onChange={(e) => set("age", +e.target.value)} />
-          </div>
-          <div>
-            <label className={labelClass}>Weight (kg)</label>
-            <input className={inputClass} type="number" value={d.weight} onChange={(e) => set("weight", +e.target.value)} />
-          </div>
-          <div>
-            <label className={labelClass}>Height (cm)</label>
-            <input className={inputClass} type="number" value={d.height} onChange={(e) => set("height", +e.target.value)} />
-          </div>
-          <div>
-            <label className={labelClass}>Sex</label>
-            <select className={inputClass} value={d.gender} onChange={(e) => set("gender", e.target.value)}>
-              <option value="male">Male</option>
-              <option value="female">Female</option>
-            </select>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-          <div>
-            <label className={labelClass}>Daily activity</label>
-            <select className={inputClass} value={d.activity} onChange={(e) => set("activity", e.target.value)}>
-              <option value="sedentary">Sedentary (desk job)</option>
-              <option value="lightly active">Lightly active (1-3 days/wk)</option>
-              <option value="moderately active">Moderately active (3-5 days/wk)</option>
-              <option value="very active">Very active (6-7 days/wk)</option>
-              <option value="extra active">Extra active (athlete)</option>
-            </select>
-          </div>
-          <div>
-            <label className={labelClass}>Location (for climate-based foods)</label>
-            <div className="flex gap-2">
-              <input className={inputClass} type="text" placeholder="City" value={d.city} onChange={(e) => set("city", e.target.value)} />
-              <input className={inputClass} type="text" placeholder="Country" value={d.country} onChange={(e) => set("country", e.target.value)} />
-            </div>
-          </div>
-        </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-          <div>
-            <label className={labelClass}>Main goal</label>
-            <select className={inputClass} value={d.goal} onChange={(e) => set("goal", e.target.value)}>
-              <option value="Lose weight">Lose weight</option>
-              <option value="Gain muscle">Gain muscle</option>
-              <option value="Maintain weight">Maintain weight</option>
-              <option value="Improve overall health">Improve overall health</option>
-            </select>
-          </div>
-          <div>
-            <label className={labelClass}>Specific target (e.g. 5kg)</label>
-            <input className={inputClass} type="text" placeholder="Optional" value={d.goal_amount} onChange={(e) => set("goal_amount", e.target.value)} />
-          </div>
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+          <div className="col-span-2"><label className={labelClass}>Name</label><input className={inputClass} value={d.name || "Patient"} onChange={(event) => set("name", event.target.value)} /></div>
+          <div><label className={labelClass}>Age</label><input className={inputClass} type="number" value={d.age} onChange={(event) => set("age", Number(event.target.value))} /></div>
+          <div><label className={labelClass}>Gender</label><select className={inputClass} value={d.gender} onChange={(event) => set("gender", event.target.value)}><option value="male">Male</option><option value="female">Female</option><option value="unspecified">Unspecified</option></select></div>
+          <div><label className={labelClass}>Weight (kg)</label><input className={inputClass} type="number" value={d.weight} onChange={(event) => set("weight", Number(event.target.value))} /></div>
+          <div><label className={labelClass}>Height (cm)</label><input className={inputClass} type="number" value={d.height} onChange={(event) => set("height", Number(event.target.value))} /></div>
+          <div className="col-span-2"><label className={labelClass}>Daily activity</label><select className={inputClass} value={d.activity} onChange={(event) => set("activity", event.target.value)}><option value="sedentary">Sedentary (desk job)</option><option value="lightly active">Lightly active (1–3 days/wk)</option><option value="moderately active">Moderately active (3–5 days/wk)</option><option value="very active">Very active (6–7 days/wk)</option><option value="extra active">Extra active (athlete)</option></select></div>
+          <div className="col-span-2"><label className={labelClass}>Location for climate-based foods</label><div className="grid grid-cols-2 gap-3"><input className={inputClass} placeholder="City" value={d.city || "Lahore"} onChange={(event) => set("city", event.target.value)} /><input className={inputClass} placeholder="Country" value={d.country || "Pakistan"} onChange={(event) => set("country", event.target.value)} /></div></div>
+          <div className="col-span-2"><label className={labelClass}>Main goal</label><select className={inputClass} value={d.goal} onChange={(event) => set("goal", event.target.value)}><option value="Lose weight">Lose weight</option><option value="Gain muscle">Gain muscle</option><option value="Maintain weight">Maintain weight</option><option value="Improve overall health">Improve overall health</option></select></div>
+          <div className="col-span-2"><label className={labelClass}>Specific target</label><input className={inputClass} placeholder="Optional, e.g. 5kg" value={d.goal_amount} onChange={(event) => set("goal_amount", event.target.value)} /></div>
         </div>
       </motion.section>
 
-      {/* Health & Preferences */}
       <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className={sectionClass}>
-        <div className="flex items-center gap-3 mb-6">
-          <div className="p-2 bg-rose-500/10 rounded-xl text-rose-400"><MdFavorite size={20} /></div>
-          <h2 className="text-xl font-semibold text-white tracking-tight">Health & Preferences</h2>
+        <div className="mb-6 flex items-center gap-3">
+          <div className="rounded-xl bg-rose-500/10 p-2 text-rose-400"><MdFavorite size={20} /></div>
+          <h2 className="text-xl font-semibold tracking-tight text-white">2. Health Conditions &amp; Dietary Needs</h2>
         </div>
-
         <div className="space-y-6">
-          <div>
-            <label className={labelClass}>Medical conditions</label>
-            <div className="flex flex-wrap gap-2 mb-2">
-              {CONDITIONS_PRESET.map((c) => (
-                <button key={c} type="button" onClick={() => toggle(d.conditions, c, "conditions")}
-                  className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${d.conditions.includes(c) ? "bg-white text-black scale-95" : "bg-white/5 text-neutral-300 hover:bg-white/10"}`}>
-                  {c}
-                </button>
-              ))}
-            </div>
-            <input type="text" placeholder="Add other conditions..." className={inputClass} value={customCond} onChange={(e) => setCustomCond(e.target.value)} />
+          <div className="rounded-2xl border border-amber-500/20 bg-amber-500/[0.05] p-4">
+            <label className="flex cursor-pointer items-center gap-2 text-sm font-semibold text-amber-200"><input type="checkbox" checked={Boolean(d.is_post_discharge)} onChange={(event) => set("is_post_discharge", event.target.checked)} className="accent-amber-400" />Post-discharge recovery protocol</label>
+            {d.is_post_discharge && <div className="mt-4"><label className={labelClass}>Recovery focus</label><select className={inputClass} value={d.recovery_type || "Gastric Recovery (Bland & Soft)"} onChange={(event) => set("recovery_type", event.target.value)}><option>Gastric Recovery (Bland &amp; Soft)</option><option>Post-Surgery / Soft Food</option><option>Low BP / Hydration Focus</option><option>General Recovery</option></select></div>}
+            <div className="mt-4"><label className={labelClass}>Spice preference</label><select className={inputClass} value={d.spice_tolerance || "Normal"} onChange={(event) => set("spice_tolerance", event.target.value)}><option value="Bland">Bland (Zero Spice)</option><option value="Low Spice">Low Spice</option><option value="Normal">Normal</option></select></div>
+            <div className="mt-4"><label className={labelClass}>Doctor&apos;s medical notes</label><textarea className={`${inputClass} min-h-24 resize-y`} value={d.medical_history_notes || ""} onChange={(event) => set("medical_history_notes", event.target.value)} placeholder="Ongoing care instructions or dietary guidelines..." /></div>
           </div>
-
-          <div>
-            <label className={labelClass}>Dietary preferences</label>
-            <div className="flex flex-wrap gap-2 mb-2">
-              {RESTRICTIONS_PRESET.map((c) => (
-                <button key={c} type="button" onClick={() => toggle(d.dietary_restrictions, c, "dietary_restrictions")}
-                  className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${d.dietary_restrictions.includes(c) ? "bg-white text-black scale-95" : "bg-white/5 text-neutral-300 hover:bg-white/10"}`}>
-                  {c}
-                </button>
-              ))}
-            </div>
-            <input type="text" placeholder="Add other preferences..." className={inputClass} value={customDiet} onChange={(e) => setCustomDiet(e.target.value)} />
-          </div>
-
-          <div>
-            <label className={labelClass}>Allergies</label>
-            <div className="flex flex-wrap gap-2 mb-2">
-              {ALLERGIES_PRESET.map((c) => (
-                <button key={c} type="button" onClick={() => toggle(d.allergies, c, "allergies")}
-                  className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${d.allergies.includes(c) ? "bg-white text-black scale-95" : "bg-white/5 text-neutral-300 hover:bg-white/10"}`}>
-                  {c}
-                </button>
-              ))}
-            </div>
-            <input type="text" placeholder="Add other allergies..." className={inputClass} value={customAllergy} onChange={(e) => setCustomAllergy(e.target.value)} />
-          </div>
-
-          <div className="pt-4 border-t border-white/5">
-            <button type="button" onClick={() => setShowIllness(!showIllness)}
-              className="flex items-center gap-2 text-[13px] font-medium text-orange-400 hover:text-orange-300 transition-colors bg-orange-500/10 px-4 py-2 rounded-xl">
-              {showIllness ? "Γû╝" : "Γû╢"} Feeling under the weather today?
+          {listField("Chronic conditions", "conditions", CONDITIONS_PRESET, customCond, setCustomCond, "Add a condition...")}
+          {listField("Dietary restrictions", "dietary_restrictions", RESTRICTIONS_PRESET, customDiet, setCustomDiet, "Add a dietary restriction...")}
+          {listField("Allergies", "allergies", ALLERGIES_PRESET, customAllergy, setCustomAllergy, "Add an allergy...")}
+          <div className="border-t border-white/5 pt-5">
+            <button type="button" onClick={() => setShowIllness(!showIllness)} className="flex items-center gap-2 rounded-xl bg-orange-500/10 px-4 py-2 text-[13px] font-medium text-orange-300 transition-colors hover:text-orange-200">
+              {showIllness ? <MdExpandLess size={18} /> : <MdExpandMore size={18} />} Feeling under the weather today?
             </button>
-            <AnimatePresence>
-              {showIllness && (
-                <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden">
-                  <div className="mt-3">
-                    <label className={labelClass}>Tell us your symptoms</label>
-                    <input type="text" placeholder="e.g., Flu, cough, sore throat, fever" className={inputClass} value={d.acute_illness || ""} onChange={(e) => set("acute_illness", e.target.value)} />
-                    <p className="text-[12px] text-neutral-500 mt-2 ml-1">We'll tailor your diet to help you heal and strictly avoid foods that make it worse.</p>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
+            <AnimatePresence>{showIllness && <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden"><div className="mt-4"><label className={labelClass}>Symptoms</label><input className={inputClass} value={d.acute_illness || ""} onChange={(event) => set("acute_illness", event.target.value)} placeholder="Flu, cough, sore throat, fever..." /><p className="ml-1 mt-2 text-xs text-neutral-500">We&apos;ll account for this while building today&apos;s meal plan.</p></div></motion.div>}</AnimatePresence>
           </div>
         </div>
       </motion.section>
 
-      {/* Pantry & Budget */}
       <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className={sectionClass}>
-        <div className="flex items-center gap-3 mb-6">
-          <div className="p-2 bg-green-500/10 rounded-xl text-green-400"><MdHome size={20} /></div>
-          <h2 className="text-xl font-semibold text-white tracking-tight">Your Kitchen & Budget</h2>
-        </div>
-
-        <p className="mb-5 text-[13px] leading-relaxed text-neutral-400">
-          Just tell us what you have in your kitchen, and we'll prioritize meals using those ingredients.
-        </p>
-
-        <div className="mb-6">
-          <textarea
-            className="w-full bg-white/5 border border-white/5 focus:bg-white/10 focus:border-white/20 hover:bg-white/[0.07] rounded-[1.5rem] px-5 py-4 outline-none text-white transition-all placeholder:text-neutral-500 text-sm md:text-base min-h-[120px] resize-none"
-            placeholder="e.g., I have some chicken, rice, tomatoes, and onions. Maybe some eggs too."
-            value={d.pantry_input || ""}
-            onChange={(e) => set("pantry_input", e.target.value)}
-          />
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-white/5">
-          <div>
-            <label className={labelClass}>Weekly food budget</label>
-            <select className={inputClass} value={d.weekly_budget || "No Limit"} onChange={(e) => set("weekly_budget", e.target.value)}>
-              <option value="Under 5,000 PKR">Under 5,000 PKR</option>
-              <option value="5,000 - 10,000 PKR">5,000 - 10,000 PKR</option>
-              <option value="10,000 - 15,000 PKR">10,000 - 15,000 PKR</option>
-              <option value="No Limit">No Limit</option>
-            </select>
-            <p className="text-[12px] text-neutral-500 mt-2 ml-1">We'll estimate recipe costs to fit your pocket.</p>
-          </div>
-          <div className="flex items-start gap-3 mt-4 md:mt-8 ml-2">
-             <input type="checkbox" id="strict" className="mt-1 w-4 h-4 rounded-md border-white/20 bg-white/10 accent-blue-500 cursor-pointer" checked={d.strict_pantry_mode} onChange={(e) => set("strict_pantry_mode", e.target.checked)} />
-             <label htmlFor="strict" className="text-sm text-neutral-300 cursor-pointer select-none">
-               <strong>Strict Mode</strong><br/><span className="text-xs text-neutral-500">Only recommend meals using the exact ingredients I selected above.</span>
-             </label>
-          </div>
+        <div className="mb-6 flex items-center gap-3"><div className="rounded-xl bg-green-500/10 p-2 text-green-400"><MdHome size={20} /></div><h2 className="text-xl font-semibold tracking-tight text-white">3. Your Kitchen &amp; Budget</h2></div>
+        <p className="mb-5 text-[13px] leading-relaxed text-neutral-400">Tell us what you have at home and we&apos;ll prioritize meals using those ingredients.</p>
+        <textarea className={`${inputClass} min-h-28 resize-y rounded-3xl`} placeholder="e.g. Chicken, rice, tomatoes, onions, and eggs" value={d.pantry_input || ""} onChange={(event) => set("pantry_input", event.target.value)} />
+        <div className="mt-5 grid gap-4 border-t border-white/5 pt-5 sm:grid-cols-2">
+          <div><label className={labelClass}>Weekly food budget</label><select className={inputClass} value={d.weekly_budget || "No Limit"} onChange={(event) => set("weekly_budget", event.target.value)}><option>Under 5,000 PKR</option><option>5,000 - 10,000 PKR</option><option>10,000 - 15,000 PKR</option><option>No Limit</option></select></div>
+          <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-white/5 bg-white/[0.03] p-4 text-sm text-neutral-300"><input type="checkbox" className="mt-1 accent-emerald-400" checked={Boolean(d.strict_pantry_mode)} onChange={(event) => set("strict_pantry_mode", event.target.checked)} /><span><strong>Strict pantry mode</strong><br /><span className="text-xs text-neutral-500">Restrict meals to your available ingredients and staples.</span></span></label>
         </div>
       </motion.section>
 
-      {/* Generate Button */}
-      <motion.button
-        whileHover={{ scale: 1.01 }}
-        whileTap={{ scale: 0.98 }}
-        type="submit"
-        disabled={loading}
-        className="w-full relative overflow-hidden flex items-center justify-center gap-2 rounded-full bg-white px-8 py-5 text-[17px] font-semibold text-black transition-all hover:bg-neutral-200 disabled:opacity-70 disabled:cursor-not-allowed shadow-[0_0_40px_rgba(255,255,255,0.15)] mt-4"
-      >
-        {loading ? (
-          <>
-            <MdAutorenew className="animate-spin" size={20} />
-            Initializing Engine...
-          </>
-        ) : (
-          "Generate Personal Plan"
-        )}
+      <motion.button whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.98 }} type="submit" disabled={loading} className="mt-2 flex w-full items-center justify-center gap-2 rounded-full bg-white px-8 py-5 text-[17px] font-semibold text-black shadow-[0_0_40px_rgba(255,255,255,0.15)] transition-all hover:bg-neutral-200 disabled:cursor-not-allowed disabled:opacity-70">
+        {loading ? <><MdAutorenew className="animate-spin" size={20} /> Preparing your plan...</> : "Generate Personal Plan"}
       </motion.button>
     </form>
   );
