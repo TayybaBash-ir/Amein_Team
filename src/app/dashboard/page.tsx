@@ -39,7 +39,6 @@ export default function Dashboard() {
       setSavedProfile(null);
     }
   }, []);
->>>>>>> origin/feature/patient-profile-recovery
 
 const handleGenerate = async (data: IntakeData) => {
     setStep("loading");
