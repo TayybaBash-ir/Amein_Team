@@ -185,10 +185,7 @@ const handleGenerate = async (data: IntakeData) => {
             <motion.div key="generate" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
               {step === "input" && (
                 <motion.div key="input" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="mx-auto max-w-3xl">
-                  <div className="mb-8">
-                    <h1 className="editorial-title mb-2 text-4xl sm:text-5xl">New Plan Generation</h1>
-                    <p className="text-lg text-neutral-400">Enter patient signals and local climate context.</p>
-                  </div>
+                  
                   {error && (
                     <div className="mb-6 rounded-xl border border-orange-500/20 bg-orange-500/10 p-4 text-sm text-orange-400">
                       {error}
