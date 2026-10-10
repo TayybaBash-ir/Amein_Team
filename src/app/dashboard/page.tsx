@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { MdEco, MdArrowBack, MdRestaurantMenu, MdPerson, MdList, MdDashboard, MdAdd, MdWbSunny, MdDarkMode } from "react-icons/md";
+import { MdEco, MdRestaurantMenu, MdPerson, MdList, MdDashboard, MdAdd, MdWbSunny, MdDarkMode } from "react-icons/md";
 import AuthButton from "@/components/clima/AuthButton";
 import { motion, AnimatePresence } from "framer-motion";
 import ClinicalIntakeForm from "@/components/clima/ClinicalIntakeForm";
@@ -10,7 +10,6 @@ import MacroScorecard from "@/components/clima/MacroScorecard";
 import MealPlanView from "@/components/clima/MealPlanView";
 import { RestaurantRecommendationCard } from "@/components/clima/RestaurantRecommendationCard";
 import { type PlanResponse, type IntakeData } from "@/lib/mock";
-import { ACCENT } from "@/lib/theme";
 
 type ScreenStep = "input" | "loading" | "results";
 type AppTab = "generate" | "restaurants";
@@ -225,7 +224,10 @@ const handleGenerate = async (data: IntakeData) => {
             <motion.div key="generate" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
               {step === "input" && (
                 <motion.div key="input" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="mx-auto max-w-3xl">
-                  
+                  <div className="mb-8">
+                    <h1 className="editorial-title mb-2 text-4xl sm:text-5xl">Create Your Daily Meal Plan</h1>
+                    <p className="text-lg text-neutral-400">Tell us about yourself so we can curate meals tailored to your health and weather.</p>
+                  </div>
                   {error && (
                     <div className="mb-6 rounded-xl border border-orange-500/20 bg-orange-500/10 p-4 text-sm text-orange-400">
                       {error}
@@ -236,17 +238,10 @@ const handleGenerate = async (data: IntakeData) => {
               )}
 
               {step === "loading" && (
-                <motion.div key="loading" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex min-h-[60vh] flex-col items-center justify-center text-center">
-                  <div className="relative mb-8 grid h-24 w-24 place-items-center rounded-full bg-white/5">
-                    <div className="absolute inset-0 animate-ping rounded-full border-2 border-[#4a7c59] opacity-20" />
-                    <MdEco size={32} className="animate-pulse text-[#4a7c59]" />
-                  </div>
-                  <h3 className="editorial-title text-2xl">Computing Clinical Targets</h3>
-                  <div className="mt-4 flex flex-col gap-2 text-sm text-neutral-500">
-                    <p className="animate-pulse">Resolving location via Open-Meteo API...</p>
-                    <p className="animate-pulse delay-100">Applying Harris-Benedict thermodynamics...</p>
-                    <p className="animate-pulse delay-200">Matching dishes with strict AI constraints...</p>
-                  </div>
+                <motion.div key="loading" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex flex-col items-center justify-center p-12 text-center">
+                  <div className="mb-4 h-12 w-12 animate-spin rounded-full border-4 border-emerald-500 border-t-transparent" />
+                  <h3 className="mb-2 text-xl font-bold text-white">Preparing Your Custom Meal Plan...</h3>
+                  <p className="animate-pulse text-sm text-slate-400">Tailoring health-safe dishes to your weather and medical profile...</p>
                 </motion.div>
               )}
 
@@ -256,7 +251,7 @@ const handleGenerate = async (data: IntakeData) => {
                     <div>
                       <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight text-white mb-1">Your Health Overview</h2>
                       <p className="text-xs sm:text-sm text-neutral-400">
-                        Perfectly balanced for {plan.patient.age}y {plan.patient.gender} â€¢ {plan.patient.goal}
+                        Perfectly balanced for {plan.patient.age}y {plan.patient.gender} • {plan.patient.goal}
                       </p>
                     </div>
                     <div className="flex items-center gap-2">
