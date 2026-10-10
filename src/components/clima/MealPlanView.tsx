@@ -239,7 +239,37 @@ export default function MealPlanView({
                   <div className="mb-3 font-mono text-xs text-muted-foreground">
                     {meal.calories} kcal{" · "}{meal.protein}g protein{meal.estimated_cost ? ` · ~Rs. ${Math.round(meal.estimated_cost)}` : ""}
                   </div>
-                  <p className="mb-4 line-clamp-2 flex-1 text-xs text-muted-foreground">
+                    {/* TRACKING BUTTONS */}
+                    {isTracking && (
+                    <div className="mb-3 flex flex-wrap items-center gap-2" onClick={e => e.stopPropagation()}>
+                      {foodLog[meal.id]?.status === 'logged' ? (
+                        <span className="text-[10px] font-bold text-green-500 bg-green-500/10 px-2 py-1 rounded">✓ Logged</span>
+                      ) : foodLog[meal.id]?.status === 'skipped' ? (
+                        <span className="text-[10px] font-bold text-neutral-500 bg-neutral-500/10 px-2 py-1 rounded">Skipped</span>
+                      ) : foodLog[meal.id]?.status === 'custom' ? (
+                        <span className="text-[10px] font-bold text-amber-500 bg-amber-500/10 px-2 py-1 rounded line-clamp-1 max-w-[120px]" title={foodLog[meal.id]?.customText}>Custom: {foodLog[meal.id]?.customText}</span>
+                      ) : (
+                        <>
+                          <button onClick={() => updateLog(meal.id, 'logged', undefined, meal.name)} className="px-3 py-1.5 text-xs bg-brand text-white font-bold rounded-lg hover:bg-brand-dark shadow-md">Log Meal</button>
+                          <button onClick={() => updateLog(meal.id, 'skipped', undefined, meal.name)} className="px-3 py-1.5 text-xs bg-surface-2 text-foreground font-bold rounded-lg hover:bg-border border border-border">Skip</button>
+                          <button onClick={() => {
+                            const t = prompt("What did you eat instead?");
+                            if (t) updateLog(meal.id, 'custom', t, meal.name);
+                          }} className="px-3 py-1.5 text-xs border border-border text-foreground font-bold rounded-lg hover:bg-surface-2">Custom</button>
+                        </>
+                      )}
+                      {foodLog[meal.id] && (
+                         <button onClick={() => {
+                            const newLog = {...foodLog};
+                            delete newLog[meal.id];
+                            setFoodLog(newLog);
+                            localStorage.setItem("clima_food_log", JSON.stringify(newLog));
+                         }} className="ml-auto text-[10px] text-red-400 hover:underline">Undo</button>
+                      )}
+                    </div>
+                    )}
+
+                  <p className="mb-2 line-clamp-3 text-xs text-muted-foreground">
                     {meal.why}
                   </p>
                   <div className="mt-auto flex flex-col gap-2 border-t border-border pt-3">
@@ -247,36 +277,7 @@ export default function MealPlanView({
                         View details <MdChevronRight size={14} className="ml-1" />
                       </div>
                       
-                      {/* TRACKING BUTTONS */}
-                      {isTracking && (
-                      <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-border/50" onClick={e => e.stopPropagation()}>
-                        {foodLog[meal.id]?.status === 'logged' ? (
-                          <span className="text-[10px] font-bold text-green-500 bg-green-500/10 px-2 py-1 rounded">✓ Logged</span>
-                        ) : foodLog[meal.id]?.status === 'skipped' ? (
-                          <span className="text-[10px] font-bold text-neutral-500 bg-neutral-500/10 px-2 py-1 rounded">Skipped</span>
-                        ) : foodLog[meal.id]?.status === 'custom' ? (
-                          <span className="text-[10px] font-bold text-amber-500 bg-amber-500/10 px-2 py-1 rounded line-clamp-1 max-w-[120px]" title={foodLog[meal.id]?.customText}>Custom: {foodLog[meal.id]?.customText}</span>
-                        ) : (
-                          <>
-                            <button onClick={() => updateLog(meal.id, 'logged', undefined, meal.name)} className="px-2 py-1 text-[10px] bg-brand text-white font-bold rounded-lg hover:bg-brand-dark">Log</button>
-                            <button onClick={() => updateLog(meal.id, 'skipped', undefined, meal.name)} className="px-2 py-1 text-[10px] bg-surface-2 text-foreground font-bold rounded-lg hover:bg-border">Skip</button>
-                            <button onClick={() => {
-                              const t = prompt("What did you eat instead?");
-                              if (t) updateLog(meal.id, 'custom', t, meal.name);
-                            }} className="px-2 py-1 text-[10px] border border-border text-foreground font-bold rounded-lg hover:bg-surface-2">Custom</button>
-                          </>
-                        )}
-                        {foodLog[meal.id] && (
-                           <button onClick={() => {
-                              const newLog = {...foodLog};
-                              delete newLog[meal.id];
-                              setFoodLog(newLog);
-                              localStorage.setItem("clima_food_log", JSON.stringify(newLog));
-                           }} className="ml-auto text-[10px] text-red-400 hover:underline">Undo</button>
-                        )}
                       </div>
-                      )}
-                    </div>
                 </div>
               </motion.div>
             ))}
