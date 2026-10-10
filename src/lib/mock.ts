@@ -114,6 +114,7 @@ export type PlanResponse = {
   meal_plan: MealPlan;
   external_dining?: ExternalDiningRecommendation[];
   outside_order_matches?: ExternalDiningRecommendation[][];
+  recovery_advice?: { advice: string; avoid: string[] } | null;
 };
 
 export const MOCK_PLAN: PlanResponse = {

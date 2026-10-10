@@ -9,6 +9,7 @@ class UserPreferences(BaseModel):
     strictness: str = "Very Strict"
 
 class PatientIntake(BaseModel):
+    plan_mode: Optional[str] = "standard"
     preferences: Optional[UserPreferences] = None
     name: Optional[str] = "Patient"
     age: Optional[int] = 30
@@ -119,6 +120,7 @@ class PlanResponse(BaseModel):
     meal_plan: MealPlan
     external_dining: List[ExternalDiningRecommendation] = Field(default_factory=list)
     outside_order_matches: List[List[ExternalDiningRecommendation]] = Field(default_factory=list)
+    recovery_advice: Optional[dict] = None
 
 class SwapRequest(BaseModel):
     patient: PatientIntake

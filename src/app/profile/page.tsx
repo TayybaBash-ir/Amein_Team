@@ -135,7 +135,6 @@ export default function ProfilePage() {
             <span className="font-sans text-lg font-bold tracking-tight text-white">ClimaDiet</span>
           </Link>
         </div>
-        <AuthButton />
       </nav>
 
       <main className="mx-auto max-w-2xl px-4 py-8 sm:py-12">
@@ -314,17 +313,23 @@ export default function ProfilePage() {
           )}
         </motion.section>
 
-        {/* Save button (bottom) */}
-        {isEditing && (
-          <motion.button
-            initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
-            onClick={handleSave}
-            className="w-full rounded-2xl bg-indigo-500 py-4 text-sm font-bold text-white shadow-lg shadow-indigo-500/25 hover:bg-indigo-600 transition-all"
-          >
-            <MdSave size={16} className="inline mr-2 -mt-0.5" /> Save Profile
-          </motion.button>
-        )}
-      </main>
-    </div>
-  );
-}
+          {/* Save button (bottom) */}
+          {isEditing && (
+            <motion.button
+              initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+              onClick={handleSave}
+              className="w-full rounded-2xl bg-indigo-500 py-4 text-sm font-bold text-white shadow-lg shadow-indigo-500/25 hover:bg-indigo-600 transition-all mb-8"
+            >
+              <MdSave size={16} className="inline mr-2 -mt-0.5" /> Save Profile
+            </motion.button>
+          )}
+
+          {/* Sign Out Button at the very bottom */}
+          <div className="mt-8 pt-8 border-t border-white/[0.06] flex flex-col items-center">
+            <p className="text-xs text-neutral-500 mb-4">Account Management</p>
+            <AuthButton />
+          </div>
+        </main>
+      </div>
+    );
+  }

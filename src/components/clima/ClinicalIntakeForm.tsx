@@ -14,11 +14,14 @@ export default function ClinicalIntakeForm({
   onSubmit,
   loading,
   onInputChange,
+  planMode = "standard",
 }: {
   onSubmit: (data: IntakeData) => void;
   loading: boolean;
   onInputChange: () => void;
+  planMode?: "standard" | "recovery";
 }) {
+  const [showIllness, setShowIllness] = useState(planMode === "recovery");
   const [d, setD] = useState<IntakeData>({
     name: "Patient",
     age: 32,
@@ -48,7 +51,6 @@ export default function ClinicalIntakeForm({
   const [customCond, setCustomCond] = useState("");
   const [customDiet, setCustomDiet] = useState("");
   const [customAllergy, setCustomAllergy] = useState("");
-  const [showIllness, setShowIllness] = useState(false);
 
   useEffect(() => {
     const savedIntake = localStorage.getItem("patientProfile");
@@ -209,7 +211,9 @@ export default function ClinicalIntakeForm({
         <p className="mb-5 text-[13px] leading-relaxed text-neutral-400">Tell us what you have at home and we&apos;ll prioritize meals using those ingredients.</p>
         <textarea className={`${inputClass} min-h-28 resize-y rounded-3xl`} placeholder="e.g. Chicken, rice, tomatoes, onions, and eggs" value={d.pantry_input || ""} onChange={(event) => set("pantry_input", event.target.value)} />
         <div className="mt-5 grid gap-4 border-t border-white/5 pt-5 sm:grid-cols-2">
-          <div><label className={labelClass}>Weekly food budget</label><select className={inputClass} value={d.weekly_budget || "No Limit"} onChange={(event) => set("weekly_budget", event.target.value)}><option>Under 5,000 PKR</option><option>5,000 - 10,000 PKR</option><option>10,000 - 15,000 PKR</option><option>No Limit</option></select></div>
+          {planMode !== "recovery" && (
+            <div><label className={labelClass}>Weekly food budget</label><select className={inputClass} value={d.weekly_budget || "No Limit"} onChange={(event) => set("weekly_budget", event.target.value)}><option>Under 5,000 PKR</option><option>5,000 - 10,000 PKR</option><option>10,000 - 15,000 PKR</option><option>No Limit</option></select></div>
+          )}
           <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-white/5 bg-white/[0.03] p-4 text-sm text-neutral-300"><input type="checkbox" className="mt-1 accent-emerald-400" checked={Boolean(d.strict_pantry_mode)} onChange={(event) => set("strict_pantry_mode", event.target.checked)} /><span><strong>Strict pantry mode</strong><br /><span className="text-xs text-neutral-500">Restrict meals to your available ingredients and staples.</span></span></label>
         </div>
       </motion.section>

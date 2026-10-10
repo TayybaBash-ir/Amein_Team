@@ -9,6 +9,7 @@ import ClinicalIntakeForm from "@/components/clima/ClinicalIntakeForm";
 import MacroScorecard from "@/components/clima/MacroScorecard";
 import MealPlanView from "@/components/clima/MealPlanView";
 import { RestaurantRecommendationCard } from "@/components/clima/RestaurantRecommendationCard";
+import { useRouter } from "next/navigation";
 import { type PlanResponse, type IntakeData } from "@/lib/mock";
 import { ACCENT } from "@/lib/theme";
 import HomeHero from "@/components/clima/HomeHero";
@@ -17,7 +18,23 @@ type ScreenStep = "home" | "input" | "loading" | "results";
 type AppTab = "generate" | "restaurants";
 
 export default function Dashboard() {
+  const router = useRouter();
   const [step, setStep] = useState<ScreenStep>("home");
+  const [planMode, setPlanMode] = useState<"standard" | "recovery">("standard");
+
+  const handleHeroAction = (action: 'standard' | 'recovery' | 'restaurants' | 'saved') => {
+    if (action === 'standard') {
+      setPlanMode("standard");
+      setStep("input");
+    } else if (action === 'recovery') {
+      setPlanMode("recovery");
+      setStep("input");
+    } else if (action === 'restaurants') {
+      setActiveTab("restaurants");
+    } else if (action === 'saved') {
+      router.push('/plans');
+    }
+  };
   const [activeTab, setActiveTab] = useState<AppTab>("generate");
   const [plan, setPlan] = useState<PlanResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -80,6 +97,7 @@ const handleGenerate = async (data: IntakeData) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
+          plan_mode: planMode,
           name: updatedProfile.name,
           age: updatedProfile.age,
           weight: updatedProfile.weight,
@@ -117,6 +135,19 @@ const handleGenerate = async (data: IntakeData) => {
 
       const result: PlanResponse = await response.json();
       setPlan(result);
+      
+      // Save to past plans
+      try {
+        const past = JSON.parse(localStorage.getItem('clima_past_plans') || '[]');
+        const planMeta = { 
+          id: Date.now().toString(), 
+          date: new Date().toISOString(), 
+          mode: planMode,
+          plan: result 
+        };
+        localStorage.setItem('clima_past_plans', JSON.stringify([planMeta, ...past].slice(0, 50))); // keep last 50
+      } catch (e) { console.error("Could not save plan", e); }
+
       setStep("results");
       setActiveTab("generate");
     } catch (err: any) {
@@ -239,7 +270,7 @@ const handleGenerate = async (data: IntakeData) => {
           {activeTab === "generate" && (
             <motion.div key="generate" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
               {step === "home" && (
-                <HomeHero onGetStarted={() => setStep("input")} />
+                <HomeHero onAction={handleHeroAction} />
               )}
 
               {step === "input" && (
@@ -250,7 +281,13 @@ const handleGenerate = async (data: IntakeData) => {
                       {error}
                     </div>
                   )}
-                  <ClinicalIntakeForm onSubmit={handleGenerate} loading={false} onInputChange={() => {}} />
+                  {planMode === "recovery" && (
+                    <div className="mb-6 rounded-xl border border-indigo-500/20 bg-indigo-500/10 p-4">
+                      <h3 className="text-sm font-bold text-indigo-400 mb-1 flex items-center gap-2"><MdPerson size={16}/> Sickness & Recovery Mode</h3>
+                      <p className="text-xs text-indigo-300/80">Tell us what you're feeling and we will generate a fast 3-day recovery meal plan with foods to eat and avoid. Budget filtering is disabled to prioritize your health.</p>
+                    </div>
+                  )}
+                  <ClinicalIntakeForm onSubmit={handleGenerate} loading={loading} planMode={planMode} onInputChange={() => {}} />
                 </motion.div>
               )}
 

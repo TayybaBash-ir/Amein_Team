@@ -398,7 +398,8 @@ def generate_meal_plan(patient: PatientIntake):
     prefs = patient.preferences.dict() if patient.preferences else {}
     
     used_dishes = set()
-    for day_num in range(1, 8):
+    num_days = 3 if patient.plan_mode == "recovery" else 7
+    for day_num in range(1, num_days + 1):
         best_plan, multiplier = find_best_meal_plan(categorized, final_targets.dict(), preferences=prefs, iterations=2500, previously_selected=used_dishes)
         
         if not best_plan:
@@ -550,6 +551,13 @@ def generate_meal_plan(patient: PatientIntake):
             external_dining = []
             outside_order_matches = [[] for _ in day_plans]
 
+    recovery_advice = None
+    if patient.plan_mode == "recovery":
+        recovery_advice = {
+            "advice": getattr(ai_rules, "illness_advice", "Focus on hydration, rest, and easy-to-digest nutrition."),
+            "avoid": getattr(ai_rules, "forbidden_ingredients", [])
+        }
+
     return PlanResponse(
         patient=patient,
         nutrition=final_targets,
@@ -557,6 +565,7 @@ def generate_meal_plan(patient: PatientIntake):
         meal_plan=meal_plan,
         external_dining=external_dining,
         outside_order_matches=outside_order_matches,
+        recovery_advice=recovery_advice,
     )
 
 @app.get("/health")
