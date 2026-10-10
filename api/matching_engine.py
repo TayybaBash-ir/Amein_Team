@@ -1,5 +1,11 @@
 from __future__ import annotations
 import random
+
+def calc_local_ml_penalty(dish_name, ml_prefs):
+    if not ml_prefs: return 0.0
+    keywords = [w for w in str(dish_name).lower().split() if len(w) > 2 and w not in ("with", "and", "the", "for", "style", "plain")]
+    total = sum(ml_prefs.get(kw, 0.0) for kw in keywords)
+    return max(-500.0, min(1000.0, total))
 from typing import List, Dict
 
 
@@ -68,7 +74,7 @@ def clean_name(dish):
         dish['name'] = name.replace('Fitness ', '').replace('Fitness', '')
     return dish
 
-def find_best_meal_plan(categorized, target_macros, preferences=None, iterations=2500, previously_selected=None, daily_budget=None, strict_pantry_mode=False):
+def find_best_meal_plan(categorized, target_macros, preferences=None, iterations=2500, previously_selected=None, daily_budget=None, strict_pantry_mode=False, ml_prefs=None):
     best_plan = None
     best_score = float('inf')
     best_mult = 1.0
@@ -269,11 +275,10 @@ def find_best_meal_plan(categorized, target_macros, preferences=None, iterations
             'fat': base_fat * multiplier
         }
         
-        from api.ml_recommender import get_ml_score_penalty
-        ml_score_b = get_ml_score_penalty(b.get("name", ""))
-        ml_score_l = get_ml_score_penalty(l.get("name", ""))
-        ml_score_s = get_ml_score_penalty(s.get("name", ""))
-        ml_score_d = get_ml_score_penalty(d.get("name", ""))
+        ml_score_b = calc_local_ml_penalty(b.get("name", ""), ml_prefs)
+        ml_score_l = calc_local_ml_penalty(l.get("name", ""), ml_prefs)
+        ml_score_s = calc_local_ml_penalty(s.get("name", ""), ml_prefs)
+        ml_score_d = calc_local_ml_penalty(d.get("name", ""), ml_prefs)
         
         score = calculate_penalty(scaled_macros, target_macros) + variety_penalty + ml_score_b + ml_score_l + ml_score_s + ml_score_d
         estimated_daily_cost = None
@@ -468,8 +473,7 @@ def get_alternative_meals(categorized, slot, target_meal_macros, previously_sele
         fat_diff = abs(scaled_fat - target_meal_macros['fat']) * 9
         
         score = cal_diff + pro_diff + carb_diff + fat_diff
-        from api.ml_recommender import get_ml_score_penalty
-        score += get_ml_score_penalty(cand["name"])
+        score += calc_local_ml_penalty(cand["name"], ml_prefs)
         estimated_meal_cost = None
         if daily_budget is not None and daily_budget > 0:
             estimated_meal_cost = estimate_dish_cost(
@@ -516,8 +520,7 @@ def get_alternative_meals(categorized, slot, target_meal_macros, previously_sele
             if base_cals <= 0: continue
             multiplier = target_meal_macros['calories'] / base_cals
             score = abs(base_cals * multiplier - target_meal_macros['calories']) + abs(cand['protein_g'] * multiplier - target_meal_macros['protein'])*4 + abs(cand['carbs_g'] * multiplier - target_meal_macros['carbs'])*4 + abs(cand['fat_g'] * multiplier - target_meal_macros['fat'])*9
-            from api.ml_recommender import get_ml_score_penalty
-            score += get_ml_score_penalty(cand["name"])
+            score += calc_local_ml_penalty(cand["name"], ml_prefs)
             final_options.append({
                 'candidate': cand,
                 'multiplier': multiplier,
