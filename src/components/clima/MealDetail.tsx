@@ -31,6 +31,8 @@ export default function MealDetail({
   index,
   total,
   tdee,
+  externalDining,
+  onGoToRestaurant,
 }: MealDetailProps) {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
