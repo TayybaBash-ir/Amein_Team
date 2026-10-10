@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { MdChevronLeft, MdChevronRight, MdAutoAwesome, MdRestaurant, MdPlayArrow } from "react-icons/md";
-import type { Meal } from "@/lib/mock";
+import type { Meal, ExternalDiningRecommendation } from "@/lib/mock";
 import { ACCENT } from "@/lib/theme";
 import Ring from "./Ring";
 import MealImage from "./MealImage";
@@ -17,6 +17,8 @@ interface MealDetailProps {
   index?: number;
   total?: number;
   tdee?: number;
+  externalDining?: ExternalDiningRecommendation[];
+  onGoToRestaurant?: (r: string) => void;
 }
 
 export default function MealDetail({
@@ -130,21 +132,35 @@ export default function MealDetail({
           </div>
         </div>
 
+        
         {/* Watch Recipe Button */}
-        {recipeLink && (
+        {meal.recipe_link && (
           <div className="mb-6">
-            <a
-              href={recipeLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center justify-center gap-2 w-full py-3.5 px-4 rounded-xl font-bold text-zinc-950 shadow-lg transition-all hover:opacity-90 active:scale-[0.98]"
-              style={{ backgroundColor: ACCENT }}
-            >
+            <a href={meal.recipe_link} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 w-full py-3.5 px-4 rounded-xl font-bold text-white shadow-lg transition-all hover:opacity-90 active:scale-[0.98]" style={{ backgroundColor: ACCENT }}>
               <MdPlayArrow className="w-5 h-5 fill-current" />
               <span>Watch Recipe</span>
             </a>
           </div>
         )}
+        
+        {/* Restaurant Order Button */}
+        {externalDining && externalDining.find(d => d.matched_meal_name === meal.name || d.matched_meal_id === meal.id) && (() => {
+          const matched = externalDining.find(d => d.matched_meal_name === meal.name || d.matched_meal_id === meal.id);
+          if (!matched) return null;
+          return (
+            <div className="mb-6">
+              <button
+                onClick={() => {
+                  onClose();
+                  if (onGoToRestaurant) onGoToRestaurant(matched.restaurant_name);
+                }}
+                className="flex items-center justify-center gap-2 w-full py-3.5 px-4 rounded-xl font-bold text-white shadow-lg transition-all hover:opacity-90 active:scale-[0.98] bg-brand"
+              >
+                <span>Order online &rarr;</span>
+              </button>
+            </div>
+          );
+        })()}
 
         {/* Ingredients Section */}
         {meal.ingredients && meal.ingredients.length > 0 && (

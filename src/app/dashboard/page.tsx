@@ -280,17 +280,25 @@ export default function Dashboard() {
         </div>
       </nav>
 
-      <div className="flex sm:hidden overflow-x-auto p-3 border-b border-border bg-background gap-2 print:hidden scrollbar-hide">
-        {step !== "home" && activeTab === "generate" && (
-          <button onClick={() => setStep("home")} className="flex items-center gap-1 px-3 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground">
-            <MdArrowBack size={16} /> Back
+      <div className="flex sm:hidden justify-around p-3 border-b border-border bg-background gap-2 print:hidden scrollbar-hide">
+          {step !== "home" && activeTab === "generate" && (
+            <button onClick={() => setStep("home")} className="flex items-center justify-center p-2 rounded-lg text-muted-foreground hover:text-foreground">
+              <MdArrowBack size={24} />
+            </button>
+          )}
+          <button onClick={() => { setActiveTab("generate"); setStep("home"); }} className={`flex items-center justify-center p-2 rounded-lg ${activeTab === "generate" ? "text-brand" : "text-muted-foreground hover:bg-surface-2"}`}>
+            <MdDashboard size={24} />
           </button>
-        )}
-        <button onClick={() => { setActiveTab("generate"); setStep("home"); }} className={navItemClass("generate", "Generate")}>Home</button>
-        <button onClick={() => setActiveTab("restaurants")} className={navItemClass("restaurants", "Restaurants")}>Restaurants</button>
-        <Link href="/profile" className="px-4 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground">Profile</Link>
-        <Link href="/plans" className="px-4 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground">Saved Plans</Link>
-      </div>
+          <button onClick={() => setActiveTab("restaurants")} className={`flex items-center justify-center p-2 rounded-lg ${activeTab === "restaurants" ? "text-brand" : "text-muted-foreground hover:bg-surface-2"}`}>
+            <MdRestaurantMenu size={24} />
+          </button>
+          <Link href="/profile" className="flex items-center justify-center p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-surface-2">
+            <MdPerson size={24} />
+          </Link>
+          <Link href="/plans" className="flex items-center justify-center p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-surface-2">
+            <MdList size={24} />
+          </Link>
+        </div>
 
       <main className="mx-auto max-w-5xl p-4 sm:p-8">
         {(savedProfile?.is_post_discharge || savedProfile?.spice_tolerance === "Bland") && (
@@ -399,7 +407,7 @@ export default function Dashboard() {
                     </div>
                   </div>
                   <MacroScorecard plan={plan} />
-                  <MealPlanView plan={plan} />
+                  <MealPlanView plan={plan} onGoToRestaurant={(r) => { setActiveTab('restaurants'); setTimeout(() => { const el = document.getElementById('restaurant-' + r); if (el) el.scrollIntoView({ behavior: 'smooth' }); }, 100); }} />
                 </motion.div>
               )}
             </motion.div>

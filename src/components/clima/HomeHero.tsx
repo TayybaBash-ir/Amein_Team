@@ -139,7 +139,7 @@ const features = [
 // ── HomeHero ─────────────────────────────────────────────────────────────
 export default function HomeHero({ onAction }: { onAction: (action: 'standard' | 'recovery' | 'restaurants' | 'saved') => void }) {
   return (
-    <div className="relative flex flex-col items-center justify-start min-h-[85vh] pt-10 pb-32 overflow-hidden">
+    <div className="relative flex flex-col items-center justify-start py-8 overflow-hidden">
 
       {/* Ambient background blobs */}
       <div className="pointer-events-none absolute -top-32 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full bg-brand/10 blur-[120px]" />
@@ -157,13 +157,11 @@ export default function HomeHero({ onAction }: { onAction: (action: 'standard' |
           <span className="h-1.5 w-1.5 rounded-full bg-brand animate-pulse" />
           Mindful Daily Eating
         </div>
-        <h1 className="text-4xl sm:text-5xl font-bold tracking-tight text-foreground leading-[1.15] mb-4">
-          Healthy eating,<br />
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand to-brand-dark">built around your life.</span>
-
+        <h1 className="text-4xl sm:text-5xl font-serif italic text-foreground leading-[1.15] mb-4 text-brand">
+          Healthy eating, built around your life.
         </h1>
         <p className="text-muted-foreground text-base sm:text-lg max-w-lg mx-auto leading-relaxed">
-          ClimaDiet crafts a 7-day meal plan around your medical needs, local weather, kitchen ingredients, and weekly budget.
+          Build a meal plan around your needs and weather.
         </p>
       </motion.div>
 
@@ -179,7 +177,7 @@ export default function HomeHero({ onAction }: { onAction: (action: 'standard' |
           {/* Top tag */}
           <div className="flex items-center justify-between mb-4">
             <span className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">Weekly</span>
-            <span className="rounded-full bg-brand/20 px-3 py-1 text-xs font-bold text-brand">Active</span>
+            
           </div>
           <h2 className="text-xl font-bold text-foreground mb-1">Your Weekly Plan</h2>
           <p className="text-sm text-muted-foreground mb-5 leading-relaxed">
@@ -203,7 +201,7 @@ export default function HomeHero({ onAction }: { onAction: (action: 'standard' |
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.5 }}
-          className="absolute -right-2 top-8 rounded-2xl border border-border bg-background/80 backdrop-blur-lg px-3 py-2 shadow-xl"
+          className="absolute right-4 sm:-right-2 top-8 rounded-2xl border border-border bg-background/80 backdrop-blur-lg px-3 py-2 shadow-xl"
         >
           <p className="text-[10px] text-muted-foreground">BMI</p>
           <p className="text-base font-bold text-foreground">22.4</p>
@@ -215,7 +213,7 @@ export default function HomeHero({ onAction }: { onAction: (action: 'standard' |
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.6 }}
-          className="absolute -left-2 bottom-16 rounded-2xl border border-border bg-background/80 backdrop-blur-lg px-3 py-2 shadow-xl"
+          className="absolute left-4 sm:-left-2 bottom-16 rounded-2xl border border-border bg-background/80 backdrop-blur-lg px-3 py-2 shadow-xl"
         >
           <p className="text-[10px] text-muted-foreground">Today&apos;s Calories</p>
           <p className="text-base font-bold text-foreground">1,840 kcal</p>

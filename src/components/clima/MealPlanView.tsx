@@ -9,7 +9,7 @@ import MealDetail from "./MealDetail";
 import SwapMealModal from "./SwapMealModal";
 import { RestaurantRecommendationCard } from "./RestaurantRecommendationCard";
 
-export default function MealPlanView({ plan: initialPlan }: { plan: PlanResponse }) {
+export default function MealPlanView({ plan: initialPlan, onGoToRestaurant }: { plan: PlanResponse; onGoToRestaurant?: (r: string) => void }) {
   const [plan, setPlan] = useState(initialPlan);
   const [swapMealInfo, setSwapMealInfo] = useState<{meal: Meal, dayIdx: number, mealIdx: number} | null>(null);
   const [selectedDay, setSelectedDay] = useState(0);
