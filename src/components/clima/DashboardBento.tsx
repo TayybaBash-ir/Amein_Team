@@ -52,6 +52,7 @@ export default function DashboardBento({
   onGoToRestaurant,
 }: any) {
   const [mealDetailsOpen, setMealDetailsOpen] = useState(false);
+  const [checkInOpen, setCheckInOpen] = useState(false);
   const hydrationTapTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => () => {
