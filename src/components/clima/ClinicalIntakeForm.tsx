@@ -44,6 +44,32 @@ export default function ClinicalIntakeForm({
   const [customPantryItem, setCustomPantryItem] = useState("");
   const [showIllness, setShowIllness] = useState(false);
 
+  useEffect(() => {
+    const savedIntake = localStorage.getItem("patientProfile");
+    const savedMedicalProfile = localStorage.getItem("clima_patient_profile");
+    try {
+      const intake = savedIntake ? JSON.parse(savedIntake) : {};
+      const medical = savedMedicalProfile ? JSON.parse(savedMedicalProfile) : {};
+      const asList = (value: unknown): string[] => Array.isArray(value)
+        ? value.filter((item): item is string => typeof item === "string")
+        : typeof value === "string" ? value.split(",").map((item) => item.trim()).filter(Boolean) : [];
+      const unique = (...values: unknown[]) => Array.from(new Set(values.flatMap(asList)));
+
+      setD(prev => ({
+        ...prev,
+        ...intake,
+        medical_history_notes: medical.medical_history_notes || prev.medical_history_notes,
+        is_post_discharge: medical.is_post_discharge || prev.is_post_discharge,
+        recovery_type: medical.recovery_type || prev.recovery_type,
+        spice_tolerance: medical.spice_tolerance || prev.spice_tolerance,
+        conditions: unique(intake.conditions, medical.conditions),
+        allergies: unique(intake.allergies, medical.allergies),
+      }));
+    } catch (e) {
+      console.error("Failed to parse saved profiles", e);
+    }
+  }, []);
+
   useEffect(() => { onInputChange(); }, [d, onInputChange]);
   const set = (k: keyof IntakeData, v: any) => setD({ ...d, [k]: v });
   const toggle = (list: string[], val: string, key: keyof IntakeData) => set(key, list.includes(val) ? list.filter((x) => x !== val) : [...list, val]);
@@ -84,7 +110,7 @@ export default function ClinicalIntakeForm({
     >
       <div className="text-center mb-2">
         <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight text-white mb-3">Tailor your plan.</h1>
-        <p className="text-neutral-400 text-sm sm:text-base">Tell us about your body, your goals, and what’s in your kitchen.</p>
+        <p className="text-neutral-400 text-sm sm:text-base">Tell us about your body, your goals, and whatΓÇÖs in your kitchen.</p>
       </div>
 
       {/* About You */}
@@ -203,7 +229,7 @@ export default function ClinicalIntakeForm({
           <div className="pt-4 border-t border-white/5">
             <button type="button" onClick={() => setShowIllness(!showIllness)}
               className="flex items-center gap-2 text-[13px] font-medium text-orange-400 hover:text-orange-300 transition-colors bg-orange-500/10 px-4 py-2 rounded-xl">
-              {showIllness ? "▼" : "▶"} Feeling under the weather today?
+              {showIllness ? "Γû╝" : "Γû╢"} Feeling under the weather today?
             </button>
             <AnimatePresence>
               {showIllness && (

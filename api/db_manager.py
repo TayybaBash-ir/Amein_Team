@@ -75,12 +75,12 @@ def has_unselected_major_protein(text: str, pantry_items: List[str]) -> bool:
     return False
 
 def contains_forbidden_ingredient(text: str, forbidden_items: List[str]) -> bool:
-    """Match forbidden ingredient names as whole words to avoid partial matches."""
-    candidate = _normalized_words(text)
+    """Strictly reject text containing any forbidden term, case-insensitively."""
+    candidate = (text or "").lower()
     return any(
-        re.search(rf"\b{re.escape(_normalized_words(item))}\b", candidate)
+        str(item).strip().lower() in candidate
         for item in (forbidden_items or [])
-        if _normalized_words(item)
+        if str(item).strip()
     )
 
 def _dish_ingredient_names(dish: Dict) -> List[str]:
@@ -151,7 +151,8 @@ def get_safe_dishes(
     dietary_restrictions: List[str],
     pantry_items: List[str] = None,
     strict_pantry_mode: bool = False,
-    forbidden_items: List[str] = None
+    forbidden_items: List[str] = None,
+    recovery_mode: bool = False,
 ):
     all_dishes = fetch_all_dishes()
     safe_dishes = []
@@ -179,7 +180,7 @@ def get_safe_dishes(
     pantry_terms = [item.strip().lower() for item in (pantry_items or []) if item.strip()]
 
     # Calculate explicit forbidden words if pantry is active
-    explicit_forbidden = set(forbidden_items or [])
+    explicit_forbidden = {str(item).strip().lower() for item in (forbidden_items or []) if str(item).strip()}
     if pantry_terms:
         # Determine unselected proteins dynamically
         for prot, aliases in MAJOR_PROTEINS.items():
@@ -199,6 +200,11 @@ def get_safe_dishes(
         ingredients_list = _dish_ingredient_names(d)
         dish_name = d.get('name', '').lower()
         dish_text = f"{dish_name} {' '.join(ingredients_list)}"
+
+        # Check the whole title and every joined ingredient using strict
+        # lowercase substring matching. This catches tags missing from rows.
+        if any(term in dish_text for term in explicit_forbidden):
+            continue
 
         is_safe = True
 
@@ -228,6 +234,19 @@ def get_safe_dishes(
         'snacks': [d for d in safe_dishes if d.get('category_id') == 5],
         'refreshments': [d for d in safe_dishes if d.get('category_id') == 6]
     }
+    if recovery_mode:
+        # Keep soft boiled eggs as a possible protein, and put lentil and
+        # vegetable mains first in the main pool so recovery plans favor them.
+        soft_egg_mains = [
+            dish for dish in categorized['meat']
+            if 'boiled egg' in dish.get('name', '').lower()
+            or 'boiled eggs' in dish.get('name', '').lower()
+        ]
+        prioritized_mains = categorized['daal'] + categorized['veg'] + soft_egg_mains
+        unique_mains = {}
+        for dish in prioritized_mains:
+            unique_mains[dish.get('id', dish.get('name'))] = dish
+        categorized['meat'] = list(unique_mains.values())
     has_meat_in_pantry = any(
         protein in pantry_term
         for pantry_term in pantry_terms

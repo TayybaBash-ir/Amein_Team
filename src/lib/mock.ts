@@ -37,8 +37,13 @@ export type ExternalDiningRecommendation = {
 };
 
 export type PatientIntake = {
+  name?: string;
   age: number; weight: number; height: number; gender: string; activity: string;
   conditions: string[]; allergies: string[];
+  medical_history_notes?: string;
+  is_post_discharge?: boolean;
+  recovery_type?: string | null;
+  spice_tolerance?: string;
   goal: string; goal_amount: string; dietary_restrictions: string[];
   city?: string;
   country?: string;

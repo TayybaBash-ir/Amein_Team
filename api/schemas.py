@@ -10,27 +10,33 @@ class UserPreferences(BaseModel):
 
 class PatientIntake(BaseModel):
     preferences: Optional[UserPreferences] = None
-    age: int = Field(..., ge=18, le=120, description="Age in years")
-    weight: float = Field(..., gt=30, le=300, description="Weight in kg")
-    height: float = Field(..., gt=100, le=250, description="Height in cm")
-    gender: str = Field(..., description="'Male' or 'Female'")
-    activity: str = Field(..., description="e.g., 'Sedentary', 'Lightly active', 'Moderately active'")
-    conditions: List[str] = Field(default_factory=list, description="List of conditions like 'Diabetes', 'Hypertension'")
-    allergies: List[str] = Field(default_factory=list, description="List of allergies like 'peanuts'")
-    goal: str = Field(default='maintain', description="e.g., 'maintain', 'lose weight', 'gain muscle'")
-    goal_amount: str = Field(default='', description="e.g., '5kg'")
-    dietary_restrictions: List[str] = Field(default_factory=list, description="e.g., 'Halal', 'Vegan'")
-    city: str = Field(default="Unknown", description="City for weather forecast")
-    country: str = Field(default="Unknown", description="Country for weather forecast")
+    name: Optional[str] = "Patient"
+    age: Optional[int] = 30
+    gender: Optional[str] = "Unspecified"
+    height: Optional[float] = 170.0
+    weight: Optional[float] = 70.0
+    allergies: List[str] = Field(default_factory=list)
+    dietary_restrictions: List[str] = Field(default_factory=list)
+    conditions: List[str] = Field(default_factory=list)
+    medical_history_notes: Optional[str] = ""
+    is_post_discharge: bool = False
+    recovery_type: Optional[str] = None
+    spice_tolerance: Optional[str] = "Normal"
+    goal: Optional[str] = "Maintain"
+    goal_amount: str = ""
+    city: Optional[str] = "Lahore"
+    country: Optional[str] = "Pakistan"
     start_date: Optional[str] = Field(default=None, description="Start date YYYY-MM-DD")
+    activity: str = "sedentary"
     acute_illness: Optional[str] = Field(default=None, description='e.g. flu, cough, sore throat')
     weekly_budget: Optional[str] = Field(default='No Limit', description='e.g., No Limit, Under 5,000 PKR, 5,000 - 10,000 PKR')
+    pantry_input: Optional[str] = Field(default=None, description="Natural language description of pantry items")
     allow_external_dining: bool = Field(
         default=False,
         description="Include optional external dining recommendations such as Foodpanda",
     )
     pantry_items: Optional[List[str]] = Field(default=None, description="Ingredients available at home")
-    strict_pantry_mode: Optional[bool] = Field(default=False, description="Restrict meals to pantry ingredients and household staples")
+    strict_pantry_mode: bool = False
 
 # --- Output Models for LLM Structured Output ---
 

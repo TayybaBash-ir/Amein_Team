@@ -13,7 +13,7 @@ import { type PlanResponse, type IntakeData } from "@/lib/mock";
 import { ACCENT } from "@/lib/theme";
 
 type ScreenStep = "input" | "loading" | "results";
-type AppTab = "generate" | "restaurants" | "profile";
+type AppTab = "generate" | "restaurants";
 
 export default function Dashboard() {
   const [step, setStep] = useState<ScreenStep>("input");
@@ -29,33 +29,78 @@ export default function Dashboard() {
     }
   }, [theme]);
 
+  const [savedProfile, setSavedProfile] = useState<Record<string, any> | null>(null);
+
+  useEffect(() => {
+    try {
+      const storedProfile = localStorage.getItem("clima_patient_profile");
+      setSavedProfile(storedProfile ? JSON.parse(storedProfile) : null);
+    } catch {
+      setSavedProfile(null);
+    }
+  }, []);
+>>>>>>> origin/feature/patient-profile-recovery
 
 const handleGenerate = async (data: IntakeData) => {
     setStep("loading");
     setError(null);
     try {
+      let medicalProfile: Record<string, any> = {};
+      try {
+        medicalProfile = JSON.parse(localStorage.getItem("clima_patient_profile") || "{}");
+      } catch { /* Ignore an invalid saved profile and continue with intake values. */ }
+      const asList = (value: unknown): string[] => Array.isArray(value)
+        ? value.filter((item): item is string => typeof item === "string")
+        : typeof value === "string" ? value.split(",").map((item) => item.trim()).filter(Boolean) : [];
+      const mergeLists = (...values: unknown[]) => Array.from(new Set(values.flatMap(asList)));
+      const updatedProfile = {
+        ...medicalProfile,
+        name: data.name || "Patient",
+        age: Number(data.age) || 30,
+        height: Number(data.height) || 170,
+        weight: Number(data.weight) || 70,
+        gender: String(data.gender || "male").toLowerCase(),
+        conditions: mergeLists(data.conditions),
+        allergies: mergeLists(data.allergies),
+        dietary_restrictions: mergeLists(data.dietary_restrictions),
+        medical_history_notes: data.medical_history_notes || "",
+        is_post_discharge: Boolean(data.is_post_discharge),
+        recovery_type: data.recovery_type || "None",
+        spice_tolerance: data.spice_tolerance || "Normal",
+        pantry_items: Array.isArray(data.pantry_items) ? data.pantry_items : [],
+        strict_pantry_mode: Boolean(data.strict_pantry_mode),
+        city: data.city || medicalProfile.city || "Lahore",
+        country: data.country || medicalProfile.country || "Pakistan",
+      };
+      localStorage.setItem("clima_patient_profile", JSON.stringify(updatedProfile));
+      setSavedProfile(updatedProfile);
       const response = await fetch("/api/generate-plan", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          age: Number(data.age),
-          weight: Number(data.weight),
-          height: Number(data.height),
-          gender: String(data.gender || "male").toLowerCase(),
+          name: updatedProfile.name,
+          age: updatedProfile.age,
+          weight: updatedProfile.weight,
+          height: updatedProfile.height,
+          gender: updatedProfile.gender,
           activity: String(data.activity || "sedentary"),
           goal: String(data.goal || "Lose weight"),
           goal_amount: String(data.goal_amount || "5kg"),
-          city: String(data.city || "Islamabad"),
-          country: String(data.country || "pakistan"),
+          city: String(updatedProfile.city),
+          country: String(updatedProfile.country),
           start_date: new Date().toISOString().split("T")[0],
-          conditions: Array.isArray(data.conditions) ? data.conditions : [],
-          allergies: Array.isArray(data.allergies) ? data.allergies : [],
-          dietary_restrictions: Array.isArray(data.dietary_restrictions) ? data.dietary_restrictions : [],
+          conditions: updatedProfile.conditions,
+          allergies: updatedProfile.allergies,
+          dietary_restrictions: updatedProfile.dietary_restrictions,
+          medical_history_notes: updatedProfile.medical_history_notes,
+          is_post_discharge: updatedProfile.is_post_discharge,
+          recovery_type: updatedProfile.recovery_type,
+          spice_tolerance: updatedProfile.spice_tolerance,
           allow_external_dining: Boolean(data.allow_external_dining),
-          pantry_items: Array.isArray(data.pantry_items) ? data.pantry_items : [],
-          strict_pantry_mode: Boolean(data.strict_pantry_mode),
+          pantry_items: updatedProfile.pantry_items,
+          strict_pantry_mode: updatedProfile.strict_pantry_mode,
           preferences: data.preferences || {},
         }),
       });
@@ -103,9 +148,9 @@ const handleGenerate = async (data: IntakeData) => {
             <button onClick={() => setActiveTab("restaurants")} className={navItemClass("restaurants", "Restaurants")}>
               <MdRestaurantMenu size={16} /> Restaurants
             </button>
-            <button onClick={() => setActiveTab("profile")} className={navItemClass("profile", "Profile")}>
+            <Link href="/profile" className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-neutral-400 hover:text-white hover:bg-white/5 transition-colors">
               <MdPerson size={16} /> Profile
-            </button>
+            </Link>
             <Link href="/plans" className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-neutral-400 hover:text-white hover:bg-white/5 transition-colors">
               <MdList size={16} /> Saved Plans
             </Link>
@@ -128,23 +173,19 @@ const handleGenerate = async (data: IntakeData) => {
       <div className="flex sm:hidden overflow-x-auto p-3 border-b border-white/5 bg-[#1A1D1E] gap-2 print:hidden scrollbar-hide">
         <button onClick={() => setActiveTab("generate")} className={navItemClass("generate", "Generate")}>Home</button>
         <button onClick={() => setActiveTab("restaurants")} className={navItemClass("restaurants", "Restaurants")}>Restaurants</button>
-        <button onClick={() => setActiveTab("profile")} className={navItemClass("profile", "Profile")}>Profile</button>
+        <Link href="/profile" className="px-4 py-2 rounded-lg text-sm font-medium text-neutral-400">Profile</Link>
         <Link href="/plans" className="px-4 py-2 rounded-lg text-sm font-medium text-neutral-400">Saved Plans</Link>
       </div>
 
       <main className="mx-auto max-w-5xl p-4 sm:p-8">
+        {(savedProfile?.is_post_discharge || savedProfile?.spice_tolerance === "Bland") && (
+          <div role="status" className="mb-6 flex items-center gap-3 rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm font-semibold text-amber-200">
+            <span aria-hidden="true">🏥</span>
+            <span>Active Protocol: Post-Discharge Recovery (Bland &amp; Soft Foods Enforced)</span>
+          </div>
+        )}
         <AnimatePresence mode="wait">
           
-          {activeTab === "profile" && (
-            <motion.div key="profile" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="pt-10 text-center">
-              <div className="mx-auto mb-4 grid h-20 w-20 place-items-center rounded-full bg-white/5">
-                <MdPerson size={32} className="text-neutral-500" />
-              </div>
-              <h2 className="text-2xl font-bold text-white mb-2">User Profile</h2>
-              <p className="text-neutral-400 mb-6">Connect to Supabase to manage your persistent medical history.</p>
-              <button onClick={() => setActiveTab("generate")} className="rounded-lg bg-white/10 px-6 py-2 text-sm font-medium text-white hover:bg-white/20">Go back to Home</button>
-            </motion.div>
-          )}
 
           {activeTab === "restaurants" && (
             <motion.div key="restaurants" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="pt-4">
