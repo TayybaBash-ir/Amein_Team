@@ -18,6 +18,7 @@ import { useRouter } from "next/navigation";
 import { type PlanResponse, type IntakeData } from "@/lib/mock";
 import { ACCENT } from "@/lib/theme";
 import HomeHero from "@/components/clima/HomeHero";
+import TodayMealTile from "@/components/clima/TodayMealTile";
 
 type ScreenStep = "home" | "input" | "loading" | "results";
 type AppTab = "generate" | "restaurants";
@@ -70,6 +71,30 @@ export default function Dashboard() {
       router.push('/plans');
     }
   };
+    const [activePlan, setActivePlan] = useState<any>(null);
+  const [hydrationLog, setHydrationLog] = useState<number>(0);
+  
+  useEffect(() => {
+    try {
+      const active = localStorage.getItem("clima_active_plan");
+      if (active) setActivePlan(JSON.parse(active));
+      
+      const log = JSON.parse(localStorage.getItem("clima_hydration") || "{}");
+      const today = new Date().toISOString().split('T')[0];
+      setHydrationLog(log[today] || 0);
+    } catch (e) {}
+  }, []);
+
+  const handleHydrate = () => {
+    try {
+      const today = new Date().toISOString().split('T')[0];
+      const log = JSON.parse(localStorage.getItem("clima_hydration") || "{}");
+      log[today] = (log[today] || 0) + 1;
+      localStorage.setItem("clima_hydration", JSON.stringify(log));
+      setHydrationLog(log[today]);
+    } catch (e) {}
+  };
+
   const [activeTab, setActiveTab] = useState<AppTab>("generate");
   const [plan, setPlan] = useState<PlanResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -220,6 +245,9 @@ export default function Dashboard() {
           plan: result 
         };
         localStorage.setItem('clima_past_plans', JSON.stringify([planMeta, ...past].slice(0, 50))); // keep last 50
+        const activeData = { plan: result, startDate: planMeta.date, id: planMeta.id };
+        localStorage.setItem("clima_active_plan", JSON.stringify(activeData));
+        setActivePlan(activeData);
       } catch (e) { console.error("Could not save plan", e); }
 
       setStep("results");
@@ -351,7 +379,16 @@ export default function Dashboard() {
           {activeTab === "generate" && (
             <motion.div key="generate" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
               {step === "home" && (
-                <HomeHero onAction={handleHeroAction} />
+                <div className="flex flex-col lg:flex-row gap-6 items-start justify-center w-full">
+                  <div className="flex-1 w-full max-w-2xl mx-auto">
+                    <HomeHero onAction={handleHeroAction} />
+                  </div>
+                  {activePlan && (
+                    <div className="w-full lg:w-[400px] shrink-0 mt-8 lg:mt-24">
+                      <TodayMealTile activePlan={activePlan} onHydrate={handleHydrate} hydrationLog={hydrationLog} />
+                    </div>
+                  )}
+                </div>
               )}
 
               {step === "input" && (

@@ -1,6 +1,7 @@
 ﻿"use client";
 
 import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { MdArrowBack, MdEco, MdCalendarToday } from "react-icons/md";
 import { type PlanResponse } from "@/lib/mock";
@@ -14,6 +15,7 @@ type SavedPlan = {
 };
 
 export default function PlansPage() {
+  const router = useRouter();
   const [plans, setPlans] = useState<SavedPlan[]>([]);
   const [selectedPlan, setSelectedPlan] = useState<SavedPlan | null>(null);
 
