@@ -57,8 +57,8 @@ export default function MealPlanView({ plan: initialPlan }: { plan: PlanResponse
       <div className="flex flex-col gap-5 w-full print:hidden">
         <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
           <div>
-            <h2 className="text-2xl font-bold editorial-title">Your Clinical Meal Plan</h2>
-            <p className="text-sm text-neutral-400 mt-1">Generated based on your exact macros and restrictions.</p>
+            <h2 className="text-2xl font-bold editorial-title">Your Custom Menu</h2>
+            <p className="text-sm text-neutral-400 mt-1">Crafted specifically for your body, taste, and goals.</p>
           </div>
           <div className="flex items-center gap-2">
             <button 
@@ -127,7 +127,7 @@ export default function MealPlanView({ plan: initialPlan }: { plan: PlanResponse
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ delay: idx * 0.08 }}
-                className="group flex w-full cursor-pointer flex-col overflow-hidden rounded-3xl border border-white/10 bg-[#111113] transition-all hover:border-white/20 hover:bg-white/[0.04]"
+                className="group flex w-full cursor-pointer flex-col overflow-hidden rounded-[2rem] border border-white/[0.04] bg-white/[0.02] backdrop-blur-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all hover:scale-[1.01] hover:bg-white/[0.04]"
                 onClick={() => go(dayStart(selectedDay) + idx)}
               >
                 <div className="relative">

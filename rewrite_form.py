@@ -1,4 +1,9 @@
+﻿import os
 
+with open("src/components/clima/ClinicalIntakeForm.tsx", "r", encoding="utf-8") as f:
+    pass # I'll just write it from scratch.
+
+new_form = """
 "use client";
 import { useState, useEffect } from "react";
 import { Loader2, Plus, X, HeartPulse, Activity, Home, Apple } from "lucide-react";
@@ -316,3 +321,8 @@ export default function ClinicalIntakeForm({
     </form>
   );
 }
+"""
+
+with open("src/components/clima/ClinicalIntakeForm.tsx", "w", encoding="utf-8") as f:
+    f.write(new_form)
+print("Rewrote ClinicalIntakeForm")

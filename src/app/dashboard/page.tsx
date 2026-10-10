@@ -199,9 +199,9 @@ const handleGenerate = async (data: IntakeData) => {
                 <motion.div key="results" initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} className="space-y-8 pb-20">
                   <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/[0.08] pb-4 print:hidden">
                     <div>
-                      <h2 className="editorial-title text-xl sm:text-2xl mb-0.5">Calculated Nutrition Plan</h2>
+                      <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight text-white mb-1">Your Health Overview</h2>
                       <p className="text-xs sm:text-sm text-neutral-400">
-                        Personalized nutrition plan tailored for {plan.patient.age}y {plan.patient.gender} â€¢ {plan.patient.goal}
+                        Perfectly balanced for {plan.patient.age}y {plan.patient.gender} â€¢ {plan.patient.goal}
                       </p>
                     </div>
                     <div className="flex items-center gap-2">

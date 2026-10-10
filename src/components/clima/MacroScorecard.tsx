@@ -26,7 +26,7 @@ export default function MacroScorecard({ plan }: { plan: PlanResponse }) {
   let offset = 0;
 
   const tile = (label: string, value: string, detail: string, Icon: typeof Activity, isDouble: boolean = false) => (
-    <div key={label} className={`rounded-2xl border border-white/10 bg-white/[0.04] p-3 ${isDouble ? "col-span-2 sm:col-span-1" : ""}`}>
+    <div key={label} className={`rounded-3xl border border-white/[0.03] bg-white/[0.03] p-4 transition-transform hover:scale-[1.02] ${isDouble ? "col-span-2 sm:col-span-1" : ""}`}>
       <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-wide text-neutral-400">
         <Icon size={14} style={{ color: ACCENT }} /> {label}
       </div>
@@ -37,10 +37,10 @@ export default function MacroScorecard({ plan }: { plan: PlanResponse }) {
 
   return (
     <div className="flex flex-col gap-4 print:hidden">
-      <section className="clinical-card fade-up" aria-labelledby="calculated-summary-title">
+      <section className="rounded-[2rem] border border-white/[0.04] bg-white/[0.02] p-5 sm:p-7 backdrop-blur-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] fade-up" aria-labelledby="calculated-summary-title">
         <div className="mb-4 flex flex-wrap items-start justify-between gap-3 border-b border-white/10 pb-3">
           <div>
-            <h2 id="calculated-summary-title" className="editorial-title text-xl">Calculated for this patient</h2>
+            <h2 id="calculated-summary-title" className="editorial-title text-xl">Your Daily Targets</h2>
             <p className="mt-1 text-sm text-neutral-400">
               {patient.age} years • {patient.gender} • {patient.weight} kg • {patient.height} cm • {patient.goal}
             </p>
