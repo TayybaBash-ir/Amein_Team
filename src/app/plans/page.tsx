@@ -19,6 +19,15 @@ export default function PlansPage() {
   const [plans, setPlans] = useState<SavedPlan[]>([]);
   const [selectedPlan, setSelectedPlan] = useState<SavedPlan | null>(null);
 
+  const trackPlan = (plan: SavedPlan) => {
+    localStorage.setItem("clima_active_plan", JSON.stringify({
+      plan: plan.plan,
+      startDate: new Date().toISOString(),
+      id: plan.id,
+    }));
+    router.push("/dashboard");
+  };
+
   useEffect(() => {
     try {
       const stored = localStorage.getItem("clima_past_plans");
@@ -67,18 +76,7 @@ export default function PlansPage() {
                 </p>
               </div>
               <button 
-                onClick={() => {
-                  if (typeof window !== "undefined") {
-                    localStorage.setItem("clima_active_plan", JSON.stringify({
-                      plan: selectedPlan.plan,
-                      startDate: new Date().toISOString(),
-                      hydrationLog: 0,
-                      lastHydrationDate: new Date().toISOString().split('T')[0]
-                    }));
-                    alert("This plan is now your Active Plan!");
-                    window.location.href = "/dashboard";
-                  }
-                }}
+                onClick={() => trackPlan(selectedPlan)}
                 className="ml-auto bg-brand hover:bg-brand-dark text-white px-4 py-2 rounded-xl text-sm font-bold shadow-lg shadow-brand/20 transition-all active:scale-95"
               >
                 Track this plan &rarr;
@@ -105,26 +103,35 @@ export default function PlansPage() {
             ) : (
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {plans.map((p) => (
-                  <button
-                    key={p.id}
-                    onClick={() => setSelectedPlan(p)}
-                    className="flex flex-col items-start rounded-2xl border border-border bg-card p-5 text-left transition-all hover:bg-surface hover:border-brand/30 group"
-                  >
-                    <div className="mb-3 flex items-center gap-2">
-                      <div className="rounded-full bg-surface-2 p-2 text-foreground group-hover:bg-brand group-hover:text-foreground transition-colors">
-                        <MdCalendarToday size={16} />
+                  <article key={p.id} className="flex flex-col rounded-2xl border border-border bg-card p-4 transition-colors hover:border-brand/30 sm:p-5">
+                    <button
+                      type="button"
+                      onClick={() => setSelectedPlan(p)}
+                      className="group flex flex-col items-start text-left"
+                    >
+                      <div className="mb-3 flex items-center gap-2">
+                        <div className="rounded-full bg-surface-2 p-2 text-foreground transition-colors group-hover:bg-brand">
+                          <MdCalendarToday size={16} />
+                        </div>
+                        <span className="text-xs font-bold uppercase tracking-wider text-brand">
+                          {p.mode === "recovery" ? "Recovery (3-Day)" : "Standard (7-Day)"}
+                        </span>
                       </div>
-                      <span className={`text-xs font-bold uppercase tracking-wider ${p.mode === "recovery" ? "text-brand" : "text-brand"}`}>
-                        {p.mode === "recovery" ? "Recovery (3-Day)" : "Standard (7-Day)"}
-                      </span>
-                    </div>
-                    <p className="text-base font-semibold text-foreground mb-1">
-                      {new Date(p.date).toLocaleDateString()}
-                    </p>
-                    <p className="text-sm text-muted-foreground">
-                      {new Date(p.date).toLocaleTimeString()}
-                    </p>
-                  </button>
+                      <p className="mb-1 text-base font-semibold text-foreground">
+                        {new Date(p.date).toLocaleDateString()}
+                      </p>
+                      <p className="text-sm text-muted-foreground">
+                        {new Date(p.date).toLocaleTimeString()}
+                      </p>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => trackPlan(p)}
+                      className="mt-4 w-full rounded-xl bg-brand/10 px-3 py-2.5 text-xs font-bold text-brand transition-colors hover:bg-brand hover:text-white"
+                    >
+                      Track this plan
+                    </button>
+                  </article>
                 ))}
               </div>
             )}

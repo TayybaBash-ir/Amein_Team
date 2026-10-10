@@ -1,5 +1,7 @@
 ﻿import type { Metadata } from "next";
 import localFont from "next/font/local";
+import { Suspense } from "react";
+import MobileAppFrame from "@/components/clima/MobileAppFrame";
 import "./globals.css";
 
 const geistSans = localFont({
@@ -28,7 +30,9 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased min-h-screen`}
       >
-        {children}
+        <Suspense fallback={children}>
+          <MobileAppFrame>{children}</MobileAppFrame>
+        </Suspense>
       </body>
     </html>
   );

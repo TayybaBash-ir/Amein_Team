@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import { Suspense } from "react";
 import { createClient } from "@supabase/supabase-js";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://znsqzyxmotdzzylwpdcb.supabase.co";
@@ -14,7 +15,7 @@ import ClinicalIntakeForm from "@/components/clima/ClinicalIntakeForm";
 import MacroScorecard from "@/components/clima/MacroScorecard";
 import MealPlanView from "@/components/clima/MealPlanView";
 import { RestaurantRecommendationCard } from "@/components/clima/RestaurantRecommendationCard";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { type PlanResponse, type IntakeData } from "@/lib/mock";
 import { ACCENT } from "@/lib/theme";
 import DashboardBento from "@/components/clima/DashboardBento";
@@ -23,8 +24,16 @@ import DashboardBento from "@/components/clima/DashboardBento";
 type ScreenStep = "home" | "input" | "loading" | "results";
 type AppTab = "generate" | "restaurants";
 
-export default function Dashboard() {
+function hydrationDateKey() {
+  return new Date().toISOString().split("T")[0];
+}
+
+function DashboardContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const activeTab: AppTab = searchParams.get("tab") === "restaurants" ? "restaurants" : "generate";
+  const setActiveTab = (tab: AppTab) => router.push(tab === "restaurants" ? "/dashboard?tab=restaurants" : "/dashboard");
+  const previousTab = useRef(activeTab);
   
   const [user, setUser] = useState<any>(undefined);
   const [hasProfile, setHasProfile] = useState(true);
@@ -58,6 +67,11 @@ export default function Dashboard() {
   const [step, setStep] = useState<ScreenStep>("home");
   const [planMode, setPlanMode] = useState<"standard" | "recovery">("standard");
 
+  useEffect(() => {
+    if (previousTab.current === "restaurants" && activeTab === "generate") setStep("home");
+    previousTab.current = activeTab;
+  }, [activeTab]);
+
   const handleHeroAction = (action: 'standard' | 'recovery' | 'restaurants' | 'saved') => {
     if (action === 'standard') {
       setPlanMode("standard");
@@ -77,25 +91,27 @@ export default function Dashboard() {
   useEffect(() => {
     try {
       const active = localStorage.getItem("clima_active_plan");
-      if (active) setActivePlan(JSON.parse(active));
+      if (active) {
+        const storedPlan = JSON.parse(active);
+        setActivePlan(storedPlan);
+        setPlan(storedPlan.plan || null);
+      }
       
       const log = JSON.parse(localStorage.getItem("clima_hydration") || "{}");
-      const today = new Date().toISOString().split('T')[0];
-      setHydrationLog(log[today] || 0);
+      setHydrationLog(log[hydrationDateKey()] || 0);
     } catch (e) {}
   }, []);
 
-  const handleHydrate = () => {
+  const handleHydrationChange = (amount: number) => {
     try {
-      const today = new Date().toISOString().split('T')[0];
+      const today = hydrationDateKey();
       const log = JSON.parse(localStorage.getItem("clima_hydration") || "{}");
-      log[today] = (log[today] || 0) + 1;
+      const current = Number(log[today] ?? hydrationLog) || 0;
+      log[today] = Math.max(0, Math.min(30, current + amount));
       localStorage.setItem("clima_hydration", JSON.stringify(log));
       setHydrationLog(log[today]);
     } catch (e) {}
   };
-
-  const [activeTab, setActiveTab] = useState<AppTab>("generate");
   const [plan, setPlan] = useState<PlanResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [theme, setTheme] = useState<"dark" | "light">("light");
@@ -108,25 +124,10 @@ export default function Dashboard() {
   }, [theme]);
 
   useEffect(() => {
-    let touchStartX = 0;
-    let touchEndX = 0;
-    const handleTouchStart = (e: TouchEvent) => { touchStartX = e.changedTouches[0].screenX; };
-    const handleTouchEnd = (e: TouchEvent) => { 
-      touchEndX = e.changedTouches[0].screenX; 
-      if (touchEndX < touchStartX - 70) {
-        if (step === "home" && activeTab === "generate") setActiveTab("restaurants");
-      }
-      if (touchEndX > touchStartX + 70) {
-        if (step === "home" && activeTab === "restaurants") setActiveTab("generate");
-      }
-    };
-    window.addEventListener("touchstart", handleTouchStart, { passive: true });
-    window.addEventListener("touchend", handleTouchEnd, { passive: true });
-    return () => {
-      window.removeEventListener("touchstart", handleTouchStart);
-      window.removeEventListener("touchend", handleTouchEnd);
-    };
-  }, [step, activeTab]);
+    const handleReturnHome = () => setStep("home");
+    window.addEventListener("climadiet:return-home", handleReturnHome);
+    return () => window.removeEventListener("climadiet:return-home", handleReturnHome);
+  }, []);
 
   const [savedProfile, setSavedProfile] = useState<Record<string, any> | null>(null);
 
@@ -331,27 +332,7 @@ export default function Dashboard() {
         </div>
       </nav>
 
-      <div className="fixed bottom-0 left-0 right-0 z-50 flex sm:hidden justify-around p-3 border-t border-border bg-background/90 backdrop-blur-xl gap-2 pb-safe print:hidden shadow-[0_-10px_40px_rgba(0,0,0,0.05)]">
-          {step !== "home" && activeTab === "generate" && (
-            <button onClick={() => setStep("home")} className="flex items-center justify-center p-2 rounded-lg text-muted-foreground hover:text-foreground">
-              <MdArrowBack size={24} />
-            </button>
-          )}
-          <button onClick={() => { setActiveTab("generate"); setStep("home"); }} className={`flex items-center justify-center p-2 rounded-lg ${activeTab === "generate" ? "text-brand" : "text-muted-foreground hover:bg-surface-2"}`}>
-            <MdDashboard size={24} />
-          </button>
-          <button onClick={() => setActiveTab("restaurants")} className={`flex items-center justify-center p-2 rounded-lg ${activeTab === "restaurants" ? "text-brand" : "text-muted-foreground hover:bg-surface-2"}`}>
-            <MdRestaurantMenu size={24} />
-          </button>
-          <Link href="/profile" className="flex items-center justify-center p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-surface-2">
-            <MdPerson size={24} />
-          </Link>
-          <Link href="/plans" className="flex items-center justify-center p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-surface-2">
-            <MdList size={24} />
-          </Link>
-        </div>
-
-      <main className="mx-auto max-w-5xl p-4 sm:p-8 pb-24 sm:pb-8">
+      <main className="mx-auto max-w-5xl p-4 sm:p-8 pb-6 sm:pb-8">
         {(savedProfile?.is_post_discharge || savedProfile?.spice_tolerance === "Bland") && (
           <div role="status" className="mb-6 flex items-center gap-3 rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm font-semibold text-amber-200">
             <span aria-hidden="true">🏥</span>
@@ -360,7 +341,7 @@ export default function Dashboard() {
         )}
         <AnimatePresence mode="wait">
           {activeTab === "restaurants" && (
-            <motion.div key="restaurants" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="pt-4">
+            <motion.div key="restaurants" initial={{ opacity: 0, x: 18 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -18 }} transition={{ duration: 0.2 }} className="pt-4">
               <h2 className="text-2xl font-bold text-foreground mb-2">Local Restaurant Matches</h2>
               <p className="text-muted-foreground mb-8">Dishes available to order from nearby restaurants that perfectly match your generated meal plan.</p>
               
@@ -398,14 +379,15 @@ export default function Dashboard() {
           )}
 
           {activeTab === "generate" && (
-            <motion.div key="generate" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+            <motion.div key="generate" initial={{ opacity: 0, x: 18 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -18 }} transition={{ duration: 0.2 }}>
               {step === "home" && (
                 <div className="w-full">
                   <DashboardBento 
                     onAction={handleHeroAction} 
                     activePlan={activePlan} 
                     hydrationLog={hydrationLog} 
-                    onHydrate={handleHydrate} 
+                    onHydrate={() => handleHydrationChange(1)}
+                    onUndoHydrate={() => handleHydrationChange(-1)}
                   />
                 </div>
               )}
@@ -473,5 +455,13 @@ export default function Dashboard() {
         </AnimatePresence>
       </main>
     </div>
+  );
+}
+
+export default function Dashboard() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-background" />}>
+      <DashboardContent />
+    </Suspense>
   );
 }
