@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
@@ -162,7 +162,7 @@ export default function ProfilePage() {
               {profile.name || "Your Profile"}
             </h1>
             <p className="mt-1 text-sm text-muted-foreground">
-              Saved locally â€” used automatically in every plan you generate.
+              Saved locally • used automatically in every plan you generate.
             </p>
           </div>
           <button
@@ -184,7 +184,7 @@ export default function ProfilePage() {
               initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}
               className="mb-6 flex items-center gap-3 rounded-2xl border border-brand/20 bg-brand/10 px-4 py-3 text-sm font-semibold text-brand"
             >
-              âœ“ Profile saved successfully
+              ✓ Profile saved successfully
             </motion.div>
           )}
         </AnimatePresence>
@@ -196,7 +196,7 @@ export default function ProfilePage() {
         >
           {statTile("Age", `${profile.age}y`)}
           {statTile("Weight", `${profile.weight} kg`)}
-          {statTile("BMI", bmi ? bmi.toFixed(1) : "â€”", bmiCategory?.label)}
+          {statTile("BMI", bmi ? bmi.toFixed(1) : "-", bmiCategory?.label)}
         </motion.div>
 
         {/* Physical Metrics */}
@@ -223,7 +223,7 @@ export default function ProfilePage() {
               <div><label className={labelClass}>Country</label><input className={inputClass} value={profile.country || ""} onChange={e => setProfile({ ...profile, country: e.target.value })} /></div>
               <div>
                 <label className={labelClass}>BMI</label>
-                <input readOnly className={`${inputClass} text-muted-foreground`} value={bmi ? bmi.toFixed(1) : "â€”"} />
+                <input readOnly className={`${inputClass} text-muted-foreground`} value={bmi ? bmi.toFixed(1) : "-"} />
               </div>
             </div>
           ) : (
@@ -232,7 +232,7 @@ export default function ProfilePage() {
                 ["Name", profile.name], ["Age", `${profile.age} years`],
                 ["Gender", profile.gender], ["Height", `${profile.height} cm`],
                 ["Weight", `${profile.weight} kg`],
-                ["BMI", bmi ? `${bmi.toFixed(1)} â€” ${bmiCategory?.label}` : "â€”"],
+                ["BMI", bmi ? `${bmi.toFixed(1)} • ${bmiCategory?.label}` : "-"],
               ].map(([k, v]) => (
                 <div key={k} className="rounded-xl border border-border bg-surface p-3">
                   <p className="text-[10px] font-bold uppercase tracking-wider text-neutral-600 mb-1">{k}</p>
@@ -328,6 +328,7 @@ export default function ProfilePage() {
           )}
         </motion.section>
 
+<<<<<<< HEAD
           {/* Save button (bottom) */}
           {isEditing && (
             <motion.button
@@ -350,4 +351,25 @@ export default function ProfilePage() {
   }
 
 
+=======
+        {/* Save button (bottom) */}
+        {isEditing && (
+          <motion.button
+            initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+            onClick={handleSave}
+            className="w-full rounded-2xl bg-[#4a7c59] py-4 text-sm font-bold text-white shadow-lg shadow-emerald-500/25 hover:bg-[#3d6849] transition-all mb-8"
+          >
+            <MdSave size={16} className="inline mr-2 -mt-0.5" /> Save Profile
+          </motion.button>
+        )}
+>>>>>>> 78f3c72ef32d612f60d19ce60b1f95bbfd314150
 
+        {/* Sign Out Button at the very bottom */}
+        <div className="mt-8 pt-8 border-t border-border flex flex-col items-center">
+          <p className="text-xs text-muted-foreground mb-4">Account Management</p>
+          <AuthButton />
+        </div>
+      </main>
+    </div>
+  );
+}

@@ -1,9 +1,9 @@
-﻿"use client";
+"use client";
 
 import { motion } from "framer-motion";
 import { MdArrowForward } from "react-icons/md";
 
-// â”€â”€ Inline SVG Illustrations â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Inline SVG Illustrations ───────────────────────────────────────────────
 
 function WellnessIllustration() {
   return (
@@ -111,14 +111,14 @@ function ClockIllustration() {
   );
 }
 
-// â”€â”€ Feature Cards Data â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Feature Cards Data ───────────────────────────────────────────────────
 const features = [
   {
     id: "recovery",
     icon: <NutritionIllustration />,
     label: "Recovery Mode",
     sub: "Healing & sickness",
-    glow: "rgba(74,124,89,0.15)", // Indigo glow
+    glow: "rgba(74,124,89,0.15)",
   },
   {
     id: "restaurants",
@@ -136,22 +136,29 @@ const features = [
   },
 ];
 
-// â”€â”€ HomeHero â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── HomeHero ─────────────────────────────────────────────────────────────
 export default function HomeHero({ onAction }: { onAction: (action: 'standard' | 'recovery' | 'restaurants' | 'saved') => void }) {
   return (
     <div className="relative flex flex-col items-center justify-start min-h-[85vh] pt-10 pb-32 overflow-hidden">
 
+<<<<<<< HEAD
       {/* â”€â”€ Ambient background blobs â”€â”€ */}
       <div className="pointer-events-none absolute -top-32 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full bg-brand/10 blur-[120px]" />
       <div className="pointer-events-none absolute top-60 -right-20 w-[300px] h-[300px] rounded-full bg-brand/8 blur-[100px]" />
+=======
+      {/* Ambient background blobs */}
+      <div className="pointer-events-none absolute -top-32 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full bg-[#4a7c59]/10 blur-[120px]" />
+      <div className="pointer-events-none absolute top-60 -right-20 w-[300px] h-[300px] rounded-full bg-emerald-500/8 blur-[100px]" />
+>>>>>>> 78f3c72ef32d612f60d19ce60b1f95bbfd314150
 
-      {/* â”€â”€ Hero Text â”€â”€ */}
+      {/* Hero Text */}
       <motion.div
         initial={{ opacity: 0, y: 24 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, ease: [0.2, 0.8, 0.2, 1] }}
         className="text-center px-4 max-w-2xl mx-auto mb-10"
       >
+<<<<<<< HEAD
         <div className="inline-flex items-center gap-2 rounded-full border border-brand/30 bg-brand/10 px-4 py-1.5 text-xs font-semibold text-brand mb-6 backdrop-blur-sm">
           <span className="h-1.5 w-1.5 rounded-full bg-brand animate-pulse" />
           AI-Powered Clinical Nutrition
@@ -159,13 +166,22 @@ export default function HomeHero({ onAction }: { onAction: (action: 'standard' |
         <h1 className="text-4xl sm:text-5xl font-bold tracking-tight text-foreground leading-[1.15] mb-4">
           Your body. Your climate.<br />
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand to-brand-dark">Your perfect diet.</span>
+=======
+        <div className="inline-flex items-center gap-2 rounded-full border border-[#4a7c59]/30 bg-[#4a7c59]/10 px-4 py-1.5 text-xs font-semibold text-emerald-400 mb-6 backdrop-blur-sm">
+          <span className="h-1.5 w-1.5 rounded-full bg-[#4a7c59] animate-pulse" />
+          Mindful Daily Eating
+        </div>
+        <h1 className="text-4xl sm:text-5xl font-bold tracking-tight text-foreground leading-[1.15] mb-4">
+          Healthy eating,<br />
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-emerald-600">built around your life.</span>
+>>>>>>> 78f3c72ef32d612f60d19ce60b1f95bbfd314150
         </h1>
         <p className="text-muted-foreground text-base sm:text-lg max-w-lg mx-auto leading-relaxed">
-          ClimaDiet builds a personalized 7-day meal plan based on your health, real-time local weather, and what's already in your kitchen.
+          ClimaDiet crafts a 7-day meal plan around your medical needs, local weather, kitchen ingredients, and weekly budget.
         </p>
       </motion.div>
 
-      {/* â”€â”€ Hero Illustration Card â”€â”€ */}
+      {/* Hero Illustration Card */}
       <motion.div
         initial={{ opacity: 0, scale: 0.94 }}
         animate={{ opacity: 1, scale: 1 }}
@@ -179,9 +195,9 @@ export default function HomeHero({ onAction }: { onAction: (action: 'standard' |
             <span className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">Weekly</span>
             <span className="rounded-full bg-brand/20 px-3 py-1 text-xs font-bold text-brand">Active</span>
           </div>
-          <h2 className="text-xl font-bold text-foreground mb-1">Wellness Journey</h2>
+          <h2 className="text-xl font-bold text-foreground mb-1">Your Weekly Plan</h2>
           <p className="text-sm text-muted-foreground mb-5 leading-relaxed">
-            Embark on a holistic journey guided by AI, real weather data, and your personal health signals.
+            Nutritionally balanced guidance designed for your health goals, local climate, and personal budget.
           </p>
           {/* Illustration */}
           <div className="h-36 w-full mb-5">
@@ -205,7 +221,11 @@ export default function HomeHero({ onAction }: { onAction: (action: 'standard' |
         >
           <p className="text-[10px] text-muted-foreground">BMI</p>
           <p className="text-base font-bold text-foreground">22.4</p>
+<<<<<<< HEAD
           <p className="text-[10px] text-brand">Healthy âœ“</p>
+=======
+          <p className="text-[10px] text-emerald-400">Healthy ✓</p>
+>>>>>>> 78f3c72ef32d612f60d19ce60b1f95bbfd314150
         </motion.div>
 
         <motion.div
@@ -222,7 +242,7 @@ export default function HomeHero({ onAction }: { onAction: (action: 'standard' |
         </motion.div>
       </motion.div>
 
-      {/* â”€â”€ Feature Shortcut Cards â”€â”€ */}
+      {/* Feature Shortcut Cards */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -250,11 +270,8 @@ export default function HomeHero({ onAction }: { onAction: (action: 'standard' |
         ))}
       </motion.div>
 
-      {/* â”€â”€ Bottom blur fade â”€â”€ */}
+      {/* Bottom blur fade */}
       <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#1A1D1E] to-transparent" />
     </div>
   );
 }
-
-
-
