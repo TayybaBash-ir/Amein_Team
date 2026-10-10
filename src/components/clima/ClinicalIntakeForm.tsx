@@ -155,11 +155,9 @@ export default function ClinicalIntakeForm({
           <h2 className="text-xl font-semibold tracking-tight text-foreground">1. Health Conditions & Dietary Needs</h2>
         </div>
         <div className="space-y-6">
-          <div className="rounded-2xl border border-amber-500/20 bg-amber-500/[0.05] p-4">
-            <label className="flex cursor-pointer items-center gap-2 text-sm font-semibold text-amber-600 dark:text-amber-200"><input type="checkbox" checked={Boolean(d.is_post_discharge)} onChange={(event) => set("is_post_discharge", event.target.checked)} className="accent-amber-400" />Post-discharge recovery protocol</label>
-            {d.is_post_discharge && <div className="mt-4"><label className={labelClass}>Recovery focus</label><select className={inputClass} value={d.recovery_type || "Gastric Recovery (Bland & Soft)"} onChange={(event) => set("recovery_type", event.target.value)}><option>Gastric Recovery (Bland &amp; Soft)</option><option>Post-Surgery / Soft Food</option><option>Low BP / Hydration Focus</option><option>General Recovery</option></select></div>}
-            <div className="mt-4"><label className={labelClass}>Spice preference</label><select className={inputClass} value={d.spice_tolerance || "Normal"} onChange={(event) => set("spice_tolerance", event.target.value)}><option value="Bland">Bland (Zero Spice)</option><option value="Low Spice">Low Spice</option><option value="Normal">Normal</option></select></div>
-            <div className="mt-4"><label className={labelClass}>Doctor&apos;s medical notes</label><textarea className={`${inputClass} min-h-24 resize-y`} value={d.medical_history_notes || ""} onChange={(event) => set("medical_history_notes", event.target.value)} placeholder="Ongoing care instructions or dietary guidelines..." /></div>
+          <div className="mb-6">
+            <label className={labelClass}>AI Health Goal</label>
+            <input className={inputClass} value={d.goal || ""} placeholder="e.g. 'I want to lose 5 kg weight in 1 month'" onChange={(e) => set("goal", e.target.value)} />
           </div>
           {listField("Chronic conditions (Optional)", "conditions", CONDITIONS_PRESET, customCond, setCustomCond, "Add a condition...")}
           {listField("Dietary restrictions (Optional)", "dietary_restrictions", RESTRICTIONS_PRESET, customDiet, setCustomDiet, "Add a dietary restriction...")}
