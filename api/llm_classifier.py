@@ -11,6 +11,7 @@ class ClinicalRules(BaseModel):
     macro_tweaks: Dict[str, str] = Field(description="Instructions for macro ratio adjustments, e.g. {'carbs': 'low', 'protein': 'high'}")
     caloric_modifier: int = Field(description="Exact integer of calories to add or subtract from TDEE. e.g. -500 for standard weight loss, +300 for bulking, -200 for body recomposition (lose fat gain muscle), 0 for maintenance.")
     illness_advice: Optional[str] = Field(description="Strict dietary constraints and healing foods advice if the user is ill (e.g., 'Avoid cold dairy and fried food. Focus on warm soups.'). Otherwise null.")
+    extracted_pantry: List[str] = Field(description="List of single-word ingredients extracted from the user's pantry input text. E.g. ['chicken', 'rice', 'onion']. Empty list if none provided.")
     goal_advice: str = Field(description="A brief 1-sentence clinical advice explaining how the plan achieves their specific weight/health goal.")
 
 def analyze_clinical_conditions(
@@ -22,6 +23,7 @@ def analyze_clinical_conditions(
     avg_temp: Optional[float] = None,
     acute_illness: Optional[str] = None,
     pantry_items: Optional[List[str]] = None,
+    pantry_input: Optional[str] = None,
     forbidden_items: Optional[List[str]] = None,
 ) -> ClinicalRules:
     fallback = ClinicalRules(
@@ -29,6 +31,7 @@ def analyze_clinical_conditions(
         forced_climate=None,
         macro_tweaks={},
         illness_advice=None,
+        extracted_pantry=[],
         caloric_modifier=-500 if "los" in goal.lower() or "loos" in goal.lower() or "cut" in goal.lower() else (300 if "gain" in goal.lower() or "bulk" in goal.lower() else 0),
         goal_advice=f"[Fast Fallback] Macros tailored to your target of {goal} {goal_amount}."
     )
@@ -54,6 +57,7 @@ def analyze_clinical_conditions(
         f"Allergies: {allergies}",
         f"Dietary Restrictions: {diet}",
         f"Primary Goal: {goal}",
+        f"User Pantry Input: {pantry_input}" if pantry_input else "",
         f"Goal Target: {goal_amount}",
         f"Local 7-Day Average Temp: {avg_temp} C",
         f"Acute Illness/Symptoms: {acute_illness}" if acute_illness else "",
@@ -73,6 +77,7 @@ def analyze_clinical_conditions(
         "Return EXACTLY AND ONLY this JSON structure (no markdown blocks):",
         "{",
         '  "forbidden_ingredients": ["str"],',
+        '  "extracted_pantry": ["str"],',
         '  "forced_climate": "warming | cooling | null",',
         '  "macro_tweaks": {"protein": "high", "carbs": "low"},',
         '  "caloric_modifier": -500,',

@@ -9,12 +9,6 @@ import { motion, AnimatePresence } from "framer-motion";
 const CONDITIONS_PRESET = ["Diabetes", "Hypertension", "PCOS"];
 const RESTRICTIONS_PRESET = ["Halal", "Vegan", "Low Sodium"];
 const ALLERGIES_PRESET = ["Peanuts", "Shellfish", "Dairy"];
-const PANTRY_GROUPS = {
-  Proteins: ["Chicken", "Eggs", "Fish", "Beans", "Lentils", "Tofu"],
-  Veggies: ["Spinach", "Tomatoes", "Onions", "Potatoes", "Bell peppers", "Carrots"],
-  "Carbs & Grains": ["Rice", "Roti", "Bread", "Oats", "Pasta"],
-  "Pantry Staples": ["Milk", "Yogurt", "Cheese", "Oil", "Salt", "Pepper"],
-} as const;
 
 export default function ClinicalIntakeForm({
   onSubmit,
@@ -39,6 +33,7 @@ export default function ClinicalIntakeForm({
     allergies: [],
     dietary_restrictions: [],
     pantry_items: [],
+    pantry_input: "",
     strict_pantry_mode: false,
     city: "Lahore",
     country: "Pakistan",
@@ -233,48 +228,17 @@ export default function ClinicalIntakeForm({
         </div>
 
         <p className="mb-5 text-[13px] leading-relaxed text-neutral-400">
-          Have ingredients at home? Tap to add them. We'll prioritize meals using what you already have.
+          Just tell us what you have in your kitchen, and we'll prioritize meals using those ingredients.
         </p>
 
-        <div className="space-y-5 mb-6">
-          {Object.entries(PANTRY_GROUPS).map(([group, items]) => (
-            <div key={group}>
-              <p className="mb-2 text-[12px] font-semibold text-neutral-500 uppercase tracking-wider">{group}</p>
-              <div className="flex flex-wrap gap-2">
-                {items.map((item) => {
-                  const selected = (d.pantry_items || []).includes(item);
-                  return (
-                    <button key={item} type="button" onClick={() => toggle(d.pantry_items || [], item, "pantry_items")}
-                      className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${selected ? "bg-white text-black scale-95" : "bg-white/5 text-neutral-300 hover:bg-white/10"}`}>
-                      {item}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          ))}
+        <div className="mb-6">
+          <textarea
+            className="w-full bg-white/5 border border-white/5 focus:bg-white/10 focus:border-white/20 hover:bg-white/[0.07] rounded-[1.5rem] px-5 py-4 outline-none text-white transition-all placeholder:text-neutral-500 text-sm md:text-base min-h-[120px] resize-none"
+            placeholder="e.g., I have some chicken, rice, tomatoes, and onions. Maybe some eggs too."
+            value={d.pantry_input || ""}
+            onChange={(e) => set("pantry_input", e.target.value)}
+          />
         </div>
-
-        <div className="flex gap-2 mb-4">
-          <input type="text" placeholder="Add other ingredient..." className={inputClass} value={customPantryItem} onChange={(e) => setCustomPantryItem(e.target.value)} onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), handleAddPantryItem())} />
-          <button type="button" onClick={handleAddPantryItem} className="px-5 py-3 rounded-2xl bg-white/10 hover:bg-white/20 text-white transition-colors">
-            <Plus size={18} />
-          </button>
-        </div>
-
-        {/* Selected Pantry Tags */}
-        {(d.pantry_items || []).length > 0 && (
-          <div className="flex flex-wrap gap-2 mb-6 p-4 bg-black/20 rounded-2xl border border-white/5">
-            {(d.pantry_items || []).map((item) => (
-              <span key={item} className="flex items-center gap-1.5 rounded-full bg-white/10 pl-3 pr-2 py-1.5 text-xs font-medium text-white">
-                {item}
-                <button type="button" onClick={() => toggle(d.pantry_items || [], item, "pantry_items")} className="rounded-full p-0.5 hover:bg-white/20 transition-colors">
-                  <X size={12} />
-                </button>
-              </span>
-            ))}
-          </div>
-        )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-white/5">
           <div>

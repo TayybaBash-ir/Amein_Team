@@ -290,6 +290,12 @@ def generate_meal_plan(patient: PatientIntake):
         patient.goal, patient.goal_amount, avg_temp, patient.pantry_items, forbidden_items
     )
     
+    
+    if getattr(ai_rules, 'extracted_pantry', None):
+        pantry_items.extend(ai_rules.extracted_pantry)
+        forbidden_items = _forbidden_proteins(pantry_items)
+        print("AI EXTRACTED PANTRY:", ai_rules.extracted_pantry)
+
     targets = get_nutritional_targets(
         weight_kg=float(patient.weight),
         height_cm=float(patient.height),
@@ -347,8 +353,8 @@ def generate_meal_plan(patient: PatientIntake):
     forbidden_items.extend(getattr(ai_rules, 'forbidden_ingredients', []))
     # Parse weekly budget into a daily limit
     daily_budget = None
-    if hasattr(intake, 'weekly_budget') and intake.weekly_budget:
-        b = intake.weekly_budget.lower()
+    if hasattr(patient, 'weekly_budget') and patient.weekly_budget:
+        b = patient.weekly_budget.lower()
         if 'under 5,000' in b:
             daily_budget = 5000 / 7
         elif '5,000 - 10,000' in b:
@@ -361,8 +367,7 @@ def generate_meal_plan(patient: PatientIntake):
         dietary_restrictions,
         pantry_items=pantry_items,
         strict_pantry_mode=bool(patient.strict_pantry_mode),
-        forbidden_items=forbidden_items,
-        acute_illness=getattr(intake if "intake" in locals() else req.patient, "acute_illness", None)
+        forbidden_items=forbidden_items
     )
     print("MEAT/MAIN POOL DISHES:", [d.get('name') for d in categorized.get('meat', [])])
 
@@ -558,8 +563,7 @@ def swap_meal(req: SwapRequest):
         dietary_restrictions,
         pantry_items=pantry_items,
         strict_pantry_mode=bool(req.patient.strict_pantry_mode),
-        forbidden_items=forbidden_items,
-        acute_illness=getattr(intake if "intake" in locals() else req.patient, "acute_illness", None)
+        forbidden_items=forbidden_items
     )
     
     target_macros = {
