@@ -41,13 +41,14 @@ export default function PlansPage() {
     <div className="min-h-screen bg-background selection:bg-brand/30">
       <nav className="sticky top-0 z-50 flex items-center justify-between border-b border-border bg-background/85 px-4 py-3 backdrop-blur-xl sm:px-8">
         <div className="flex items-center gap-3">
-          <Link
-            href="/dashboard"
-            className="flex items-center justify-center h-8 w-8 rounded-xl bg-surface hover:bg-surface-2 text-muted-foreground hover:text-foreground transition-all"
-            title="Back to dashboard"
+          <button
+            type="button"
+            onClick={() => selectedPlan ? setSelectedPlan(null) : router.push("/dashboard")}
+            className="flex h-8 w-8 items-center justify-center rounded-xl bg-surface text-muted-foreground transition-all hover:bg-surface-2 hover:text-foreground"
+            title={selectedPlan ? "Back to saved plans" : "Back to dashboard"}
           >
             <MdArrowBack size={18} />
-          </Link>
+          </button>
           <Link href="/dashboard" className="group flex items-center gap-2">
             <div className="grid h-8 w-8 place-items-center rounded-xl bg-gradient-to-br from-brand to-brand-dark shadow-lg shadow-brand/20 transition-transform group-hover:scale-105">
               <MdEco size={16} className="text-foreground" />
@@ -60,30 +61,26 @@ export default function PlansPage() {
       <main className="mx-auto max-w-5xl px-4 py-8 sm:py-12">
         {selectedPlan ? (
           <div>
-            <div className="mb-6 flex items-center gap-4">
-              <button
-                onClick={() => setSelectedPlan(null)}
-                className="flex items-center gap-2 rounded-xl border border-border bg-surface px-4 py-2 text-sm font-semibold text-foreground transition-colors hover:bg-surface-2"
-              >
-                <MdArrowBack size={16} /> Back to List
-              </button>
-              <div>
-                <h1 className="text-xl font-bold text-foreground">
+            <div className="mb-6 flex flex-wrap items-center gap-x-4 gap-y-3">
+              <div className="min-w-0 flex-1">
+                <h1 className="text-xl font-bold leading-tight text-foreground">
                   {selectedPlan.mode === "recovery" ? "Recovery Plan" : "7-Day Meal Plan"}
                 </h1>
-                <p className="text-xs text-muted-foreground">
-                  Generated on {new Date(selectedPlan.date).toLocaleDateString()} at {new Date(selectedPlan.date).toLocaleTimeString()}
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Generated {new Date(selectedPlan.date).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })}
+                  {" · "}
+                  {new Date(selectedPlan.date).toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" })}
                 </p>
               </div>
               <button 
                 onClick={() => trackPlan(selectedPlan)}
-                className="ml-auto bg-brand hover:bg-brand-dark text-white px-4 py-2 rounded-xl text-sm font-bold shadow-lg shadow-brand/20 transition-all active:scale-95"
+                className="shrink-0 whitespace-nowrap rounded-xl bg-brand px-4 py-2 text-sm font-bold text-white shadow-lg shadow-brand/20 transition-all hover:bg-brand-dark active:scale-95"
               >
                 Track this plan &rarr;
               </button>
             </div>
             {/* Note: Deliberately omitting MacroScorecard as requested */}
-            <MealPlanView plan={selectedPlan.plan} />
+            <MealPlanView plan={selectedPlan.plan} hideHeading compactActions />
           </div>
         ) : (
           <div>

@@ -14,7 +14,7 @@ import {
 import type { Meal, PlanResponse } from "@/lib/mock";
 import MealPlanView from "@/components/clima/MealPlanView";
 
-function BentoCard({ title, sub, icon, onClick, delay, glow }: any) {
+function BentoCard({ title, sub, description, icon, onClick, delay, glow }: any) {
   return (
     <motion.button
       type="button"
@@ -30,8 +30,11 @@ function BentoCard({ title, sub, icon, onClick, delay, glow }: any) {
       <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-surface-2 text-brand sm:h-12 sm:w-12 sm:rounded-2xl">
         {icon}
       </span>
-      <span className="min-w-0">
-        <span className="block truncate text-xs font-bold leading-tight text-foreground sm:text-lg">{title}</span>
+      <span className="flex min-h-0 w-full flex-1 items-center py-2 sm:py-3">
+        <span className="line-clamp-3 text-[10px] leading-snug text-muted-foreground sm:text-sm">{description}</span>
+      </span>
+      <span className="min-w-0 w-full">
+        <span className="block text-xs font-bold leading-tight text-foreground sm:text-lg">{title}</span>
         <span className="mt-1 block truncate text-[10px] leading-tight text-muted-foreground sm:text-sm">{sub}</span>
       </span>
     </motion.button>
@@ -96,16 +99,17 @@ export default function DashboardBento({
   };
 
   return (
-    <div className="mx-auto mt-2 w-full max-w-2xl px-1 pb-5 sm:mt-6 sm:px-4 sm:pb-8">
+    <div className="mx-auto mt-2 w-full max-w-3xl pb-5 sm:mt-6 sm:px-4 sm:pb-8">
       <div className="mb-3 px-1 sm:mb-5 sm:px-2">
         <h1 className="mb-0.5 font-serif text-lg italic leading-tight text-brand sm:text-3xl">Welcome back.</h1>
         <p className="text-[11px] text-muted-foreground sm:text-sm">Select an option to manage your nutrition.</p>
       </div>
 
-      <div className="grid grid-cols-2 gap-2.5 sm:gap-5">
+      <div className="grid grid-cols-2 gap-2 sm:gap-5">
         <BentoCard
-          title="Weekly Plan"
-          sub="Generate tailored menu"
+          title="Generate meal plan"
+          sub="Personalized 7-day menu"
+          description="Built around your health goals, food preferences, and local climate."
           icon={<MdOutlineAutorenew size={22} />}
           onClick={() => onAction("standard")}
           delay={0.05}
@@ -124,7 +128,7 @@ export default function DashboardBento({
                 type="button"
                 onClick={() => setMealDetailsOpen(true)}
                 aria-label={`Open all meals for day ${dayIdx + 1}`}
-                className="flex min-h-0 w-full flex-1 flex-col items-start justify-between text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand"
+                className="flex min-h-0 w-full flex-1 flex-col items-start text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand"
               >
                 <span className="block w-full">
                   <span className="mb-2 flex w-full items-center justify-between gap-1">
@@ -132,17 +136,13 @@ export default function DashboardBento({
                     <span className="shrink-0 text-[9px] text-muted-foreground sm:text-xs">{totalKcal} kcal</span>
                   </span>
                   <span className="mb-1.5 block text-xs font-bold leading-tight text-foreground sm:text-base">Today&apos;s meals</span>
-                  <span className="block w-full space-y-1">
-                    {todayPlan.meals.slice(0, 2).map((meal: Meal, index: number) => (
-                      <span key={`${meal.slot}-${index}`} className="flex min-w-0 items-center justify-between gap-1 text-[9px] sm:text-xs">
-                        <span className="shrink-0 capitalize text-muted-foreground">{meal.slot || `Meal ${index + 1}`}</span>
-                        <span className="truncate text-right font-medium text-foreground">{meal.name}</span>
-                      </span>
-                    ))}
+                  <span className="flex min-w-0 items-center gap-1 text-[9px] sm:text-xs">
+                    <span className="shrink-0 capitalize text-muted-foreground">{todayPlan.meals[0]?.slot || "Meal"}</span>
+                    <span className="truncate font-medium text-foreground">{todayPlan.meals[0]?.name || "Plan details"}</span>
                   </span>
                 </span>
-                <span className="mt-1 text-[9px] font-semibold text-brand sm:text-[10px]">
-                  {todayPlan.meals.length > 2 ? `+${todayPlan.meals.length - 2} more · view all →` : "Tap to view meal details →"}
+                <span className="mt-auto block w-full shrink-0 truncate pt-1 text-[9px] font-semibold text-brand sm:text-[10px]">
+                  {todayPlan.meals.length > 1 ? `+${todayPlan.meals.length - 1} more · view all →` : "Tap to view meal details →"}
                 </span>
               </button>
 
@@ -185,12 +185,15 @@ export default function DashboardBento({
             <button
               type="button"
               onClick={() => onAction("standard")}
-              className="flex h-full w-full flex-col items-start justify-between text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand"
+              className="flex h-full w-full flex-col items-start text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand"
             >
               <span className="grid h-9 w-9 place-items-center rounded-xl bg-surface-2 text-brand sm:h-12 sm:w-12 sm:rounded-2xl">
                 <MdOutlineRestaurantMenu size={21} />
               </span>
-              <span>
+              <span className="flex min-h-0 w-full flex-1 items-center py-2 sm:py-3">
+                <span className="line-clamp-3 text-[10px] leading-snug text-muted-foreground sm:text-sm">Start with a plan tailored to your health goals and local climate.</span>
+              </span>
+              <span className="w-full">
                 <span className="block text-xs font-bold text-foreground sm:text-lg">No active plan</span>
                 <span className="mt-1 block text-[10px] text-muted-foreground sm:text-sm">Tap to create one.</span>
               </span>
@@ -199,8 +202,9 @@ export default function DashboardBento({
         </motion.div>
 
         <BentoCard
-          title="Recovery"
-          sub="Healing & sickness"
+          title="Not feeling well?"
+          sub="Recovery meal plan"
+          description="Get gentle meal ideas tailored to how you feel."
           icon={<MdOutlineMedicalServices size={22} />}
           onClick={() => onAction("recovery")}
           delay={0.15}
@@ -208,13 +212,18 @@ export default function DashboardBento({
         />
         <BentoCard
           title="Saved Plans"
-          sub="Past history"
+          sub="Revisit or track a plan"
+          description="Your previous meal plans are ready whenever you need them."
           icon={<MdBookmarks size={22} />}
           onClick={() => onAction("saved")}
           delay={0.2}
           glow="rgba(74,124,89,0.05)"
         />
       </div>
+
+      <p className="mt-3 px-1 text-center text-[10px] leading-relaxed text-muted-foreground sm:mt-5 sm:text-sm">
+        Generate a 7-day meal plan shaped around your health goals and local climate.
+      </p>
 
       <AnimatePresence>
         {mealDetailsOpen && todayPlanResponse && (

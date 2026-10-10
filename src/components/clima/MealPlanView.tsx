@@ -9,7 +9,17 @@ import MealDetail from "./MealDetail";
 import SwapMealModal from "./SwapMealModal";
 import { RestaurantRecommendationCard } from "./RestaurantRecommendationCard";
 
-export default function MealPlanView({ plan: initialPlan, onGoToRestaurant }: { plan: PlanResponse; onGoToRestaurant?: (r: string) => void }) {
+export default function MealPlanView({
+  plan: initialPlan,
+  onGoToRestaurant,
+  hideHeading = false,
+  compactActions = false,
+}: {
+  plan: PlanResponse;
+  onGoToRestaurant?: (r: string) => void;
+  hideHeading?: boolean;
+  compactActions?: boolean;
+}) {
   const [plan, setPlan] = useState(initialPlan);
   const [swapMealInfo, setSwapMealInfo] = useState<{meal: Meal, dayIdx: number, mealIdx: number} | null>(null);
   const [selectedDay, setSelectedDay] = useState(0);
@@ -73,15 +83,17 @@ export default function MealPlanView({ plan: initialPlan, onGoToRestaurant }: { 
 
       {/* INTERACTIVE WEB LAYOUT */}
       <div className="flex flex-col gap-5 w-full print:hidden">
-        <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
-          <div>
-            <h2 className="text-2xl font-bold editorial-title">Your Custom Menu</h2>
-            <p className="text-sm text-muted-foreground mt-1">Crafted specifically for your body, taste, and goals.</p>
-          </div>
-          <div className="flex items-center gap-2">
+        <div className={`flex flex-wrap items-center gap-3 ${hideHeading ? "mb-0 justify-end" : "mb-6 justify-between"}`}>
+          {!hideHeading && (
+            <div>
+              <h2 className="text-2xl font-bold editorial-title">Your Custom Menu</h2>
+              <p className="text-sm text-muted-foreground mt-1">Crafted specifically for your body, taste, and goals.</p>
+            </div>
+          )}
+          <div className={`flex shrink-0 items-center gap-2 ${compactActions ? "w-full sm:w-auto" : ""}`}>
             <button 
               onClick={() => window.print()}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-surface hover:bg-surface-2 border border-border transition-colors text-sm font-bold"
+              className={`flex items-center justify-center gap-1.5 whitespace-nowrap rounded-xl border border-border bg-surface transition-colors hover:bg-surface-2 ${compactActions ? "min-w-0 flex-1 px-2.5 py-2 text-xs sm:flex-none sm:px-4 sm:text-sm" : "px-4 py-2 text-sm"} font-bold`}
             >
               <MdPrint size={16} /> Download PDF
             </button>
@@ -105,7 +117,7 @@ export default function MealPlanView({ plan: initialPlan, onGoToRestaurant }: { 
                   alert("Network error saving plan.");
                 }
               }}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white text-black hover:bg-neutral-200 transition-colors text-sm font-bold"
+              className={`flex items-center justify-center gap-1.5 whitespace-nowrap rounded-xl bg-white text-black transition-colors hover:bg-neutral-200 ${compactActions ? "min-w-0 flex-1 px-2.5 py-2 text-xs sm:flex-none sm:px-4 sm:text-sm" : "px-4 py-2 text-sm"} font-bold`}
             >
               <MdShare size={16} /> Save & Share
             </button>
