@@ -50,7 +50,7 @@ const sources = Array.from(
             className="absolute inset-0"
           >
             {!loaded && (
-              <div className="absolute inset-0 z-10 grid place-items-center bg-black/60">
+              <div className="absolute inset-0 z-10 grid place-items-center bg-surface-2/60">
                 <MdAutorenew className="h-7 w-7 animate-spin text-lime-300" aria-label="Loading food photo" />
               </div>
             )}

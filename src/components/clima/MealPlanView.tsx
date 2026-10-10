@@ -150,14 +150,14 @@ export default function MealPlanView({ plan: initialPlan, onGoToRestaurant }: { 
               >
                 <div className="relative">
                   <MealImage meal={meal} className="aspect-[4/3] h-36 md:h-40 w-full rounded-none border-0 shadow-none object-cover" />
-                  <div className="absolute right-3 top-3 rounded-full border border-border bg-black/70 p-2 text-foreground backdrop-blur hover:bg-surface-2 transition-colors z-10"
+                  <div className="absolute right-3 top-3 rounded-full border border-border bg-background/80 p-2 text-foreground backdrop-blur hover:bg-surface-2 transition-colors z-10"
                     onClick={(e) => {
                       e.stopPropagation();
                       setSwapMealInfo({meal, dayIdx: selectedDay, mealIdx: idx});
                     }}>
                     <MdRefresh size={14} />
                   </div>
-                  <div className="absolute left-3 top-3 rounded-full border border-border bg-black/70 px-3 py-1 text-xs font-bold uppercase tracking-wider text-foreground backdrop-blur">
+                  <div className="absolute left-3 top-3 rounded-full border border-border bg-background/80 px-3 py-1 text-xs font-bold uppercase tracking-wider text-foreground backdrop-blur">
                     {meal.slot}
                   </div>
                 </div>
@@ -177,32 +177,7 @@ export default function MealPlanView({ plan: initialPlan, onGoToRestaurant }: { 
           </AnimatePresence>
         </div>
 
-        {/* OUTSIDE ORDER MATCHES */}
-        {plan.outside_order_matches && plan.outside_order_matches[selectedDay]?.length > 0 && (
-          <div className="mt-10 rounded-2xl border border-border bg-[#222627] p-6 shadow-xl">
-            <div className="mb-4">
-              <h3 className="text-xl font-bold text-foreground">Outside-order matches</h3>
-              <p className="text-xs text-muted-foreground">
-                Restaurant items aligned with today's plan. Home-cooked meals remain the default.
-              </p>
-            </div>
-
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {plan.outside_order_matches[selectedDay].map((item, i) => (
-                <RestaurantRecommendationCard
-                  key={`${item.restaurant_name}-${i}`}
-                  restaurantName={item.restaurant_name}
-                  dishName={item.item_name || item.dish_name}
-                  price={item.price}
-                  protein={item.protein}
-                  kitchenNote={item.kitchen_note}
-                  orderUrl={item.order_url}
-                  matchedMealName={item.matched_meal_name}
-                />
-              ))}
-            </div>
-          </div>
-        )}
+        
 
         {swapMealInfo && (
           <SwapMealModal
