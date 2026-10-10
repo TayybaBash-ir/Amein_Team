@@ -287,7 +287,7 @@ const handleGenerate = async (data: IntakeData) => {
                       <p className="text-xs text-indigo-300/80">Tell us what you're feeling and we will generate a fast 3-day recovery meal plan with foods to eat and avoid. Budget filtering is disabled to prioritize your health.</p>
                     </div>
                   )}
-                  <ClinicalIntakeForm onSubmit={handleGenerate} loading={loading} planMode={planMode} onInputChange={() => {}} />
+                  <ClinicalIntakeForm onSubmit={handleGenerate} loading={step === "loading"} planMode={planMode} onInputChange={() => {}} />
                 </motion.div>
               )}
 
