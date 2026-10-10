@@ -233,7 +233,7 @@ function DashboardContent() {
           conditions: updatedProfile.conditions,
           allergies: updatedProfile.allergies,
           dietary_restrictions: updatedProfile.dietary_restrictions,
-            metabolic_modifier: updatedProfile.metabolic_modifier || 1.0,
+            metabolic_modifier: (updatedProfile as any).metabolic_modifier || 1.0,
           medical_history_notes: updatedProfile.medical_history_notes,
           is_post_discharge: updatedProfile.is_post_discharge,
           recovery_type: updatedProfile.recovery_type,
