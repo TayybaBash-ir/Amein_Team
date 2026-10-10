@@ -297,11 +297,10 @@ const handleGenerate = async (data: IntakeData) => {
                     <div className="absolute inset-0 animate-ping rounded-full border-2 border-[#4a7c59] opacity-20" />
                     <MdEco size={32} className="animate-pulse text-[#4a7c59]" />
                   </div>
-                  <h3 className="editorial-title text-2xl">Computing Clinical Targets</h3>
-                  <div className="mt-4 flex flex-col gap-2 text-sm text-muted-foreground">
-                    <p className="animate-pulse">Resolving location via Open-Meteo API...</p>
-                    <p className="animate-pulse delay-100">Applying Harris-Benedict thermodynamics...</p>
-                    <p className="animate-pulse delay-200">Matching dishes with strict AI constraints...</p>
+                  <h3 className="editorial-title text-2xl font-bold text-white mb-2">Preparing Your Custom Meal Plan...</h3>
+<p className="text-sm text-slate-400 animate-pulse">
+  Tailoring health-safe dishes to your local weather and personal profile...
+</p>
                   </div>
                 </motion.div>
               )}
