@@ -59,6 +59,7 @@ export default function DashboardBento({
     if (hydrationTapTimer.current) clearTimeout(hydrationTapTimer.current);
   }, []);
 
+  let diffDays = 0;
   let dayIdx = 0;
   let todayPlan: any = null;
   let totalKcal = 0;
@@ -69,7 +70,7 @@ export default function DashboardBento({
     const now = new Date();
     const startDay = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate()).getTime();
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
-    const diffDays = Math.max(0, Math.floor((today - startDay) / 86_400_000));
+    diffDays = Math.max(0, Math.floor((today - startDay) / 86_400_000));
     const days = activePlan.plan.meal_plan?.days || [];
     if (days.length > 0) {
       dayIdx = Math.min(diffDays, days.length - 1);
@@ -155,7 +156,18 @@ export default function DashboardBento({
               </button>
 
               
-            </>
+            
+              {diffDays >= 6 && (
+                <div className="mt-3 w-full border-t border-border pt-3">
+                  <button 
+                    onClick={(e) => { e.stopPropagation(); setCheckInOpen(true); }}
+                    className="flex w-full items-center justify-center gap-2 rounded-xl bg-brand py-2.5 text-xs font-bold text-white shadow-lg shadow-brand/20 transition-all hover:bg-brand-dark"
+                  >
+                    <MdAssessment size={16} /> Run Weekly Check-In
+                  </button>
+                </div>
+              )}
+              </>
           ) : (
             <button
               type="button"
