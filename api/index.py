@@ -16,7 +16,7 @@ from api.schemas import (
 )
 from api.nutrition_math import get_nutritional_targets
 from api.meal_validator import validate_meals, structure_day_plans
-from api.llm_classifier import analyze_clinical_conditions
+from api.llm_classifier import analyze_clinical_conditions, RECOVERY_FORBIDDEN_TERMS
 
 env_path = pathlib.Path('.') / '.env.local'
 load_dotenv(dotenv_path=env_path)
@@ -274,6 +274,12 @@ def generate_meal_plan(patient: PatientIntake):
     print("="*50 + "\n")
     pantry_items = [item.strip() for item in (patient.pantry_items or []) if item.strip()]
     forbidden_items = _forbidden_proteins(pantry_items)
+    recovery_mode = bool(
+        patient.is_post_discharge
+        or patient.spice_tolerance == "Bland"
+    )
+    if recovery_mode:
+        forbidden_items = list(dict.fromkeys([*forbidden_items, *RECOVERY_FORBIDDEN_TERMS, "deep fried", "heavy oil", "raw food"]))
 
     from api.weather_api import get_7_day_forecast
     w_data = get_7_day_forecast(patient.city, patient.country, patient.start_date)
@@ -286,8 +292,17 @@ def generate_meal_plan(patient: PatientIntake):
             avg_temp = sum(temps) / len(temps)
 
     ai_rules = analyze_clinical_conditions(
-        patient.conditions, patient.allergies, patient.dietary_restrictions, 
-        patient.goal, patient.goal_amount, avg_temp, patient.pantry_items, forbidden_items
+        conditions=[*patient.conditions, *([patient.medical_history_notes] if patient.medical_history_notes else [])],
+        allergies=patient.allergies,
+        diet=patient.dietary_restrictions,
+        goal=patient.goal or "Maintain",
+        goal_amount=patient.goal_amount,
+        avg_temp=avg_temp,
+        pantry_items=patient.pantry_items,
+        forbidden_items=forbidden_items,
+        is_post_discharge=patient.is_post_discharge,
+        recovery_type=patient.recovery_type,
+        spice_tolerance=patient.spice_tolerance,
     )
     
     targets = get_nutritional_targets(
@@ -308,6 +323,7 @@ def generate_meal_plan(patient: PatientIntake):
     if patient.allergies: constraints.extend(patient.allergies)
     if patient.dietary_restrictions: constraints.extend(patient.dietary_restrictions)
     if patient.conditions: constraints.extend(patient.conditions)
+    if patient.medical_history_notes: constraints.append(f"Medical notes: {patient.medical_history_notes}")
     constraints.append(f"Goal: {patient.goal} {patient.goal_amount}")
     if ai_rules.goal_advice:
         constraints.append(f"AI: {ai_rules.goal_advice}")
@@ -330,14 +346,17 @@ def generate_meal_plan(patient: PatientIntake):
     allergies = list(patient.allergies or [])
     if ai_rules.forbidden_ingredients:
         allergies.extend(ai_rules.forbidden_ingredients)
+    if recovery_mode:
+        allergies.extend(RECOVERY_FORBIDDEN_TERMS)
+        allergies.extend(["deep fried", "heavy oil", "raw food"])
         
     if ai_rules.forced_climate == 'warming' or (avg_temp is not None and avg_temp < 15):
         allergies.extend(['ice cream', 'cold', 'smoothie', 'chilled', 'sorbet', 'salad'])
-    elif ai_rules.forced_climate == 'cooling' or (avg_temp is not None and avg_temp > 30):
+    elif (ai_rules.forced_climate == 'cooling' or (avg_temp is not None and avg_temp > 30)) and not recovery_mode:
         allergies.extend(['soup', 'stew', 'hot pot', 'broth', 'spicy'])
         
     current_month = datetime.datetime.now().month
-    if not ((avg_temp is not None and avg_temp < 25) or current_month in [12, 1]):
+    if not recovery_mode and not ((avg_temp is not None and avg_temp < 25) or current_month in [12, 1]):
         allergies.append('soup')
         if not any('fish' in item.lower() or item.lower() in {'salmon', 'tuna', 'tilapia', 'rohu', 'pomfret', 'mackerel'} for item in pantry_items):
             allergies.append('fish')
@@ -349,6 +368,7 @@ def generate_meal_plan(patient: PatientIntake):
         pantry_items=pantry_items,
         strict_pantry_mode=bool(patient.strict_pantry_mode),
         forbidden_items=forbidden_items,
+        recovery_mode=recovery_mode,
     )
     print("MEAT/MAIN POOL DISHES:", [d.get('name') for d in categorized.get('meat', [])])
 
@@ -525,12 +545,20 @@ def swap_meal(req: SwapRequest):
     from api.db_manager import get_safe_dishes, contains_forbidden_ingredient
     pantry_items = [item.strip() for item in (req.patient.pantry_items or []) if item.strip()]
     forbidden_items = _forbidden_proteins(pantry_items)
+    recovery_mode = bool(
+        req.patient.is_post_discharge
+        or req.patient.spice_tolerance == "Bland"
+    )
+    if recovery_mode:
+        allergies = [*allergies, *RECOVERY_FORBIDDEN_TERMS, "deep fried", "heavy oil", "raw food"]
+        forbidden_items = list(dict.fromkeys([*forbidden_items, *RECOVERY_FORBIDDEN_TERMS, "deep fried", "heavy oil", "raw food"]))
     categorized = get_safe_dishes(
         allergies,
         dietary_restrictions,
         pantry_items=pantry_items,
         strict_pantry_mode=bool(req.patient.strict_pantry_mode),
         forbidden_items=forbidden_items,
+        recovery_mode=recovery_mode,
     )
     
     target_macros = {

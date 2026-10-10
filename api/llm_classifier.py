@@ -5,6 +5,12 @@ import concurrent.futures
 from typing import Dict, List, Optional
 from pydantic import BaseModel, Field
 
+RECOVERY_FORBIDDEN_TERMS = [
+    "spicy", "chili", "chilli", "manchurian", "karahi", "tikka", "biryani",
+    "fried", "oily", "pepper", "sauce", "schezwan", "grill", "grilled",
+    "barbecue", "bbq",
+]
+
 class ClinicalRules(BaseModel):
     forbidden_ingredients: List[str] = Field(description="List of ingredients the patient MUST NEVER consume due to their medical conditions, allergies, or diet restrictions.")
     forced_climate: Optional[str] = Field(description="If the patient has a disease requiring warming/cooling foods (e.g., flu requires warming), output 'warming' or 'cooling'. Otherwise null.")
@@ -21,7 +27,24 @@ def analyze_clinical_conditions(
     avg_temp: Optional[float] = None,
     pantry_items: Optional[List[str]] = None,
     forbidden_items: Optional[List[str]] = None,
+    is_post_discharge: bool = False,
+    recovery_type: Optional[str] = None,
+    spice_tolerance: Optional[str] = "Normal",
 ) -> ClinicalRules:
+    def apply_recovery_rules(result: ClinicalRules) -> ClinicalRules:
+        strict_restrictions = []
+        if is_post_discharge or spice_tolerance == "Bland":
+            strict_restrictions.extend(RECOVERY_FORBIDDEN_TERMS)
+            strict_restrictions.extend(["deep fried", "heavy oil", "raw food"])
+        elif spice_tolerance == "Low Spice":
+            strict_restrictions.extend(["spicy", "chili", "hot sauce"])
+        result.forbidden_ingredients = list(dict.fromkeys([
+            *result.forbidden_ingredients, *strict_restrictions
+        ]))
+        if is_post_discharge:
+            result.forced_climate = "cooling"
+        return result
+
     fallback = ClinicalRules(
         forbidden_ingredients=[],
         forced_climate=None,
@@ -96,7 +119,7 @@ def analyze_clinical_conditions(
             )
             if res.status_code == 200:
                 data = json.loads(res.json()["choices"][0]["message"]["content"])
-                return ClinicalRules(**data)
+                return apply_recovery_rules(ClinicalRules(**data))
         except Exception:
             pass
             
@@ -116,9 +139,9 @@ def analyze_clinical_conditions(
             res = requests.post(url, json=payload, timeout=2.5)
             if res.status_code == 200:
                 data = json.loads(res.json()["candidates"][0]["content"]["parts"][0]["text"])
-                return ClinicalRules(**data)
+                return apply_recovery_rules(ClinicalRules(**data))
         except Exception:
             pass
 
-    return fallback
+    return apply_recovery_rules(fallback)
 

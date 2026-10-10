@@ -4,7 +4,7 @@ import { Loader2, Plus, X } from "lucide-react";
 import { type IntakeData } from "@/lib/mock";
 import { ACCENT } from "@/lib/theme";
 
-const CONDITIONS_PRESET = ["Diabetes", "Hypertension", "PCOS"];
+const CONDITIONS_PRESET = ["Low BP", "Hypertension", "Diabetes", "Gastritis / GORD", "Kidney Disease", "High Cholesterol", "PCOS"];
 const RESTRICTIONS_PRESET = ["Halal", "Vegan", "Low Sodium"];
 const ALLERGIES_PRESET = ["Peanuts", "Shellfish", "Dairy"];
 const PANTRY_GROUPS = {
@@ -24,6 +24,7 @@ export default function ClinicalIntakeForm({
   onInputChange: () => void;
 }) {
   const [d, setD] = useState<IntakeData>({
+    name: "Patient",
     age: 32,
     weight: 85,
     height: 175,
@@ -31,6 +32,10 @@ export default function ClinicalIntakeForm({
     activity: "sedentary",
     goal: "Lose weight",
     goal_amount: "5kg",
+    medical_history_notes: "",
+    is_post_discharge: false,
+    recovery_type: "None",
+    spice_tolerance: "Normal",
     conditions: [],
     allergies: [],
     dietary_restrictions: [],
@@ -51,21 +56,37 @@ export default function ClinicalIntakeForm({
   const [customPantryItem, setCustomPantryItem] = useState("");
 
   useEffect(() => {
-    const saved = localStorage.getItem("patientProfile");
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
-        if (parsed) {
-          setD({
-            ...parsed,
-            pantry_items: Array.isArray(parsed.pantry_items) ? parsed.pantry_items : [],
-            strict_pantry_mode: Boolean(parsed.strict_pantry_mode),
-            allow_external_dining: Boolean(parsed.allow_external_dining),
-          });
-        }
-      } catch (error) {
-        console.warn("Failed to load profile", error);
-      }
+    const savedIntake = localStorage.getItem("patientProfile");
+    const savedMedicalProfile = localStorage.getItem("clima_patient_profile");
+    try {
+      const intake = savedIntake ? JSON.parse(savedIntake) : {};
+      const medical = savedMedicalProfile ? JSON.parse(savedMedicalProfile) : {};
+      const asList = (value: unknown): string[] => Array.isArray(value)
+        ? value.filter((item): item is string => typeof item === "string")
+        : typeof value === "string" ? value.split(",").map((item) => item.trim()).filter(Boolean) : [];
+      const unique = (...values: unknown[]) => Array.from(new Set(values.flatMap(asList)));
+
+      setD((current) => ({
+        ...current,
+        ...intake,
+        name: medical.name || intake.name || current.name,
+        age: Number(medical.age ?? intake.age ?? current.age),
+        weight: Number(medical.weight ?? intake.weight ?? current.weight),
+        height: Number(medical.height ?? intake.height ?? current.height),
+        gender: String(medical.gender ?? intake.gender ?? current.gender).toLowerCase(),
+        allergies: savedMedicalProfile ? unique(medical.allergies) : unique(intake.allergies),
+        conditions: savedMedicalProfile ? unique(medical.conditions) : unique(intake.conditions),
+        dietary_restrictions: savedMedicalProfile ? unique(medical.dietary_restrictions) : unique(intake.dietary_restrictions),
+        medical_history_notes: medical.medical_history_notes || intake.medical_history_notes || "",
+        is_post_discharge: Boolean(medical.is_post_discharge ?? intake.is_post_discharge),
+        recovery_type: medical.recovery_type || intake.recovery_type || "None",
+        spice_tolerance: medical.spice_tolerance || intake.spice_tolerance || "Normal",
+        pantry_items: Array.isArray(intake.pantry_items) ? intake.pantry_items : [],
+        strict_pantry_mode: Boolean(intake.strict_pantry_mode),
+        allow_external_dining: Boolean(intake.allow_external_dining ?? current.allow_external_dining),
+      }));
+    } catch (error) {
+      console.warn("Failed to load saved patient profile", error);
     }
   }, []);
 
@@ -191,6 +212,10 @@ export default function ClinicalIntakeForm({
           1. PATIENT PROFILE
         </h3>
         <div className="grid grid-cols-2 gap-2 sm:gap-3">
+          <div className="col-span-2">
+            <label className="clinical-label text-[10px] sm:text-xs">Name</label>
+            <input className="clinical-input py-1.5 sm:py-2 text-xs sm:text-sm" type="text" value={d.name || "Patient"} onChange={(e) => set("name", e.target.value)} />
+          </div>
           <div>
             <label className="clinical-label text-[10px] sm:text-xs">Age</label>
             <input
@@ -317,6 +342,28 @@ export default function ClinicalIntakeForm({
           3. CLINICAL & DIETARY
         </h3>
         <div className="flex flex-col gap-2.5 sm:gap-3.5">
+          <div className="rounded-xl border border-amber-500/20 bg-amber-500/[0.05] p-3 sm:p-4">
+            <label className="flex cursor-pointer items-center gap-2 text-xs font-semibold text-amber-200 sm:text-sm">
+              <input type="checkbox" checked={Boolean(d.is_post_discharge)} onChange={(e) => set("is_post_discharge", e.target.checked)} className="accent-amber-400" />
+              Post-discharge recovery protocol
+            </label>
+            {d.is_post_discharge && <div className="mt-3">
+                <label className="clinical-label text-[10px] sm:text-xs">Recovery Focus</label>
+                <select className="clinical-input py-1.5 text-xs sm:py-2 sm:text-sm" value={d.recovery_type || "Gastric Recovery (Bland & Soft)"} onChange={(e) => set("recovery_type", e.target.value)}>
+                  <option>Gastric Recovery (Bland &amp; Soft)</option><option>Post-Surgery / Soft Food</option><option>Low BP / Hydration Focus</option><option>General Recovery</option>
+                </select>
+            </div>}
+            <div className="mt-3">
+              <label className="clinical-label text-[10px] sm:text-xs">Spice Preference</label>
+              <select className="clinical-input py-1.5 text-xs sm:py-2 sm:text-sm" value={d.spice_tolerance || "Normal"} onChange={(e) => set("spice_tolerance", e.target.value)}>
+                <option value="Bland">Bland (Zero Spice)</option><option value="Low Spice">Low Spice</option><option value="Normal">Normal</option>
+              </select>
+            </div>
+            <div className="mt-3">
+              <label className="clinical-label text-[10px] sm:text-xs">Doctor&apos;s Medical Notes / Instructions</label>
+              <textarea className="clinical-input min-h-16 py-2 text-xs sm:text-sm" value={d.medical_history_notes || ""} onChange={(e) => set("medical_history_notes", e.target.value)} placeholder="Care instructions or permanent dietary constraints..." />
+            </div>
+          </div>
           {/* Conditions */}
           <div>
             <label className="clinical-label text-[10px] sm:text-xs">Conditions</label>
