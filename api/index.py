@@ -636,7 +636,6 @@ def log_interaction(log: dict):
     import json
     import os
 
-    record['timestamp'] = time.time()
     
     # 1. Supabase (Persistent)
     try:
