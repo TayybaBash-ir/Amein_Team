@@ -165,7 +165,7 @@ const handleGenerate = async (data: IntakeData) => {
     <div className="min-h-screen bg-background text-foreground selection:bg-[#4a7c59]/30">
       <nav className="sticky top-0 z-50 flex items-center justify-between border-b border-border bg-background/85 px-4 py-3 backdrop-blur-xl print:hidden sm:px-8">
         <div className="flex items-center gap-3">
-          {/* Back arrow â€” shown when not on home screen */}
+          {/* Back arrow - shown when not on home screen */}
           {step !== "home" && activeTab === "generate" && (
             <button
               onClick={() => { setStep("home"); }}
