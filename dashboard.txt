@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect } from "react";
 import { createClient } from "@supabase/supabase-js";
@@ -52,47 +52,6 @@ export default function Dashboard() {
     }
   }, []);
 
-  
-
-  const [step, setStep] = useState<ScreenStep>("home");
-  const [planMode, setPlanMode] = useState<"standard" | "recovery">("standard");
-
-  const handleHeroAction = (action: 'standard' | 'recovery' | 'restaurants' | 'saved') => {
-    if (action === 'standard') {
-      setPlanMode("standard");
-      setStep("input");
-    } else if (action === 'recovery') {
-      setPlanMode("recovery");
-      setStep("input");
-    } else if (action === 'restaurants') {
-      setActiveTab("restaurants");
-    } else if (action === 'saved') {
-      router.push('/plans');
-    }
-  };
-  const [activeTab, setActiveTab] = useState<AppTab>("generate");
-  const [plan, setPlan] = useState<PlanResponse | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [theme, setTheme] = useState<"dark" | "light">("light");
-  useEffect(() => {
-    if (theme === "light") {
-      document.documentElement.classList.add("light");
-    } else {
-      document.documentElement.classList.remove("light");
-    }
-  }, [theme]);
-
-  const [savedProfile, setSavedProfile] = useState<Record<string, any> | null>(null);
-
-  useEffect(() => {
-    try {
-      const storedProfile = localStorage.getItem("clima_patient_profile");
-      setSavedProfile(storedProfile ? JSON.parse(storedProfile) : null);
-    } catch {
-      setSavedProfile(null);
-    }
-  }, []);
-
   if (user === undefined) return <div className="min-h-screen bg-background flex items-center justify-center"><div className="animate-spin w-8 h-8 border-4 border-brand border-t-transparent rounded-full" /></div>;
 
   if (user === null) {
@@ -131,6 +90,45 @@ export default function Dashboard() {
       </div>
     );
   }
+
+  const [step, setStep] = useState<ScreenStep>("home");
+  const [planMode, setPlanMode] = useState<"standard" | "recovery">("standard");
+
+  const handleHeroAction = (action: 'standard' | 'recovery' | 'restaurants' | 'saved') => {
+    if (action === 'standard') {
+      setPlanMode("standard");
+      setStep("input");
+    } else if (action === 'recovery') {
+      setPlanMode("recovery");
+      setStep("input");
+    } else if (action === 'restaurants') {
+      setActiveTab("restaurants");
+    } else if (action === 'saved') {
+      router.push('/plans');
+    }
+  };
+  const [activeTab, setActiveTab] = useState<AppTab>("generate");
+  const [plan, setPlan] = useState<PlanResponse | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [theme, setTheme] = useState<"dark" | "light">("dark");
+  useEffect(() => {
+    if (theme === "light") {
+      document.documentElement.classList.add("light");
+    } else {
+      document.documentElement.classList.remove("light");
+    }
+  }, [theme]);
+
+  const [savedProfile, setSavedProfile] = useState<Record<string, any> | null>(null);
+
+  useEffect(() => {
+    try {
+      const storedProfile = localStorage.getItem("clima_patient_profile");
+      setSavedProfile(storedProfile ? JSON.parse(storedProfile) : null);
+    } catch {
+      setSavedProfile(null);
+    }
+  }, []);
 
   const handleGenerate = async (data: IntakeData) => {
     setStep("loading");
@@ -305,7 +303,7 @@ export default function Dashboard() {
       <main className="mx-auto max-w-5xl p-4 sm:p-8">
         {(savedProfile?.is_post_discharge || savedProfile?.spice_tolerance === "Bland") && (
           <div role="status" className="mb-6 flex items-center gap-3 rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm font-semibold text-amber-200">
-            <span aria-hidden="true">🏥</span>
+            <span aria-hidden="true">ðŸ¥</span>
             <span>Active Protocol: Post-Discharge Recovery (Bland & Soft Foods Enforced)</span>
           </div>
         )}
@@ -419,3 +417,4 @@ export default function Dashboard() {
     </div>
   );
 }
+
