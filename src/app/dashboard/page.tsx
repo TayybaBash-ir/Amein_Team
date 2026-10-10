@@ -45,6 +45,8 @@ const handleGenerate = async (data: IntakeData) => {
           allergies: Array.isArray(data.allergies) ? data.allergies : [],
           dietary_restrictions: Array.isArray(data.dietary_restrictions) ? data.dietary_restrictions : [],
           allow_external_dining: Boolean(data.allow_external_dining),
+          pantry_items: Array.isArray(data.pantry_items) ? data.pantry_items : [],
+          strict_pantry_mode: Boolean(data.strict_pantry_mode),
           preferences: data.preferences || {},
         }),
       });

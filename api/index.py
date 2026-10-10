@@ -24,6 +24,63 @@ load_dotenv()
 
 app = FastAPI(title="ClimaDiet API", description="AI Clinical Nutrition API")
 
+ALL_PROTEINS = {
+    "chicken", "beef", "mutton", "lamb", "fish", "prawns", "seafood",
+    "egg", "tofu", "paneer", "lentils", "daal", "chana",
+}
+PLANT_PROTEIN_ALIASES = {"lentil", "lentils", "daal", "dal", "chana", "chickpea", "chickpeas"}
+
+def _forbidden_proteins(pantry_items):
+    forbidden = [
+        protein for protein in ALL_PROTEINS
+        if pantry_items and not any(protein in item.lower() for item in pantry_items)
+    ]
+    if any(
+        alias in item.lower()
+        for item in pantry_items
+        for alias in PLANT_PROTEIN_ALIASES
+    ):
+        forbidden = [protein for protein in forbidden if protein not in PLANT_PROTEIN_ALIASES]
+    return forbidden
+
+def _sanitize_candidate_plan(plan, categorized, forbidden_items):
+    """Replace forbidden components with safe catalog components before assembly."""
+    from api.db_manager import contains_forbidden_ingredient
+
+    by_category = categorized
+    safe_components = [
+        item
+        for components in by_category.values()
+        for item in components
+        if not contains_forbidden_ingredient(item.get("name", ""), forbidden_items)
+        and not any(
+            contains_forbidden_ingredient(ingredient, forbidden_items)
+            for ingredient in item.get("ingredient_names", [])
+        )
+    ]
+
+    for meal in plan:
+        sanitized_items = []
+        for item in meal.get("items", []):
+            is_forbidden = contains_forbidden_ingredient(item.get("name", ""), forbidden_items) or any(
+                contains_forbidden_ingredient(ingredient, forbidden_items)
+                for ingredient in item.get("ingredient_names", [])
+            )
+            if not is_forbidden:
+                sanitized_items.append(item)
+                continue
+
+            same_category = [
+                candidate for candidate in safe_components
+                if candidate.get("category_id") == item.get("category_id")
+            ]
+            replacement_pool = same_category or safe_components
+            if not replacement_pool:
+                continue
+            sanitized_items.append(replacement_pool[0])
+        meal["items"] = sanitized_items
+    return plan
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"], 
@@ -211,6 +268,13 @@ def resolve_direct_youtube_url(m_items, combo_name, categorized):
 
 @app.post("/api/generate-plan", response_model=PlanResponse)
 def generate_meal_plan(patient: PatientIntake):
+    print("\n" + "="*50)
+    print("RECEIVED PANTRY ITEMS FROM FRONTEND:", patient.pantry_items)
+    print("STRICT PANTRY MODE:", patient.strict_pantry_mode)
+    print("="*50 + "\n")
+    pantry_items = [item.strip() for item in (patient.pantry_items or []) if item.strip()]
+    forbidden_items = _forbidden_proteins(pantry_items)
+
     from api.weather_api import get_7_day_forecast
     w_data = get_7_day_forecast(patient.city, patient.country, patient.start_date)
     weather_info = WeatherInfo(**w_data)
@@ -223,7 +287,7 @@ def generate_meal_plan(patient: PatientIntake):
 
     ai_rules = analyze_clinical_conditions(
         patient.conditions, patient.allergies, patient.dietary_restrictions, 
-        patient.goal, patient.goal_amount, avg_temp
+        patient.goal, patient.goal_amount, avg_temp, patient.pantry_items, forbidden_items
     )
     
     targets = get_nutritional_targets(
@@ -260,10 +324,10 @@ def generate_meal_plan(patient: PatientIntake):
         constraints_applied=constraints
     )
 
-    from api.db_manager import get_safe_dishes
+    from api.db_manager import get_safe_dishes, contains_forbidden_ingredient
     from api.matching_engine import find_best_meal_plan
     
-    allergies = patient.allergies or []
+    allergies = list(patient.allergies or [])
     if ai_rules.forbidden_ingredients:
         allergies.extend(ai_rules.forbidden_ingredients)
         
@@ -274,11 +338,20 @@ def generate_meal_plan(patient: PatientIntake):
         
     current_month = datetime.datetime.now().month
     if not ((avg_temp is not None and avg_temp < 25) or current_month in [12, 1]):
-        allergies.extend(['soup', 'fish'])
+        allergies.append('soup')
+        if not any('fish' in item.lower() or item.lower() in {'salmon', 'tuna', 'tilapia', 'rohu', 'pomfret', 'mackerel'} for item in pantry_items):
+            allergies.append('fish')
         
-    dietary_restrictions = patient.dietary_restrictions or []
-    categorized = get_safe_dishes(allergies, dietary_restrictions)
-    
+    dietary_restrictions = list(patient.dietary_restrictions or [])
+    categorized = get_safe_dishes(
+        allergies,
+        dietary_restrictions,
+        pantry_items=pantry_items,
+        strict_pantry_mode=bool(patient.strict_pantry_mode),
+        forbidden_items=forbidden_items,
+    )
+    print("MEAT/MAIN POOL DISHES:", [d.get('name') for d in categorized.get('meat', [])])
+
     if not categorized.get('meat') and not categorized.get('veg'):
         raise HTTPException(status_code=422, detail="No suitable dishes found for these dietary restrictions.")
         
@@ -291,6 +364,9 @@ def generate_meal_plan(patient: PatientIntake):
         
         if not best_plan:
             raise HTTPException(status_code=422, detail="Math engine failed to find a combination.")
+
+        if forbidden_items:
+            best_plan = _sanitize_candidate_plan(best_plan, categorized, forbidden_items)
             
         for m in best_plan:
             for item in m['items']:
@@ -376,6 +452,23 @@ def generate_meal_plan(patient: PatientIntake):
             )
             
             all_final_meals.append(meal_obj)
+
+    if pantry_items:
+        forbidden_meals = []
+        for meal in all_final_meals:
+            if contains_forbidden_ingredient(meal.name, forbidden_items) or any(
+                contains_forbidden_ingredient(ingredient, forbidden_items)
+                for ingredient in meal.ingredients
+            ):
+                forbidden_meals.append(meal.name)
+        if forbidden_meals:
+            raise HTTPException(
+                status_code=422,
+                detail=(
+                    "Pantry validation rejected meals containing unselected proteins: "
+                    f"{', '.join(forbidden_meals)}."
+                ),
+            )
             
     is_valid, errs = validate_meals(all_final_meals, final_targets, dietary_restrictions, allergies)
     
@@ -429,8 +522,16 @@ def health_check():
 def swap_meal(req: SwapRequest):
     allergies = req.patient.allergies or []
     dietary_restrictions = req.patient.dietary_restrictions or []
-    from api.db_manager import get_safe_dishes
-    categorized = get_safe_dishes(allergies, dietary_restrictions)
+    from api.db_manager import get_safe_dishes, contains_forbidden_ingredient
+    pantry_items = [item.strip() for item in (req.patient.pantry_items or []) if item.strip()]
+    forbidden_items = _forbidden_proteins(pantry_items)
+    categorized = get_safe_dishes(
+        allergies,
+        dietary_restrictions,
+        pantry_items=pantry_items,
+        strict_pantry_mode=bool(req.patient.strict_pantry_mode),
+        forbidden_items=forbidden_items,
+    )
     
     target_macros = {
         'calories': req.target_calories,
@@ -457,6 +558,16 @@ def swap_meal(req: SwapRequest):
     for cand_info in alts:
         cand = cand_info['candidate']
         multiplier = cand_info['multiplier']
+
+        if pantry_items and any(
+            contains_forbidden_ingredient(item.get('name', ''), forbidden_items)
+            or any(
+                contains_forbidden_ingredient(ingredient, forbidden_items)
+                for ingredient in item.get('ingredient_names', [])
+            )
+            for item in cand.get('items', [])
+        ):
+            continue
         
         name = " with ".join([item.get('name', '') for item in cand['items']])
         ingredients = []
@@ -516,6 +627,12 @@ def swap_meal(req: SwapRequest):
             youtube_url=dish_recipe_url
         )
         final_alts.append(final_meal)
+
+    if not final_alts:
+        raise HTTPException(
+            status_code=404,
+            detail="No alternative meals found that satisfy the pantry ingredients and macro targets.",
+        )
         
     return SwapResponse(alternatives=final_alts)
 

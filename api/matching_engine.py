@@ -129,6 +129,45 @@ def find_best_meal_plan(categorized, target_macros, preferences=None, iterations
         for _ in range(15):
             complex_mains.append(combine([random.choice(pulao_biryani)]))
 
+    # Daal is a full lunch/dinner main, not only a side or fallback. Keep
+    # explicit daal-plus-carb combinations in both main pools so the optimizer
+    # can select lentil meals when the pantry contains no meat or fish.
+    daal_mains = []
+    daal_carbs = list({
+        carb.get("id", carb.get("name")): carb
+        for carb in roti_paratha + boiled_rice
+    }.values())
+    for dish in daal:
+        for carb in daal_carbs:
+            daal_mains.append(combine([dish, carb]))
+    easy_mains.extend(daal_mains)
+    complex_mains.extend(daal_mains)
+
+    # The pantry bridge can put Category 3 dishes in `meat`; identify actual
+    # animal mains by their source category so lentils are not overshadowed by
+    # dummy or snack-like entries in that pool.
+    animal_mains = [dish for dish in meat if dish.get("category_id") == 1]
+    daal_main_candidates = [
+        combine([dish, carb])
+        for dish in daal
+        if dish.get("category_id") == 3
+        for carb in daal_carbs
+    ]
+    veg_main_candidates = [
+        combine([dish, carb])
+        for dish in veg
+        if dish.get("category_id") == 2
+        for carb in daal_carbs
+    ]
+    # Prefer actual Category 3 meals whenever the filtered pool contains them;
+    # fall back to vegetable mains only when no daal candidates are available.
+    plant_main_candidates = daal_main_candidates or veg_main_candidates
+    if not animal_mains and plant_main_candidates:
+        # With no meat/fish candidates, both lunch and dinner draw from
+        # lentil/vegetable mains paired with a staple carb.
+        easy_mains = list(plant_main_candidates)
+        complex_mains = list(plant_main_candidates)
+
     sks = []
     for _ in range(20):
         sks.append(combine([random.choice(pure_snacks)]))
@@ -163,7 +202,13 @@ def find_best_meal_plan(categorized, target_macros, preferences=None, iterations
         base_fat = b['fat_g'] + l['fat_g'] + d['fat_g'] + s['fat_g']
         
         multiplier = target_cals / base_cals if base_cals > 0 else 1.0
-        if not (0.7 <= multiplier <= 1.5):
+        uses_plant_main = any(
+            item.get("category_id") in (2, 3)
+            for main in (l, d)
+            for item in main.get("items", [])
+        )
+        min_multiplier, max_multiplier = (0.5, 2.0) if uses_plant_main else (0.7, 1.5)
+        if not (min_multiplier <= multiplier <= max_multiplier):
             continue
             
         variety_penalty = 0
