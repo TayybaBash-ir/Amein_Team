@@ -1,7 +1,7 @@
 
 "use client";
 import { useState, useEffect } from "react";
-import { Loader2, Plus, X, HeartPulse, Activity, Home, Apple } from "lucide-react";
+import { MdAutorenew, MdAdd, MdClose, MdFavorite, MdDirectionsRun, MdHome } from "react-icons/md";
 import { type IntakeData } from "@/lib/mock";
 import { ACCENT } from "@/lib/theme";
 import { motion, AnimatePresence } from "framer-motion";
@@ -90,7 +90,7 @@ export default function ClinicalIntakeForm({
       {/* About You */}
       <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className={sectionClass}>
         <div className="flex items-center gap-3 mb-6">
-          <div className="p-2 bg-blue-500/10 rounded-xl text-blue-400"><Activity size={20} /></div>
+          <div className="p-2 bg-blue-500/10 rounded-xl text-blue-400"><MdDirectionsRun size={20} /></div>
           <h2 className="text-xl font-semibold text-white tracking-tight">About You</h2>
         </div>
         
@@ -156,7 +156,7 @@ export default function ClinicalIntakeForm({
       {/* Health & Preferences */}
       <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className={sectionClass}>
         <div className="flex items-center gap-3 mb-6">
-          <div className="p-2 bg-rose-500/10 rounded-xl text-rose-400"><HeartPulse size={20} /></div>
+          <div className="p-2 bg-rose-500/10 rounded-xl text-rose-400"><MdFavorite size={20} /></div>
           <h2 className="text-xl font-semibold text-white tracking-tight">Health & Preferences</h2>
         </div>
 
@@ -223,7 +223,7 @@ export default function ClinicalIntakeForm({
       {/* Pantry & Budget */}
       <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className={sectionClass}>
         <div className="flex items-center gap-3 mb-6">
-          <div className="p-2 bg-green-500/10 rounded-xl text-green-400"><Home size={20} /></div>
+          <div className="p-2 bg-green-500/10 rounded-xl text-green-400"><MdHome size={20} /></div>
           <h2 className="text-xl font-semibold text-white tracking-tight">Your Kitchen & Budget</h2>
         </div>
 
@@ -270,7 +270,7 @@ export default function ClinicalIntakeForm({
       >
         {loading ? (
           <>
-            <Loader2 className="animate-spin" size={20} />
+            <MdAutorenew className="animate-spin" size={20} />
             Initializing Engine...
           </>
         ) : (

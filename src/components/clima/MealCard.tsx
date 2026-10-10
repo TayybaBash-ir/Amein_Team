@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ChevronRight } from "lucide-react";
+import { MdChevronRight } from "react-icons/md";
 import type { Meal } from "@/lib/mock";
 import { ACCENT } from "@/lib/theme";
 import MealImage from "./MealImage";
@@ -47,7 +47,7 @@ export default function MealCard({
           Portion to eat: {meal.why}
         </p>
         <div className="mt-auto hidden items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-[#4a7c59] opacity-0 transition-opacity group-hover:opacity-100 sm:flex no-print">
-          View details <ChevronRight size={12} strokeWidth={3} />
+          View details <MdChevronRight size={12} strokeWidth={3} />
         </div>
       </div>
     </motion.button>

@@ -1,6 +1,6 @@
 ﻿"use client";
 import { useState, useEffect } from "react";
-import { User, LogOut } from "lucide-react";
+import { MdPerson, MdLogout } from "react-icons/md";
 import { createClient } from "@supabase/supabase-js";
 
 // Initialize a client side supabase instance
@@ -29,7 +29,7 @@ export default function AuthButton() {
         onClick={() => supabase.auth.signOut()}
         className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 hover:bg-red-500/10 border border-white/10 transition-colors text-sm font-bold no-print"
       >
-        <LogOut size={16} /> Sign Out
+        <MdLogout size={16} /> Sign Out
       </button>
     );
   }
@@ -39,7 +39,7 @@ export default function AuthButton() {
       onClick={() => supabase.auth.signInWithOAuth({ provider: "google" })}
       className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white text-black hover:bg-neutral-200 transition-colors text-sm font-bold no-print"
     >
-      <User size={16} /> Login with Google
+      <MdPerson size={16} /> Login with Google
     </button>
   );
 }

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { type PlanResponse } from "@/lib/mock";
-import { Activity, Flame, HeartPulse, Target } from "lucide-react";
+import { MdDirectionsRun, MdLocalFireDepartment, MdFavorite, MdGpsFixed } from "react-icons/md";
 import { ACCENT } from "@/lib/theme";
 
 const MACROS = [
@@ -64,7 +64,7 @@ export default function MacroScorecard({ plan }: { plan: PlanResponse }) {
             </svg>
             <div className="absolute inset-0 grid place-items-center text-center">
               <div>
-                <Flame className="mx-auto text-orange-400" size={18} />
+                <MdLocalFireDepartment className="mx-auto text-orange-400" size={18} />
                 <b className="block text-2xl leading-none text-white">{nutrition.target_calories}</b>
                 <span className="text-[10px] text-neutral-400">kcal/day</span>
               </div>

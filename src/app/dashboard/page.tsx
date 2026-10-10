@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Leaf, ArrowLeft, UtensilsCrossed, User, List, LayoutDashboard, Plus, Sun, Moon } from "lucide-react";
+import { MdEco, MdArrowBack, MdRestaurantMenu, MdPerson, MdList, MdDashboard, MdAdd, MdWbSunny, MdDarkMode } from "react-icons/md";
 import AuthButton from "@/components/clima/AuthButton";
 import { motion, AnimatePresence } from "framer-motion";
 import ClinicalIntakeForm from "@/components/clima/ClinicalIntakeForm";
@@ -91,23 +91,23 @@ const handleGenerate = async (data: IntakeData) => {
         <div className="flex items-center gap-6">
           <Link href="/" className="group flex items-center gap-2">
             <div className="grid h-8 w-8 place-items-center rounded-xl bg-gradient-to-br from-[#4a7c59] to-[#2c4c36] shadow-lg transition-transform group-hover:scale-105">
-              <Leaf size={16} className="text-white" />
+              <MdEco size={16} className="text-white" />
             </div>
             <span className="font-sans text-lg font-bold tracking-tight text-white">ClimaDiet</span>
           </Link>
           <div className="hidden h-6 w-px bg-white/10 sm:block" />
           <div className="hidden sm:flex items-center gap-2">
             <button onClick={() => setActiveTab("generate")} className={navItemClass("generate", "Generate")}>
-              <LayoutDashboard size={16} /> Home
+              <MdDashboard size={16} /> Home
             </button>
             <button onClick={() => setActiveTab("restaurants")} className={navItemClass("restaurants", "Restaurants")}>
-              <UtensilsCrossed size={16} /> Restaurants
+              <MdRestaurantMenu size={16} /> Restaurants
             </button>
             <button onClick={() => setActiveTab("profile")} className={navItemClass("profile", "Profile")}>
-              <User size={16} /> Profile
+              <MdPerson size={16} /> Profile
             </button>
             <Link href="/plans" className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-neutral-400 hover:text-white hover:bg-white/5 transition-colors">
-              <List size={16} /> Saved Plans
+              <MdList size={16} /> Saved Plans
             </Link>
           </div>
         </div>
@@ -118,7 +118,7 @@ const handleGenerate = async (data: IntakeData) => {
             className="p-2 rounded-xl bg-white/5 hover:bg-white/10 text-white transition-colors"
             title="Toggle theme"
           >
-            {theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
+            {theme === "dark" ? <MdWbSunny size={18} /> : <MdDarkMode size={18} />}
           </button>
 
           <AuthButton />
@@ -138,7 +138,7 @@ const handleGenerate = async (data: IntakeData) => {
           {activeTab === "profile" && (
             <motion.div key="profile" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="pt-10 text-center">
               <div className="mx-auto mb-4 grid h-20 w-20 place-items-center rounded-full bg-white/5">
-                <User size={32} className="text-neutral-500" />
+                <MdPerson size={32} className="text-neutral-500" />
               </div>
               <h2 className="text-2xl font-bold text-white mb-2">User Profile</h2>
               <p className="text-neutral-400 mb-6">Connect to Supabase to manage your persistent medical history.</p>
@@ -153,11 +153,11 @@ const handleGenerate = async (data: IntakeData) => {
               
               {!plan || !plan.external_dining || plan.external_dining.length === 0 ? (
                 <div className="text-center py-20 border border-dashed border-white/10 rounded-3xl bg-white/[0.02]">
-                  <UtensilsCrossed size={32} className="mx-auto text-neutral-600 mb-4" />
+                  <MdRestaurantMenu size={32} className="mx-auto text-neutral-600 mb-4" />
                   <h3 className="text-lg font-bold text-neutral-300">No restaurants matched</h3>
                   <p className="text-sm text-neutral-500 mt-2 max-w-sm mx-auto">Generate a new clinical meal plan first. If any meals match our Foodpanda catalog, they will appear here!</p>
                   <button onClick={() => setActiveTab("generate")} className="mt-6 rounded-lg bg-[#4a7c59] px-6 py-2 text-sm font-medium text-white hover:bg-[#3d6849]">
-                    <Plus size={16} className="inline mr-2 -mt-0.5" />
+                    <MdAdd size={16} className="inline mr-2 -mt-0.5" />
                     Generate Plan
                   </button>
                 </div>
@@ -199,7 +199,7 @@ const handleGenerate = async (data: IntakeData) => {
                 <motion.div key="loading" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex min-h-[60vh] flex-col items-center justify-center text-center">
                   <div className="relative mb-8 grid h-24 w-24 place-items-center rounded-full bg-white/5">
                     <div className="absolute inset-0 animate-ping rounded-full border-2 border-[#4a7c59] opacity-20" />
-                    <Leaf size={32} className="animate-pulse text-[#4a7c59]" />
+                    <MdEco size={32} className="animate-pulse text-[#4a7c59]" />
                   </div>
                   <h3 className="editorial-title text-2xl">Computing Clinical Targets</h3>
                   <div className="mt-4 flex flex-col gap-2 text-sm text-neutral-500">

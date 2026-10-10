@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import { type Meal, type PlanResponse } from "@/lib/mock";
 import MealImage from "./MealImage";
 
-import { X } from "lucide-react";
+import { MdClose } from "react-icons/md";
 import { motion } from "framer-motion";
 
 export default function SwapMealModal({
@@ -73,7 +73,7 @@ export default function SwapMealModal({
             <p className="text-neutral-400 text-xs mt-1">Choose an alternative {meal?.slot}</p>
           </div>
           <button onClick={onClose} className="p-2 bg-white/5 rounded-full hover:bg-white/10 transition-colors">
-            <X size={16} />
+            <MdClose size={16} />
           </button>
         </div>
 

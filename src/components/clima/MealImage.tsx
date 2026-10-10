@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Loader2 } from "lucide-react";
+import { MdAutorenew } from "react-icons/md";
 import type { Meal } from "@/lib/mock";
 
 const FALLBACK_URL = "https://image.pollinations.ai/prompt/";
@@ -51,7 +51,7 @@ const sources = Array.from(
           >
             {!loaded && (
               <div className="absolute inset-0 z-10 grid place-items-center bg-black/60">
-                <Loader2 className="h-7 w-7 animate-spin text-lime-300" aria-label="Loading food photo" />
+                <MdAutorenew className="h-7 w-7 animate-spin text-lime-300" aria-label="Loading food photo" />
               </div>
             )}
             {/* eslint-disable-next-line @next/next/no-img-element */}

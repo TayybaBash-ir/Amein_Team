@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { ChevronLeft, ChevronRight, Sparkles, Utensils, Play } from "lucide-react";
+import { MdChevronLeft, MdChevronRight, MdAutoAwesome, MdRestaurant, MdPlayArrow } from "react-icons/md";
 import type { Meal } from "@/lib/mock";
 import { ACCENT } from "@/lib/theme";
 import Ring from "./Ring";
@@ -140,7 +140,7 @@ export default function MealDetail({
               className="flex items-center justify-center gap-2 w-full py-3.5 px-4 rounded-xl font-bold text-zinc-950 shadow-lg transition-all hover:opacity-90 active:scale-[0.98]"
               style={{ backgroundColor: ACCENT }}
             >
-              <Play className="w-5 h-5 fill-current" />
+              <MdPlayArrow className="w-5 h-5 fill-current" />
               <span>Watch Recipe</span>
             </a>
           </div>
@@ -150,7 +150,7 @@ export default function MealDetail({
         {meal.ingredients && meal.ingredients.length > 0 && (
           <div className="mb-6 p-4 rounded-2xl bg-white/5 border border-white/5">
             <div className="flex items-center gap-2 text-xs font-bold tracking-wider text-emerald-400 uppercase mb-3">
-              <Utensils className="w-4 h-4" />
+              <MdRestaurant className="w-4 h-4" />
               <span>Ingredients</span>
             </div>
             <div className="flex flex-wrap gap-2">
@@ -167,7 +167,7 @@ export default function MealDetail({
         {meal.why && (
           <div className="mb-6 p-4 rounded-2xl bg-white/5 border border-white/5">
             <div className="flex items-center gap-2 text-xs font-bold tracking-wider text-emerald-400 uppercase mb-2">
-              <Sparkles className="w-4 h-4" />
+              <MdAutoAwesome className="w-4 h-4" />
               <span>Why This Meal</span>
             </div>
             <p className="text-sm leading-relaxed text-zinc-300">{meal.why}</p>
@@ -181,7 +181,7 @@ export default function MealDetail({
               onClick={onPrev}
               className="flex items-center gap-1 text-sm font-medium px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-zinc-300 transition"
             >
-              <ChevronLeft className="w-4 h-4" />
+              <MdChevronLeft className="w-4 h-4" />
               Previous
             </button>
           ) : <div />}
@@ -199,7 +199,7 @@ export default function MealDetail({
               style={{ backgroundColor: ACCENT }}
             >
               Next
-              <ChevronRight className="w-4 h-4" />
+              <MdChevronRight className="w-4 h-4" />
             </button>
           ) : <div />}
         </div>

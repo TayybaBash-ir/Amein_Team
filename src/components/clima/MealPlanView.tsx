@@ -2,7 +2,7 @@
 import { useState, useCallback } from "react";
 import { type PlanResponse, type Meal } from "@/lib/mock";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronRight, Printer, Share, RefreshCw } from "lucide-react";
+import { MdChevronRight, MdPrint, MdShare, MdRefresh } from "react-icons/md";
 import { ACCENT } from "@/lib/theme";
 import MealImage from "./MealImage";
 import MealDetail from "./MealDetail";
@@ -65,7 +65,7 @@ export default function MealPlanView({ plan: initialPlan }: { plan: PlanResponse
               onClick={() => window.print()}
               className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 transition-colors text-sm font-bold"
             >
-              <Printer size={16} /> Download PDF
+              <MdPrint size={16} /> Download PDF
             </button>
             <button 
               onClick={async () => {
@@ -89,7 +89,7 @@ export default function MealPlanView({ plan: initialPlan }: { plan: PlanResponse
               }}
               className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white text-black hover:bg-neutral-200 transition-colors text-sm font-bold"
             >
-              <Share size={16} /> Save & Share
+              <MdShare size={16} /> Save & Share
             </button>
           </div>
         </div>
@@ -137,7 +137,7 @@ export default function MealPlanView({ plan: initialPlan }: { plan: PlanResponse
                       e.stopPropagation();
                       setSwapMealInfo({meal, dayIdx: selectedDay, mealIdx: idx});
                     }}>
-                    <RefreshCw size={14} />
+                    <MdRefresh size={14} />
                   </div>
                   <div className="absolute left-3 top-3 rounded-full border border-white/10 bg-black/70 px-3 py-1 text-xs font-bold uppercase tracking-wider text-white backdrop-blur">
                     {meal.slot}
@@ -151,7 +151,7 @@ export default function MealPlanView({ plan: initialPlan }: { plan: PlanResponse
                     {meal.why}
                   </p>
                   <div className="mt-auto flex items-center border-t border-white/10 pt-3 text-xs font-bold uppercase tracking-wider transition-opacity group-hover:opacity-80" style={{ color: ACCENT }}>
-                    View details <ChevronRight size={14} className="ml-1" />
+                    View details <MdChevronRight size={14} className="ml-1" />
                   </div>
                 </div>
               </motion.div>
