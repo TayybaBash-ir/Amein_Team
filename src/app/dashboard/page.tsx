@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Sparkles, ArrowLeft, Thermometer, ShieldCheck } from 'lucide-react';
 import ClinicalIntakeForm from '@/components/clima/ClinicalIntakeForm';
 
 export default function DashboardPage() {
@@ -30,7 +29,6 @@ export default function DashboardPage() {
   const handleGeneratePlan = async (formData: any) => {
     setLoading(true);
     try {
-      // Execute API payload and meal generation logic
       const response = await fetch('/api/generate-plan', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -45,13 +43,19 @@ export default function DashboardPage() {
     }
   };
 
+  const handleInputChange = () => {
+    // Optional callback for input state changes
+  };
+
   return (
     <div className="min-h-screen bg-[#1A1D1E] text-slate-100">
       {/* Header Navigation */}
       <nav className="sticky top-0 z-50 flex items-center justify-between border-b border-white/[0.08] bg-[#1A1D1E]/85 px-4 py-3 backdrop-blur-xl sm:px-8">
         <div className="flex items-center gap-4">
           <Link href="/" className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors">
-            <ArrowLeft className="w-5 h-5" />
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
             <span className="text-sm font-medium">Back</span>
           </Link>
         </div>
@@ -68,13 +72,15 @@ export default function DashboardPage() {
           </p>
           {patientSummary && (
             <div className="mt-3 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-medium">
-              <ShieldCheck className="w-3.5 h-3.5" />
+              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+              </svg>
               <span>{patientSummary}</span>
             </div>
           )}
         </div>
 
-        {/* Loading Screen vs Intake Form */}
+        {/* Single-Line Loading Screen vs Intake Form */}
         {loading ? (
           <div className="flex flex-col items-center justify-center p-16 text-center bg-slate-900/50 rounded-2xl border border-white/10">
             <div className="w-12 h-12 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin mb-4" />
@@ -87,7 +93,11 @@ export default function DashboardPage() {
           </div>
         ) : (
           <div className="bg-slate-900/40 rounded-2xl border border-white/10 p-6 sm:p-8">
-            <ClinicalIntakeForm onSubmit={handleGeneratePlan} />
+            <ClinicalIntakeForm 
+              onSubmit={handleGeneratePlan} 
+              loading={loading} 
+              onInputChange={handleInputChange} 
+            />
           </div>
         )}
       </main>
