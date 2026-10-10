@@ -66,6 +66,23 @@ export default function PlansPage() {
                   Generated on {new Date(selectedPlan.date).toLocaleDateString()} at {new Date(selectedPlan.date).toLocaleTimeString()}
                 </p>
               </div>
+              <button 
+                onClick={() => {
+                  if (typeof window !== "undefined") {
+                    localStorage.setItem("clima_active_plan", JSON.stringify({
+                      plan: selectedPlan.plan,
+                      startDate: new Date().toISOString(),
+                      hydrationLog: 0,
+                      lastHydrationDate: new Date().toISOString().split('T')[0]
+                    }));
+                    alert("This plan is now your Active Plan!");
+                    window.location.href = "/dashboard";
+                  }
+                }}
+                className="ml-auto bg-brand hover:bg-brand-dark text-white px-4 py-2 rounded-xl text-sm font-bold shadow-lg shadow-brand/20 transition-all active:scale-95"
+              >
+                Track this plan &rarr;
+              </button>
             </div>
             {/* Note: Deliberately omitting MacroScorecard as requested */}
             <MealPlanView plan={selectedPlan.plan} />

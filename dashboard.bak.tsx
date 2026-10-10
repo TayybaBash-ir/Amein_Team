@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect } from "react";
 import { createClient } from "@supabase/supabase-js";
@@ -17,8 +17,8 @@ import { RestaurantRecommendationCard } from "@/components/clima/RestaurantRecom
 import { useRouter } from "next/navigation";
 import { type PlanResponse, type IntakeData } from "@/lib/mock";
 import { ACCENT } from "@/lib/theme";
-import DashboardBento from "@/components/clima/DashboardBento";
-
+import HomeHero from "@/components/clima/HomeHero";
+import TodayMealTile from "@/components/clima/TodayMealTile";
 
 type ScreenStep = "home" | "input" | "loading" | "results";
 type AppTab = "generate" | "restaurants";
@@ -106,27 +106,6 @@ export default function Dashboard() {
       document.documentElement.classList.remove("light");
     }
   }, [theme]);
-
-  useEffect(() => {
-    let touchStartX = 0;
-    let touchEndX = 0;
-    const handleTouchStart = (e: TouchEvent) => { touchStartX = e.changedTouches[0].screenX; };
-    const handleTouchEnd = (e: TouchEvent) => { 
-      touchEndX = e.changedTouches[0].screenX; 
-      if (touchEndX < touchStartX - 70) {
-        if (step === "home" && activeTab === "generate") setActiveTab("restaurants");
-      }
-      if (touchEndX > touchStartX + 70) {
-        if (step === "home" && activeTab === "restaurants") setActiveTab("generate");
-      }
-    };
-    window.addEventListener("touchstart", handleTouchStart, { passive: true });
-    window.addEventListener("touchend", handleTouchEnd, { passive: true });
-    return () => {
-      window.removeEventListener("touchstart", handleTouchStart);
-      window.removeEventListener("touchend", handleTouchEnd);
-    };
-  }, [step, activeTab]);
 
   const [savedProfile, setSavedProfile] = useState<Record<string, any> | null>(null);
 
@@ -327,11 +306,11 @@ export default function Dashboard() {
           >
             {theme === "dark" ? <MdWbSunny size={18} /> : <MdDarkMode size={18} />}
           </button>
-          
+          <AuthButton />
         </div>
       </nav>
 
-      <div className="fixed bottom-0 left-0 right-0 z-50 flex sm:hidden justify-around p-3 border-t border-border bg-background/90 backdrop-blur-xl gap-2 pb-safe print:hidden shadow-[0_-10px_40px_rgba(0,0,0,0.05)]">
+      <div className="flex sm:hidden justify-around p-3 border-b border-border bg-background gap-2 print:hidden scrollbar-hide">
           {step !== "home" && activeTab === "generate" && (
             <button onClick={() => setStep("home")} className="flex items-center justify-center p-2 rounded-lg text-muted-foreground hover:text-foreground">
               <MdArrowBack size={24} />
@@ -351,10 +330,10 @@ export default function Dashboard() {
           </Link>
         </div>
 
-      <main className="mx-auto max-w-5xl p-4 sm:p-8 pb-24 sm:pb-8">
+      <main className="mx-auto max-w-5xl p-4 sm:p-8">
         {(savedProfile?.is_post_discharge || savedProfile?.spice_tolerance === "Bland") && (
           <div role="status" className="mb-6 flex items-center gap-3 rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm font-semibold text-amber-200">
-            <span aria-hidden="true">🏥</span>
+            <span aria-hidden="true">ðŸ¥</span>
             <span>Active Protocol: Post-Discharge Recovery (Bland & Soft Foods Enforced)</span>
           </div>
         )}
@@ -400,13 +379,15 @@ export default function Dashboard() {
           {activeTab === "generate" && (
             <motion.div key="generate" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
               {step === "home" && (
-                <div className="w-full">
-                  <DashboardBento 
-                    onAction={handleHeroAction} 
-                    activePlan={activePlan} 
-                    hydrationLog={hydrationLog} 
-                    onHydrate={handleHydrate} 
-                  />
+                <div className="flex flex-col lg:flex-row gap-6 items-start justify-center w-full">
+                  <div className="flex-1 w-full max-w-2xl mx-auto">
+                    <HomeHero onAction={handleHeroAction} />
+                  </div>
+                  {activePlan && (
+                    <div className="w-full lg:w-[400px] shrink-0 mt-8 lg:mt-24">
+                      <TodayMealTile activePlan={activePlan} onHydrate={handleHydrate} hydrationLog={hydrationLog} />
+                    </div>
+                  )}
                 </div>
               )}
 
@@ -475,3 +456,4 @@ export default function Dashboard() {
     </div>
   );
 }
+
