@@ -7,6 +7,12 @@ import { ACCENT } from "@/lib/theme";
 const CONDITIONS_PRESET = ["Diabetes", "Hypertension", "PCOS"];
 const RESTRICTIONS_PRESET = ["Halal", "Vegan", "Low Sodium"];
 const ALLERGIES_PRESET = ["Peanuts", "Shellfish", "Dairy"];
+const PANTRY_GROUPS = {
+  Proteins: ["Chicken", "Eggs", "Fish", "Beans", "Lentils", "Tofu"],
+  Veggies: ["Spinach", "Tomatoes", "Onions", "Potatoes", "Bell peppers", "Carrots"],
+  "Carbs & grains": ["Rice", "Roti", "Bread", "Oats", "Pasta"],
+  "Dairy & pantry staples": ["Milk", "Yogurt", "Cheese", "Oil", "Salt", "Pepper"],
+} as const;
 
 export default function ClinicalIntakeForm({
   onSubmit,
@@ -28,6 +34,8 @@ export default function ClinicalIntakeForm({
     conditions: [],
     allergies: [],
     dietary_restrictions: [],
+    pantry_items: [],
+    strict_pantry_mode: false,
     allow_external_dining: true,
     preferences: {
       cuisine: "Balanced Mix",
@@ -40,6 +48,7 @@ export default function ClinicalIntakeForm({
   const [customCond, setCustomCond] = useState("");
   const [customDiet, setCustomDiet] = useState("");
   const [customAllergy, setCustomAllergy] = useState("");
+  const [customPantryItem, setCustomPantryItem] = useState("");
 
   useEffect(() => {
     const saved = localStorage.getItem("patientProfile");
@@ -49,6 +58,8 @@ export default function ClinicalIntakeForm({
         if (parsed) {
           setD({
             ...parsed,
+            pantry_items: Array.isArray(parsed.pantry_items) ? parsed.pantry_items : [],
+            strict_pantry_mode: Boolean(parsed.strict_pantry_mode),
             allow_external_dining: Boolean(parsed.allow_external_dining),
           });
         }
@@ -84,6 +95,20 @@ export default function ClinicalIntakeForm({
     return value && !items.includes(value) ? [...items, value] : items;
   };
 
+  const addPantryItem = (value: string) => {
+    const item = value.trim();
+    if (!item || (d.pantry_items || []).some((existing) => existing.toLowerCase() === item.toLowerCase())) return;
+    set("pantry_items", [...(d.pantry_items || []), item]);
+    setCustomPantryItem("");
+  };
+
+  const hasPantryProtein = (d.pantry_items || []).some((item) =>
+    /chicken|egg|fish|bean|lentil|tofu|beef|meat|yogurt|cheese/i.test(item),
+  );
+  const hasPantryCarbOrVeg = (d.pantry_items || []).some((item) =>
+    /rice|roti|bread|oat|pasta|grain|spinach|tomato|onion|potato|pepper|carrot|vegetable|veggie/i.test(item),
+  );
+
   return (
     <form
       onSubmit={(e) => {
@@ -93,15 +118,73 @@ export default function ClinicalIntakeForm({
           conditions: includePending(d.conditions, customCond),
           dietary_restrictions: includePending(d.dietary_restrictions, customDiet),
           allergies: includePending(d.allergies, customAllergy),
+          pantry_items: includePending(d.pantry_items || [], customPantryItem),
+          strict_pantry_mode: Boolean(d.strict_pantry_mode),
         };
         setD(submitted);
         setCustomCond("");
         setCustomDiet("");
         setCustomAllergy("");
+        setCustomPantryItem("");
         onSubmit(submitted);
       }}
       className="flex flex-col gap-3 sm:gap-5 pb-4 sm:pb-8"
     >
+      <section className="rounded-2xl sm:rounded-3xl border border-white/[0.08] bg-[#24282a] p-3 sm:p-5 shadow-md">
+        <h3 className="mb-1 border-b border-white/[0.06] pb-1.5 text-xs sm:text-sm font-bold tracking-wide text-white">
+          PANTRY &amp; INGREDIENTS (OPTIONAL)
+        </h3>
+        <p className="mb-3 text-[11px] leading-relaxed text-neutral-400 sm:text-xs">
+          Have ingredients at home? Add them here to use what you already have. Otherwise, leave blank to use our full recipe library.
+        </p>
+        <div className="space-y-3">
+          {Object.entries(PANTRY_GROUPS).map(([group, items]) => (
+            <div key={group}>
+              <p className="mb-1.5 text-[10px] font-semibold text-neutral-300">{group}</p>
+              <div className="flex flex-wrap gap-1.5">
+                {items.map((item) => {
+                  const selected = (d.pantry_items || []).includes(item);
+                  return (
+                    <button key={item} type="button" aria-pressed={selected}
+                      onClick={() => set("pantry_items", selected ? (d.pantry_items || []).filter((x) => x !== item) : [...(d.pantry_items || []), item])}
+                      className={`rounded-full border px-2.5 py-1 text-[10px] transition ${selected ? "border-emerald-400/60 bg-emerald-400/15 text-emerald-200" : "border-white/10 bg-white/[0.03] text-neutral-400 hover:text-white"}`}>
+                      {item}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
+        </div>
+        {(d.pantry_items || []).length > 0 && (
+          <div className="mt-3 flex flex-wrap gap-1.5">
+            {(d.pantry_items || []).filter((item) => !Object.values(PANTRY_GROUPS).flat().includes(item as never)).map((item) => (
+              <button key={item} type="button" onClick={() => set("pantry_items", (d.pantry_items || []).filter((x) => x !== item))}
+                className="rounded-full border border-sky-400/30 bg-sky-400/10 px-2.5 py-1 text-[10px] text-sky-200">
+                {item} <span aria-hidden="true">×</span>
+              </button>
+            ))}
+          </div>
+        )}
+        <div className="mt-3 flex gap-2">
+          <input value={customPantryItem} onChange={(e) => setCustomPantryItem(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addPantryItem(customPantryItem))}
+            placeholder="Add Ingredient" aria-label="Add a custom pantry ingredient" className="clinical-input min-w-0 flex-1 py-2 text-xs" />
+          <button type="button" onClick={() => addPantryItem(customPantryItem)} className="rounded-xl border border-white/10 bg-white/[0.05] px-3 text-neutral-300 hover:text-white">
+            <Plus size={14} /><span className="sr-only">Add ingredient</span>
+          </button>
+        </div>
+        <label className="mt-3 flex cursor-pointer items-center gap-2 text-[11px] text-neutral-300 sm:text-xs">
+          <input type="checkbox" checked={Boolean(d.strict_pantry_mode)} onChange={(e) => set("strict_pantry_mode", e.target.checked)} className="accent-emerald-400" />
+          Strict pantry validation (reject any plan containing an unlisted ingredient)
+        </label>
+        {(d.pantry_items || []).length > 0 && d.strict_pantry_mode && (!hasPantryProtein || !hasPantryCarbOrVeg) && (
+          <p role="status" className="mt-2 rounded-lg bg-amber-400/10 p-2 text-[11px] leading-relaxed text-amber-200">
+            To build full meals using only your pantry, add at least 1 protein and 1 carb/veggie source.
+          </p>
+        )}
+      </section>
+
       {/* 1. PATIENT PROFILE */}
       <section className="rounded-2xl sm:rounded-3xl border border-white/[0.08] bg-[#24282a] p-3 sm:p-5 shadow-md">
         <h3 className="mb-2 sm:mb-3 border-b border-white/[0.06] pb-1.5 text-xs sm:text-sm font-bold tracking-wide text-white">

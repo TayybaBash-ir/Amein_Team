@@ -19,6 +19,8 @@ def analyze_clinical_conditions(
     goal: str,
     goal_amount: str,
     avg_temp: Optional[float] = None,
+    pantry_items: Optional[List[str]] = None,
+    forbidden_items: Optional[List[str]] = None,
 ) -> ClinicalRules:
     fallback = ClinicalRules(
         forbidden_ingredients=[],
@@ -28,32 +30,52 @@ def analyze_clinical_conditions(
         goal_advice=f"[Fast Fallback] Macros tailored to your target of {goal} {goal_amount}."
     )
     
-    prompt = f'''
-    You are an expert clinical nutritionist AI. Evaluate these patient constraints and GOALS:
-    Conditions: {conditions}
-    Allergies: {allergies}
-    Dietary Restrictions: {diet}
-    Primary Goal: {goal}
-    Goal Target: {goal_amount}
-    Local 7-Day Average Temp: {avg_temp} C
-    
-    Analyze the exact wording of the Goal.
-    If they say "lose 5kg and gain 2kg muscle", they want body recomposition -> slight deficit (-200) and high protein.
-    If they just want to lose weight -> standard deficit (-500) and high protein.
-    If they want to gain mass -> surplus (+300 to +500).
-    Output the exact caloric_modifier integer.
-    
-    Also apply medical rules (e.g. forbid high sodium if hypertension, forbid gluten if celiac).
-    
-    Return EXACTLY AND ONLY this JSON structure (no markdown blocks):
-    {{
-      "forbidden_ingredients": ["str"],
-      "forced_climate": "warming | cooling | null",
-      "macro_tweaks": {{"protein": "high", "carbs": "low"}},
-      "caloric_modifier": -500,
-      "goal_advice": "str"
-    }}
-    '''
+    selected_pantry = [item.strip() for item in (pantry_items or []) if item.strip()]
+    forbidden_list = [item for item in (forbidden_items or []) if item]
+    pantry_constraint = ""
+    if selected_pantry:
+        pantry_constraint = (
+            "STRICT NEGATIVE CONSTRAINT (FORBIDDEN INGREDIENTS):\n"
+            "The following ingredients are STRICTLY FORBIDDEN from appearing in ANY meal or dish title:\n["
+            + ", ".join(forbidden_list)
+            + "].\nDO NOT generate or include any dish with 'chicken' in the name or ingredient list "
+            "(e.g., No Chicken Karahi, No Chicken Club Sandwich, No Chicken Curry).\n"
+            "ALLOWED PROTEINS ONLY: Use ONLY ["
+            + ", ".join(selected_pantry)
+            + "] as your protein sources for Lunch and Dinner."
+        )
+
+    prompt_lines = [
+        "You are an expert clinical nutritionist AI. Evaluate these patient constraints and GOALS:",
+        f"Conditions: {conditions}",
+        f"Allergies: {allergies}",
+        f"Dietary Restrictions: {diet}",
+        f"Primary Goal: {goal}",
+        f"Goal Target: {goal_amount}",
+        f"Local 7-Day Average Temp: {avg_temp} C",
+    ]
+    if pantry_constraint:
+        prompt_lines.append(pantry_constraint)
+    prompt_lines.extend([
+        "",
+        "Analyze the exact wording of the Goal.",
+        'If they say "lose 5kg and gain 2kg muscle", they want body recomposition -> slight deficit (-200) and high protein.',
+        "If they just want to lose weight -> standard deficit (-500) and high protein.",
+        "If they want to gain mass -> surplus (+300 to +500).",
+        "Output the exact caloric_modifier integer.",
+        "",
+        "Also apply medical rules (e.g. forbid high sodium if hypertension, forbid gluten if celiac).",
+        "",
+        "Return EXACTLY AND ONLY this JSON structure (no markdown blocks):",
+        "{",
+        '  "forbidden_ingredients": ["str"],',
+        '  "forced_climate": "warming | cooling | null",',
+        '  "macro_tweaks": {"protein": "high", "carbs": "low"},',
+        '  "caloric_modifier": -500,',
+        '  "goal_advice": "str"',
+        "}",
+    ])
+    prompt = "\n".join(prompt_lines)
     
     # 1. Try Groq (Super fast, 2.5s timeout)
     groq_key = os.environ.get("GROQ_API_KEY")

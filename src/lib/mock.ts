@@ -41,6 +41,8 @@ export type PatientIntake = {
   goal: string; goal_amount: string; dietary_restrictions: string[];
   city?: string;
   country?: string;
+  pantry_items?: string[];
+  strict_pantry_mode?: boolean;
   allow_external_dining?: boolean;
   preferences?: { cuisine: string; carb: string; snack: string; strictness: string; };
 };

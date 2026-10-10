@@ -27,6 +27,8 @@ class PatientIntake(BaseModel):
         default=False,
         description="Include optional external dining recommendations such as Foodpanda",
     )
+    pantry_items: Optional[List[str]] = Field(default=None, description="Ingredients available at home")
+    strict_pantry_mode: Optional[bool] = Field(default=False, description="Restrict meals to pantry ingredients and household staples")
 
 # --- Output Models for LLM Structured Output ---
 
