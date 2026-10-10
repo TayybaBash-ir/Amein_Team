@@ -630,11 +630,12 @@ def health_check():
     return {"status": "ok"}
 
 @app.post("/api/interaction")
-def log_interaction(log: InteractionLog):
+def log_interaction(log: dict):
+    record = log
     import time
     import json
     import os
-    record = log.dict()
+
     record['timestamp'] = time.time()
     
     # 1. Supabase (Persistent)
