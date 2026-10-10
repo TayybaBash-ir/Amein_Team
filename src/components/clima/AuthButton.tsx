@@ -36,7 +36,7 @@ export default function AuthButton() {
 
   return (
     <button 
-      onClick={() => supabase.auth.signInWithOAuth({ provider: "google" })}
+      onClick={() => supabase.auth.signInWithOAuth({ provider: "google", options: { redirectTo: `${window.location.origin}/dashboard` } })}
       className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white text-black hover:bg-neutral-200 transition-colors text-sm font-bold no-print"
     >
       <MdPerson size={16} /> Login with Google
