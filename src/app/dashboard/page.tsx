@@ -207,6 +207,10 @@ function DashboardContent() {
         recovery_type: data.recovery_type || "None",
         spice_tolerance: data.spice_tolerance || "Normal",
         pantry_items: Array.isArray(data.pantry_items) ? data.pantry_items : [],
+        pantry_input: data.pantry_input || "",
+        weekly_budget: data.weekly_budget || "No Limit",
+        acute_illness: data.acute_illness || "",
+        temporary_aversions: data.temporary_aversions || "",
         strict_pantry_mode: Boolean(data.strict_pantry_mode),
         city: data.city || medicalProfile.city || "Lahore",
         country: data.country || medicalProfile.country || "Pakistan",
@@ -234,8 +238,12 @@ function DashboardContent() {
           conditions: updatedProfile.conditions,
           allergies: updatedProfile.allergies,
           dietary_restrictions: updatedProfile.dietary_restrictions,
-            metabolic_modifier: (updatedProfile as any).metabolic_modifier || 1.0,
+          metabolic_modifier: (updatedProfile as any).metabolic_modifier || 1.0,
           medical_history_notes: updatedProfile.medical_history_notes,
+          acute_illness: data.acute_illness || "",
+          temporary_aversions: data.temporary_aversions || "",
+          weekly_budget: data.weekly_budget || "No Limit",
+          pantry_input: data.pantry_input || "",
           is_post_discharge: updatedProfile.is_post_discharge,
           recovery_type: updatedProfile.recovery_type,
           spice_tolerance: updatedProfile.spice_tolerance,
@@ -246,17 +254,29 @@ function DashboardContent() {
         }),
       });
 
+      const responseText = await response.text();
+      let responseData: any = null;
+      try {
+        responseData = responseText ? JSON.parse(responseText) : null;
+      } catch { /* Non-JSON upstream errors get a readable message below. */ }
+
       if (!response.ok) {
-        const errData = await response.json();
-        const errorMessage = typeof errData.detail === "string" 
+        const errData = responseData;
+        const errorMessage = typeof errData?.detail === "string"
           ? errData.detail 
-          : Array.isArray(errData.detail)
+          : Array.isArray(errData?.detail)
           ? errData.detail.map((e: any) => `${e.loc?.join(".")}: ${e.msg}`).join(", ")
-          : "Failed to generate plan from backend.";
+          : response.status >= 500
+          ? "The plan service is temporarily unavailable. Please try again in a moment."
+          : `Plan request failed (HTTP ${response.status}). Please review your details and try again.`;
         throw new Error(errorMessage);
       }
 
-      const result: PlanResponse = await response.json();
+      if (!responseData?.meal_plan?.days || !Array.isArray(responseData.meal_plan.days)) {
+        throw new Error("The plan service returned an invalid response. Please try again in a moment.");
+      }
+
+      const result: PlanResponse = responseData;
       setPlan(result);
       
       // Save to past plans

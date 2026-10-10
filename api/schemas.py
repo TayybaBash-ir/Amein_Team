@@ -31,8 +31,8 @@ class PatientIntake(BaseModel):
     country: Optional[str] = "Pakistan"
     start_date: Optional[str] = Field(default=None, description="Start date YYYY-MM-DD")
     activity: str = "sedentary"
-    acute_illness: Optional[str]
-    temporary_aversions: Optional[str] = Field(default=None, description="Foods they want to avoid this week") = Field(default=None, description='e.g. flu, cough, sore throat')
+    acute_illness: Optional[str] = Field(default=None, description="Current symptoms, such as flu, cough, or sore throat")
+    temporary_aversions: Optional[str] = Field(default=None, description="Foods the patient wants to avoid this week")
     weekly_budget: Optional[str] = Field(default='No Limit', description='e.g., No Limit, Under 5,000 PKR, 5,000 - 10,000 PKR')
     pantry_input: Optional[str] = Field(default=None, description="Natural language description of pantry items")
     allow_external_dining: bool = Field(

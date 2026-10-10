@@ -2,13 +2,13 @@ from __future__ import annotations
 from typing import Any, Dict
 
 def get_nutritional_targets(
-    plan_mode: str = "standard",
-    metabolic_modifier: float = 1.0,
-    macro_tweak: str = "",
     weight_kg: float,
     height_cm: float,
     age: int,
     gender: str,
+    plan_mode: str = "standard",
+    metabolic_modifier: float = 1.0,
+    macro_tweak: str = "",
     activity_level: str = "moderate",
     goal: str = "maintain",
 ) -> Dict[str, Any]:

@@ -1,7 +1,7 @@
 import os
 import json
 from typing import Dict, Any
-from groq import Groq
+import requests
 
 def analyze_feedback(feedback_text: str, goal: str, weight_change: float) -> Dict[str, Any]:
     api_key = os.environ.get("GROQ_API_KEY")
@@ -12,8 +12,6 @@ def analyze_feedback(feedback_text: str, goal: str, weight_change: float) -> Dic
             "explanation": "No AI key configured. Defaults kept."
         }
         
-    client = Groq(api_key=api_key)
-    
     prompt = f"""You are an advanced reinforcement learning surrogate model for a clinical nutrition app.
 The user's goal is: {goal}. Their weight changed by {weight_change:.2f} kg this week (Negative means they lost weight, positive means they gained).
 Their free-text feedback is: "{feedback_text}"
@@ -35,14 +33,26 @@ For macro_tweak, choose EXACTLY ONE of: "higher_protein", "higher_fat", "lower_c
 For recommended_tdee_multiplier, keep it between 0.85 and 1.15. 1.0 means no change."""
 
     try:
-        completion = client.chat.completions.create(
-            model="llama-3.1-8b-instant",
-            messages=[{"role": "user", "content": prompt}],
-            temperature=0.0,
-            response_format={"type": "json_object"}
+        response = requests.post(
+            "https://api.groq.com/openai/v1/chat/completions",
+            headers={"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"},
+            json={
+                "model": "llama-3.1-8b-instant",
+                "messages": [{"role": "user", "content": prompt}],
+                "temperature": 0.0,
+                "response_format": {"type": "json_object"},
+            },
+            timeout=12,
         )
-        content = completion.choices[0].message.content
-        return json.loads(content)
+        response.raise_for_status()
+        content = response.json()["choices"][0]["message"]["content"]
+        result = json.loads(content)
+        multiplier = float(result.get("recommended_tdee_multiplier", 1.0))
+        if not 0.85 <= multiplier <= 1.15:
+            result["recommended_tdee_multiplier"] = max(0.85, min(1.15, multiplier))
+        if result.get("macro_tweak") not in {"higher_protein", "higher_fat", "lower_carb", "higher_carb", "none"}:
+            result["macro_tweak"] = "none"
+        return result
     except Exception as e:
         print("ML Feedback Error:", e)
         return {

@@ -19,12 +19,14 @@ export default function CheckInModal({
   const [feedbackText, setFeedbackText] = useState("");
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<any>(null);
+  const [error, setError] = useState("");
 
   if (!isOpen) return null;
 
   const handleSubmit = async () => {
     if (!feedbackText.trim()) return;
     setLoading(true);
+    setError("");
     try {
       const res = await fetch("/api/checkin", {
         method: "POST",
@@ -35,10 +37,20 @@ export default function CheckInModal({
           new_weight: weight
         })
       });
-      const data = await res.json();
+      const text = await res.text();
+      let data: any = null;
+      try { data = text ? JSON.parse(text) : null; } catch { /* Give a readable error for HTML or malformed responses. */ }
+      if (!res.ok) {
+        throw new Error(typeof data?.detail === "string"
+          ? data.detail
+          : "The check-in service is temporarily unavailable. Please try again.");
+      }
+      if (typeof data?.new_modifier !== "number") {
+        throw new Error(data?.error || "The check-in service returned an invalid response. Please try again.");
+      }
       setResult(data);
     } catch (e) {
-      console.error(e);
+      setError(e instanceof Error ? e.message : "Could not connect to the check-in service. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -69,6 +81,8 @@ export default function CheckInModal({
               <p className="text-sm text-muted-foreground">
                 How did this week's plan feel? Be completely honest—were you starving by 3 PM? Did you feel exhausted? Did you stick to it?
               </p>
+
+              {error && <p role="alert" className="rounded-xl border border-red-500/20 bg-red-500/10 p-3 text-sm text-red-500">{error}</p>}
 
               <div>
                 <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-muted-foreground">
