@@ -25,7 +25,7 @@ type AppTab = "generate" | "restaurants";
 export default function Dashboard() {
   const router = useRouter();
   
-  const [user, setUser] = useState(undefined);
+  const [user, setUser] = useState<any>(undefined);
   const [hasProfile, setHasProfile] = useState(true);
 
   useEffect(() => {
