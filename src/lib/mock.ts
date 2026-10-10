@@ -44,7 +44,8 @@ export type PatientIntake = {
   country?: string;
   pantry_items?: string[];
   strict_pantry_mode?: boolean;
-  weekly_budget?: string;
+  acute_illness?: string;
+    weekly_budget?: string;
     allow_external_dining?: boolean;
   preferences?: { cuisine: string; carb: string; snack: string; strictness: string; };
 };

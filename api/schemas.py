@@ -23,6 +23,7 @@ class PatientIntake(BaseModel):
     city: str = Field(default="Unknown", description="City for weather forecast")
     country: str = Field(default="Unknown", description="Country for weather forecast")
     start_date: Optional[str] = Field(default=None, description="Start date YYYY-MM-DD")
+    acute_illness: Optional[str] = Field(default=None, description='e.g. flu, cough, sore throat'),
     weekly_budget: Optional[str] = Field(default='No Limit', description='e.g., No Limit, Under 5,000 PKR, 5,000 - 10,000 PKR')
     allow_external_dining: bool = Field(
         default=False,

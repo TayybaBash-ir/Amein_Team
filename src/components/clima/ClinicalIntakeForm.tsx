@@ -32,6 +32,7 @@ export default function ClinicalIntakeForm({
     goal: "Lose weight",
     goal_amount: "5kg",
     weekly_budget: "No Limit",
+      acute_illness: "",
     conditions: [],
     allergies: [],
     dietary_restrictions: [],

@@ -344,6 +344,7 @@ def generate_meal_plan(patient: PatientIntake):
         
     dietary_restrictions = list(patient.dietary_restrictions or [])
 
+    forbidden_items.extend(clinical_rules.forbidden_ingredients)
     # Parse weekly budget into a daily limit
     daily_budget = None
     if hasattr(intake, 'weekly_budget') and intake.weekly_budget:
@@ -361,6 +362,7 @@ def generate_meal_plan(patient: PatientIntake):
         pantry_items=pantry_items,
         strict_pantry_mode=bool(patient.strict_pantry_mode),
         forbidden_items=forbidden_items,
+        acute_illness=getattr(intake, "acute_illness", None)
     )
     print("MEAT/MAIN POOL DISHES:", [d.get('name') for d in categorized.get('meat', [])])
 
@@ -544,6 +546,7 @@ def swap_meal(req: SwapRequest):
     pantry_items = [item.strip() for item in (req.patient.pantry_items or []) if item.strip()]
     forbidden_items = _forbidden_proteins(pantry_items)
 
+    forbidden_items.extend(clinical_rules.forbidden_ingredients)
     # Parse weekly budget into a daily limit
     daily_budget = None
     if hasattr(intake, 'weekly_budget') and intake.weekly_budget:
@@ -561,6 +564,7 @@ def swap_meal(req: SwapRequest):
         pantry_items=pantry_items,
         strict_pantry_mode=bool(req.patient.strict_pantry_mode),
         forbidden_items=forbidden_items,
+        acute_illness=getattr(intake, "acute_illness", None)
     )
     
     target_macros = {

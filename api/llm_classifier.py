@@ -10,6 +10,7 @@ class ClinicalRules(BaseModel):
     forced_climate: Optional[str] = Field(description="If the patient has a disease requiring warming/cooling foods (e.g., flu requires warming), output 'warming' or 'cooling'. Otherwise null.")
     macro_tweaks: Dict[str, str] = Field(description="Instructions for macro ratio adjustments, e.g. {'carbs': 'low', 'protein': 'high'}")
     caloric_modifier: int = Field(description="Exact integer of calories to add or subtract from TDEE. e.g. -500 for standard weight loss, +300 for bulking, -200 for body recomposition (lose fat gain muscle), 0 for maintenance.")
+    illness_advice: Optional[str] = Field(description="Strict dietary constraints and healing foods advice if the user is ill (e.g., 'Avoid cold dairy and fried food. Focus on warm soups.'). Otherwise null.")
     goal_advice: str = Field(description="A brief 1-sentence clinical advice explaining how the plan achieves their specific weight/health goal.")
 
 def analyze_clinical_conditions(
@@ -19,6 +20,7 @@ def analyze_clinical_conditions(
     goal: str,
     goal_amount: str,
     avg_temp: Optional[float] = None,
+    acute_illness: Optional[str] = None,
     pantry_items: Optional[List[str]] = None,
     forbidden_items: Optional[List[str]] = None,
 ) -> ClinicalRules:
@@ -26,6 +28,7 @@ def analyze_clinical_conditions(
         forbidden_ingredients=[],
         forced_climate=None,
         macro_tweaks={},
+        illness_advice=None,
         caloric_modifier=-500 if "los" in goal.lower() or "loos" in goal.lower() or "cut" in goal.lower() else (300 if "gain" in goal.lower() or "bulk" in goal.lower() else 0),
         goal_advice=f"[Fast Fallback] Macros tailored to your target of {goal} {goal_amount}."
     )
@@ -53,6 +56,7 @@ def analyze_clinical_conditions(
         f"Primary Goal: {goal}",
         f"Goal Target: {goal_amount}",
         f"Local 7-Day Average Temp: {avg_temp} C",
+        f"Acute Illness/Symptoms: {acute_illness}" if acute_illness else "",
     ]
     if pantry_constraint:
         prompt_lines.append(pantry_constraint)
@@ -72,6 +76,7 @@ def analyze_clinical_conditions(
         '  "forced_climate": "warming | cooling | null",',
         '  "macro_tweaks": {"protein": "high", "carbs": "low"},',
         '  "caloric_modifier": -500,',
+        '  "illness_advice": "str | null",',
         '  "goal_advice": "str"',
         "}",
     ])
