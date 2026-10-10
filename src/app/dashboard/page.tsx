@@ -237,15 +237,11 @@ export default function Dashboard() {
                 <div className="text-center py-20 border border-dashed border-border rounded-3xl bg-surface">
                   <MdRestaurantMenu size={32} className="mx-auto text-neutral-600 mb-4" />
                   <h3 className="text-lg font-bold text-muted-foreground">No restaurants matched</h3>
-<<<<<<< HEAD
-                  <p className="text-sm text-muted-foreground mt-2 max-w-sm mx-auto">Generate a new clinical meal plan first. If any meals match our Foodpanda catalog, they will appear here!</p>
-                  <button onClick={() => setActiveTab("generate")} className="mt-6 rounded-lg bg-brand px-6 py-2 text-sm font-medium text-white hover:bg-brand-dark">
-=======
                   <p className="text-sm text-muted-foreground mt-2 max-w-sm mx-auto">
                     Generate a meal plan to discover health-safe dishes available from local delivery partners near you.
                   </p>
-                  <button onClick={() => setActiveTab("generate")} className="mt-6 rounded-lg bg-[#4a7c59] px-6 py-2 text-sm font-medium text-white hover:bg-[#3d6849]">
->>>>>>> 78f3c72ef32d612f60d19ce60b1f95bbfd314150
+                  <button onClick={() => setActiveTab("generate")} className="mt-6 rounded-lg bg-[#4a7c59] px-6 py-2 text-sm font-medium text-foreground hover:bg-[#3d6849]">
+
                     <MdAdd size={16} className="inline mr-2 -mt-0.5" />
                     Generate Plan
                   </button>
@@ -300,7 +296,7 @@ export default function Dashboard() {
                     <MdEco size={32} className="animate-pulse text-brand" />
                   </div>
                   <h3 className="editorial-title text-2xl font-bold text-white mb-2">Preparing Your Custom Meal Plan...</h3>
-                  <p className="text-sm text-slate-400 animate-pulse">
+                  <p className="text-sm text-muted-foreground animate-pulse">
                     Tailoring health-safe dishes to your local weather and personal profile...
                   </p>
                 </motion.div>

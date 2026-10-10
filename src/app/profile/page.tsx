@@ -328,7 +328,6 @@ export default function ProfilePage() {
           )}
         </motion.section>
 
-<<<<<<< HEAD
           {/* Save button (bottom) */}
           {isEditing && (
             <motion.button
@@ -351,18 +350,7 @@ export default function ProfilePage() {
   }
 
 
-=======
-        {/* Save button (bottom) */}
-        {isEditing && (
-          <motion.button
-            initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
-            onClick={handleSave}
-            className="w-full rounded-2xl bg-[#4a7c59] py-4 text-sm font-bold text-white shadow-lg shadow-emerald-500/25 hover:bg-[#3d6849] transition-all mb-8"
-          >
-            <MdSave size={16} className="inline mr-2 -mt-0.5" /> Save Profile
-          </motion.button>
-        )}
->>>>>>> 78f3c72ef32d612f60d19ce60b1f95bbfd314150
+
 
         {/* Sign Out Button at the very bottom */}
         <div className="mt-8 pt-8 border-t border-border flex flex-col items-center">

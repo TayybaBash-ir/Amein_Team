@@ -141,15 +141,10 @@ export default function HomeHero({ onAction }: { onAction: (action: 'standard' |
   return (
     <div className="relative flex flex-col items-center justify-start min-h-[85vh] pt-10 pb-32 overflow-hidden">
 
-<<<<<<< HEAD
-      {/* â”€â”€ Ambient background blobs â”€â”€ */}
+      {/* Ambient background blobs */}
       <div className="pointer-events-none absolute -top-32 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full bg-brand/10 blur-[120px]" />
       <div className="pointer-events-none absolute top-60 -right-20 w-[300px] h-[300px] rounded-full bg-brand/8 blur-[100px]" />
-=======
-      {/* Ambient background blobs */}
-      <div className="pointer-events-none absolute -top-32 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full bg-[#4a7c59]/10 blur-[120px]" />
-      <div className="pointer-events-none absolute top-60 -right-20 w-[300px] h-[300px] rounded-full bg-emerald-500/8 blur-[100px]" />
->>>>>>> 78f3c72ef32d612f60d19ce60b1f95bbfd314150
+
 
       {/* Hero Text */}
       <motion.div
@@ -158,23 +153,14 @@ export default function HomeHero({ onAction }: { onAction: (action: 'standard' |
         transition={{ duration: 0.6, ease: [0.2, 0.8, 0.2, 1] }}
         className="text-center px-4 max-w-2xl mx-auto mb-10"
       >
-<<<<<<< HEAD
         <div className="inline-flex items-center gap-2 rounded-full border border-brand/30 bg-brand/10 px-4 py-1.5 text-xs font-semibold text-brand mb-6 backdrop-blur-sm">
           <span className="h-1.5 w-1.5 rounded-full bg-brand animate-pulse" />
-          AI-Powered Clinical Nutrition
-        </div>
-        <h1 className="text-4xl sm:text-5xl font-bold tracking-tight text-foreground leading-[1.15] mb-4">
-          Your body. Your climate.<br />
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand to-brand-dark">Your perfect diet.</span>
-=======
-        <div className="inline-flex items-center gap-2 rounded-full border border-[#4a7c59]/30 bg-[#4a7c59]/10 px-4 py-1.5 text-xs font-semibold text-emerald-400 mb-6 backdrop-blur-sm">
-          <span className="h-1.5 w-1.5 rounded-full bg-[#4a7c59] animate-pulse" />
           Mindful Daily Eating
         </div>
         <h1 className="text-4xl sm:text-5xl font-bold tracking-tight text-foreground leading-[1.15] mb-4">
           Healthy eating,<br />
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-emerald-600">built around your life.</span>
->>>>>>> 78f3c72ef32d612f60d19ce60b1f95bbfd314150
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand to-brand-dark">built around your life.</span>
+
         </h1>
         <p className="text-muted-foreground text-base sm:text-lg max-w-lg mx-auto leading-relaxed">
           ClimaDiet crafts a 7-day meal plan around your medical needs, local weather, kitchen ingredients, and weekly budget.
@@ -221,11 +207,8 @@ export default function HomeHero({ onAction }: { onAction: (action: 'standard' |
         >
           <p className="text-[10px] text-muted-foreground">BMI</p>
           <p className="text-base font-bold text-foreground">22.4</p>
-<<<<<<< HEAD
-          <p className="text-[10px] text-brand">Healthy âœ“</p>
-=======
-          <p className="text-[10px] text-emerald-400">Healthy ✓</p>
->>>>>>> 78f3c72ef32d612f60d19ce60b1f95bbfd314150
+          <p className="text-[10px] text-brand">Healthy ✓</p>
+
         </motion.div>
 
         <motion.div
