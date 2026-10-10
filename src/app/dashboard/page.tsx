@@ -1,8 +1,8 @@
 ﻿"use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Leaf, ArrowLeft, UtensilsCrossed, User, List, LayoutDashboard, Plus } from "lucide-react";
+import { Leaf, ArrowLeft, UtensilsCrossed, User, List, LayoutDashboard, Plus, Sun, Moon } from "lucide-react";
 import AuthButton from "@/components/clima/AuthButton";
 import { motion, AnimatePresence } from "framer-motion";
 import ClinicalIntakeForm from "@/components/clima/ClinicalIntakeForm";
@@ -20,6 +20,15 @@ export default function Dashboard() {
   const [activeTab, setActiveTab] = useState<AppTab>("generate");
   const [plan, setPlan] = useState<PlanResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [theme, setTheme] = useState<"dark" | "light">("dark");
+  useEffect(() => {
+    if (theme === "light") {
+      document.documentElement.classList.add("light");
+    } else {
+      document.documentElement.classList.remove("light");
+    }
+  }, [theme]);
+
 
 const handleGenerate = async (data: IntakeData) => {
     setStep("loading");
@@ -103,6 +112,15 @@ const handleGenerate = async (data: IntakeData) => {
           </div>
         </div>
         <div className="flex items-center gap-3">
+          
+          <button 
+            onClick={() => setTheme(theme === "dark" ? "light" : "dark")} 
+            className="p-2 rounded-xl bg-white/5 hover:bg-white/10 text-white transition-colors"
+            title="Toggle theme"
+          >
+            {theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
+          </button>
+
           <AuthButton />
         </div>
       </nav>

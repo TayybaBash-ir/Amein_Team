@@ -119,3 +119,15 @@ html { scroll-behavior: smooth; color-scheme: dark; background: #1A1D1E; }
     page-break-before: always;
   }
 }
+
+
+/* Automatic Light/Dark Mode Toggle Trick */
+html.light {
+  filter: invert(1) hue-rotate(180deg);
+  background: white; /* After invert, becomes black, but wait: if background is #1A1D1E, invert makes it light gray. Let's just let it be. */
+}
+html.light img, 
+html.light video,
+html.light [data-no-invert] {
+  filter: invert(1) hue-rotate(180deg);
+}
