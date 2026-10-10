@@ -269,35 +269,6 @@ export default function MealPlanView({
                   <div className="mb-3 font-mono text-xs text-muted-foreground">
                     {meal.calories} kcal{" · "}{meal.protein}g protein{meal.estimated_cost ? ` · ~Rs. ${Math.round(meal.estimated_cost)}` : ""}
                   </div>
-                    {/* TRACKING BUTTONS */}
-                    {isTracking && (
-                    <div className="mb-3 flex flex-wrap items-center gap-2" onClick={e => e.stopPropagation()}>
-                      {foodLog[meal.id]?.status === 'logged' ? (
-                        <span className="text-[10px] font-bold text-green-500 bg-green-500/10 px-2 py-1 rounded">✓ Logged</span>
-                      ) : foodLog[meal.id]?.status === 'skipped' ? (
-                        <span className="text-[10px] font-bold text-neutral-500 bg-neutral-500/10 px-2 py-1 rounded">Skipped</span>
-                      ) : foodLog[meal.id]?.status === 'custom' ? (
-                        <span className="text-[10px] font-bold text-amber-500 bg-amber-500/10 px-2 py-1 rounded line-clamp-1 max-w-[120px]" title={foodLog[meal.id]?.customText}>Custom: {foodLog[meal.id]?.customText}</span>
-                      ) : (
-                        <>
-                          <button onClick={() => updateLog(meal.id, 'logged', undefined, meal.name)} className="px-3 py-1.5 text-xs bg-brand text-white font-bold rounded-lg hover:bg-brand-dark shadow-md">Log Meal</button>
-                          <button onClick={() => updateLog(meal.id, 'skipped', undefined, meal.name)} className="px-3 py-1.5 text-xs bg-surface-2 text-foreground font-bold rounded-lg hover:bg-border border border-border">Skip</button>
-                          <button onClick={() => {
-                            const t = prompt("What did you eat instead?");
-                            if (t) updateLog(meal.id, 'custom', t, meal.name);
-                          }} className="px-3 py-1.5 text-xs border border-border text-foreground font-bold rounded-lg hover:bg-surface-2">Custom</button>
-                        </>
-                      )}
-                      {foodLog[meal.id] && (
-                         <button onClick={() => {
-                            const newLog = {...foodLog};
-                            delete newLog[meal.id];
-                            setFoodLog(newLog);
-                            localStorage.setItem("clima_food_log", JSON.stringify(newLog));
-                         }} className="ml-auto text-[10px] text-red-400 hover:underline">Undo</button>
-                      )}
-                    </div>
-                    )}
 
                   <p className="mb-2 line-clamp-3 text-xs text-muted-foreground">
                     {meal.why}
