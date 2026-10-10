@@ -334,6 +334,8 @@ def generate_meal_plan(patient: PatientIntake):
     if patient.allergies: constraints.extend(patient.allergies)
     if patient.dietary_restrictions: constraints.extend(patient.dietary_restrictions)
     if patient.conditions: constraints.extend(patient.conditions)
+    if getattr(patient, "temporary_aversions", None): constraints.append(f"Must Avoid: {patient.temporary_aversions}")
+    if getattr(patient, "acute_illness", None): constraints.append(f"Current Symptoms: {patient.acute_illness}")
     if patient.medical_history_notes: constraints.append(f"Medical notes: {patient.medical_history_notes}")
     constraints.append(f"Goal: {patient.goal} {patient.goal_amount}")
     if ai_rules.goal_advice:
