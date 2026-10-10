@@ -1,4 +1,4 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 from pydantic import BaseModel, Field
 from typing import List, Optional, Dict, Any, Literal
 
@@ -24,7 +24,6 @@ class PatientIntake(BaseModel):
     recovery_type: Optional[str] = None
     spice_tolerance: Optional[str] = "Normal"
     goal: Optional[str] = "Maintain"
-    metabolic_modifier: float = 1.0
     goal_amount: str = ""
     city: Optional[str] = "Lahore"
     country: Optional[str] = "Pakistan"
@@ -134,3 +133,4 @@ class SwapRequest(BaseModel):
 
 class SwapResponse(BaseModel):
     alternatives: List[Meal]
+

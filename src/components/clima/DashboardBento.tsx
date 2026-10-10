@@ -255,6 +255,26 @@ export default function DashboardBento({
           </motion.div>
         )}
       </AnimatePresence>
+
+      <CheckInModal 
+        isOpen={checkInOpen} 
+        onClose={() => setCheckInOpen(false)} 
+        userProfile={(() => {
+          try {
+            return JSON.parse(localStorage.getItem("clima_patient_profile") || "{}");
+          } catch { return {}; }
+        })()}
+        onComplete={(newWeight: number, newModifier: number) => {
+          try {
+            const profile = JSON.parse(localStorage.getItem("clima_patient_profile") || "{}");
+            profile.weight = newWeight;
+            profile.metabolic_modifier = newModifier;
+            localStorage.setItem("clima_patient_profile", JSON.stringify(profile));
+            setCheckInOpen(false);
+            window.location.reload();
+          } catch {}
+        }}
+      />
     </div>
   );
 }
