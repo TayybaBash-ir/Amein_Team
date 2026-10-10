@@ -16,6 +16,11 @@ type Profile = {
   dietary_restrictions: string;
   conditions: string[];
   medical_history_notes: string;
+  activity: string;
+  goal: string;
+  goal_amount: string;
+  city: string;
+  country: string;
 };
 
 const initialProfile: Profile = {
@@ -28,6 +33,11 @@ const initialProfile: Profile = {
   dietary_restrictions: "",
   conditions: [],
   medical_history_notes: "",
+  activity: "Sedentary (desk job)",
+  goal: "Maintain weight",
+  goal_amount: "",
+  city: "Lahore",
+  country: "Pakistan",
 };
 
 const conditionOptions = [
@@ -206,6 +216,11 @@ export default function ProfilePage() {
               </div>
               <div><label className={labelClass}>Height (cm)</label><input type="number" className={inputClass} value={profile.height} onChange={e => setProfile({ ...profile, height: +e.target.value })} /></div>
               <div><label className={labelClass}>Weight (kg)</label><input type="number" className={inputClass} value={profile.weight} onChange={e => setProfile({ ...profile, weight: +e.target.value })} /></div>
+              <div><label className={labelClass}>Activity Level</label><select className={inputClass} value={profile.activity} onChange={e => setProfile({ ...profile, activity: e.target.value })}><option>Sedentary (desk job)</option><option>Lightly active (1-3 days/wk)</option><option>Moderately active (3-5 days/wk)</option><option>Very active (6-7 days/wk)</option><option>Extra active (athlete)</option></select></div>
+              <div><label className={labelClass}>Primary Goal</label><select className={inputClass} value={profile.goal} onChange={e => setProfile({ ...profile, goal: e.target.value })}><option>Lose weight</option><option>Gain muscle</option><option>Maintain weight</option><option>Improve overall health</option></select></div>
+              <div><label className={labelClass}>Goal Target</label><input className={inputClass} value={profile.goal_amount || ""} placeholder="e.g. 5kg" onChange={e => setProfile({ ...profile, goal_amount: e.target.value })} /></div>
+              <div><label className={labelClass}>City</label><input className={inputClass} value={profile.city || ""} onChange={e => setProfile({ ...profile, city: e.target.value })} /></div>
+              <div><label className={labelClass}>Country</label><input className={inputClass} value={profile.country || ""} onChange={e => setProfile({ ...profile, country: e.target.value })} /></div>
               <div>
                 <label className={labelClass}>BMI</label>
                 <input readOnly className={`${inputClass} text-muted-foreground`} value={bmi ? bmi.toFixed(1) : "â€”"} />

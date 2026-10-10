@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useEffect, useState } from "react";
 import { MdAutorenew, MdFavorite, MdDirectionsRun, MdHome, MdExpandLess, MdExpandMore } from "react-icons/md";
@@ -21,7 +21,6 @@ export default function ClinicalIntakeForm({
   onInputChange: () => void;
   planMode?: "standard" | "recovery";
 }) {
-  const [showIllness, setShowIllness] = useState(planMode === "recovery");
   const [d, setD] = useState<IntakeData>({
     name: "Patient",
     age: 32,
@@ -70,151 +69,113 @@ export default function ClinicalIntakeForm({
         weight: Number(medical.weight ?? intake.weight ?? current.weight),
         height: Number(medical.height ?? intake.height ?? current.height),
         gender: String(medical.gender ?? intake.gender ?? current.gender).toLowerCase(),
+        activity: medical.activity || intake.activity || current.activity,
+        goal: medical.goal || intake.goal || current.goal,
+        goal_amount: medical.goal_amount || intake.goal_amount || current.goal_amount,
+        city: medical.city || intake.city || current.city,
+        country: medical.country || intake.country || current.country,
         conditions: Array.from(new Set([...asList(medical.conditions), ...asList(intake.conditions)])),
         allergies: Array.from(new Set([...asList(medical.allergies), ...asList(intake.allergies)])),
         dietary_restrictions: Array.from(new Set([...asList(medical.dietary_restrictions), ...asList(intake.dietary_restrictions)])),
-        medical_history_notes: medical.medical_history_notes ?? intake.medical_history_notes ?? current.medical_history_notes,
-        is_post_discharge: Boolean(medical.is_post_discharge ?? intake.is_post_discharge ?? current.is_post_discharge),
-        recovery_type: medical.recovery_type ?? intake.recovery_type ?? current.recovery_type,
-        spice_tolerance: medical.spice_tolerance ?? intake.spice_tolerance ?? current.spice_tolerance,
-        pantry_items: Array.isArray(intake.pantry_items) ? intake.pantry_items : [],
-        strict_pantry_mode: Boolean(intake.strict_pantry_mode),
-        allow_external_dining: Boolean(intake.allow_external_dining ?? current.allow_external_dining),
       }));
-    } catch (error) {
-      console.error("Failed to parse saved profiles", error);
-    }
+    } catch { /* ignore */ }
   }, []);
 
-  useEffect(() => {
-    localStorage.setItem("patientProfile", JSON.stringify(d));
-  }, [d]);
-
-  const inputClass = "w-full rounded-2xl border border-border bg-surface px-4 py-3 text-sm text-foreground outline-none transition-all placeholder:text-muted-foreground hover:bg-surface-2 focus:border-[#4a7c59] focus:bg-surface-2 md:text-base";
-  const labelClass = "mb-2 ml-1 block text-[13px] font-medium text-muted-foreground";
-  const sectionClass = "rounded-[2rem] border border-border bg-card p-5 shadow-xl sm:p-7 md:p-8";
-
-  const set = (key: keyof IntakeData, value: unknown) => {
-    setD((current) => ({ ...current, [key]: value }));
-    onInputChange();
+  const set = (key: keyof IntakeData, val: any) => {
+    setD((prev) => {
+      const next = { ...prev, [key]: val };
+      onInputChange();
+      return next;
+    });
   };
 
-  const toggle = (key: "conditions" | "allergies" | "dietary_restrictions", value: string) => {
-    const selected = d[key].includes(value);
-    set(key, selected ? d[key].filter((item) => item !== value) : [...d[key], value]);
-  };
-
-  const includePending = (items: string[], pending: string) => {
-    const value = pending.trim();
-    return value && !items.includes(value) ? [...items, value] : items;
-  };
-
-  const addCustom = (key: "conditions" | "allergies" | "dietary_restrictions", value: string, clear: (value: string) => void) => {
-    if (!value.trim() || d[key].includes(value.trim())) return;
-    set(key, [...d[key], value.trim()]);
-    clear("");
-  };
-
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const pantryFromText = (d.pantry_input || "").split(/[,\n]/).map((item) => item.trim()).filter(Boolean);
-    const submitted: IntakeData = {
-      ...d,
-      conditions: includePending(d.conditions, customCond),
-      dietary_restrictions: includePending(d.dietary_restrictions, customDiet),
-      allergies: includePending(d.allergies, customAllergy),
-      pantry_items: Array.from(new Set([...(d.pantry_items || []), ...pantryFromText])),
-      strict_pantry_mode: Boolean(d.strict_pantry_mode),
-    };
-    setD(submitted);
-    setCustomCond("");
-    setCustomDiet("");
-    setCustomAllergy("");
-    onSubmit(submitted);
+  const handleListAdd = (key: "conditions" | "dietary_restrictions" | "allergies", val: string, resetFn: () => void) => {
+    if (!val.trim()) return;
+    set(key, Array.from(new Set([...d[key], val.trim()])));
+    resetFn();
   };
 
   const listField = (
-    title: string,
+    label: string,
     key: "conditions" | "dietary_restrictions" | "allergies",
     presets: string[],
-    draft: string,
-    setDraft: (value: string) => void,
-    placeholder: string,
+    customVal: string,
+    setCustom: (s: string) => void,
+    placeholder: string
   ) => (
-    <div>
-      <label className={labelClass}>{title}</label>
-      <div className="mb-3 flex flex-wrap gap-2">
-        {presets.map((item) => {
-          const active = d[key].includes(item);
-          return <button key={item} type="button" aria-pressed={active} onClick={() => toggle(key, item)} className={`rounded-full border px-4 py-2 text-sm font-medium transition-all ${active ? "border-emerald-400/50 bg-emerald-400/15 text-emerald-200" : "border-border bg-surface-2 text-foreground hover:bg-border"}`}>{item}</button>;
+    <div className="border-t border-border pt-5">
+      <label className="mb-2 block text-xs font-semibold uppercase tracking-wide text-muted-foreground">{label}</label>
+      <div className="flex flex-wrap gap-2">
+        {presets.map((c) => {
+          const active = d[key].includes(c);
+          return (
+            <button
+              key={c}
+              type="button"
+              onClick={() => {
+                const nextList = active ? d[key].filter((x) => x !== c) : [...d[key], c];
+                set(key, nextList);
+              }}
+              className={`rounded-full border px-3 py-1.5 text-xs font-semibold transition-all ${
+                active ? "border-[#4a7c59]/50 bg-[#4a7c59]/15 text-emerald-600 dark:text-emerald-300" : "border-border bg-surface text-foreground hover:bg-surface-2 hover:border-[#4a7c59]/30"
+              }`}
+            >
+              {c}
+            </button>
+          );
         })}
-        {d[key].filter((item) => !presets.includes(item)).map((item) => <button key={item} type="button" onClick={() => toggle(key, item)} className="rounded-full border border-emerald-400/40 bg-emerald-400/10 px-4 py-2 text-sm font-medium text-emerald-200">{item} Ã—</button>)}
+        {d[key].filter((c) => !presets.includes(c)).map((c) => (
+          <span key={c} className="flex items-center gap-1 rounded-full border border-emerald-500/30 bg-[#4a7c59]/10 pl-3 pr-2 py-1.5 text-xs font-semibold text-emerald-600 dark:text-emerald-300">
+            {c}
+            <button type="button" onClick={() => set(key, d[key].filter((x) => x !== c))} className="rounded-full p-0.5 hover:bg-emerald-500/20 text-emerald-500 hover:text-emerald-700 dark:hover:text-emerald-200">
+              <MdExpandLess className="rotate-45" size={12} />
+            </button>
+          </span>
+        ))}
       </div>
-      <div className="flex gap-2">
-        <input className={inputClass} value={draft} onChange={(event) => setDraft(event.target.value)} onKeyDown={(event) => event.key === "Enter" && (event.preventDefault(), addCustom(key, draft, setDraft))} placeholder={placeholder} />
-        <button type="button" onClick={() => addCustom(key, draft, setDraft)} className="rounded-xl border border-border bg-surface-2 px-4 text-foreground hover:bg-border">Add</button>
+      <div className="mt-3 flex gap-2">
+        <input className={inputClass} value={customVal} onChange={(e) => setCustom(e.target.value)} placeholder={placeholder} onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); handleListAdd(key, customVal, () => setCustom("")); } }} />
+        <button type="button" onClick={() => handleListAdd(key, customVal, () => setCustom(""))} className="rounded-xl bg-[#4a7c59] px-4 text-sm font-bold text-white hover:bg-[#3d6849] transition-colors">
+          Add
+        </button>
       </div>
     </div>
   );
 
+  const sectionClass = "mb-4 rounded-3xl border border-border bg-card p-4 sm:p-5 shadow-xl shadow-black/5";
+  const labelClass = "mb-1.5 block text-xs font-semibold uppercase tracking-wide text-muted-foreground";
+  const inputClass = "w-full rounded-2xl border border-border bg-surface px-4 py-3 text-sm text-foreground outline-none transition-all placeholder:text-muted-foreground hover:bg-surface-2 focus:border-[#4a7c59] focus:bg-surface-2 md:text-base";
+
   return (
-    <form onSubmit={handleSubmit} className="mx-auto flex max-w-4xl flex-col gap-6 pb-12 font-sans sm:gap-8">
-      <div className="mb-2 text-center">
-        <h2 className="mb-3 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">Tailor your plan.</h2>
-        <p className="text-sm text-muted-foreground sm:text-base">Tell us about your health, your goals, and what&apos;s in your kitchen.</p>
-      </div>
-
-      <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className={sectionClass}>
-        <div className="mb-6 flex items-center gap-3">
-          <div className="rounded-xl bg-blue-500/10 p-2 text-blue-400"><MdDirectionsRun size={20} /></div>
-          <h2 className="text-xl font-semibold tracking-tight text-foreground">1. Personal Information</h2>
-        </div>
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-          <div className="col-span-2"><label className={labelClass}>Name</label><input className={inputClass} value={d.name || "Patient"} onChange={(event) => set("name", event.target.value)} /></div>
-          <div><label className={labelClass}>Age</label><input className={inputClass} type="number" value={d.age} onChange={(event) => set("age", Number(event.target.value))} /></div>
-          <div><label className={labelClass}>Gender</label><select className={inputClass} value={d.gender} onChange={(event) => set("gender", event.target.value)}><option value="male">Male</option><option value="female">Female</option><option value="unspecified">Unspecified</option></select></div>
-          <div><label className={labelClass}>Weight (kg)</label><input className={inputClass} type="number" value={d.weight} onChange={(event) => set("weight", Number(event.target.value))} /></div>
-          <div><label className={labelClass}>Height (cm)</label><input className={inputClass} type="number" value={d.height} onChange={(event) => set("height", Number(event.target.value))} /></div>
-          <div className="col-span-2"><label className={labelClass}>Daily activity</label><select className={inputClass} value={d.activity} onChange={(event) => set("activity", event.target.value)}><option value="sedentary">Sedentary (desk job)</option><option value="lightly active">Lightly active (1â€“3 days/wk)</option><option value="moderately active">Moderately active (3â€“5 days/wk)</option><option value="very active">Very active (6â€“7 days/wk)</option><option value="extra active">Extra active (athlete)</option></select></div>
-          <div className="col-span-2"><label className={labelClass}>Location for climate-based foods</label><div className="grid grid-cols-2 gap-3"><input className={inputClass} placeholder="City" value={d.city || "Lahore"} onChange={(event) => set("city", event.target.value)} /><input className={inputClass} placeholder="Country" value={d.country || "Pakistan"} onChange={(event) => set("country", event.target.value)} /></div></div>
-          <div className="col-span-2"><label className={labelClass}>Main goal</label><select className={inputClass} value={d.goal} onChange={(event) => set("goal", event.target.value)}><option value="Lose weight">Lose weight</option><option value="Gain muscle">Gain muscle</option><option value="Maintain weight">Maintain weight</option><option value="Improve overall health">Improve overall health</option></select></div>
-          <div className="col-span-2"><label className={labelClass}>Specific target</label><input className={inputClass} placeholder="Optional, e.g. 5kg" value={d.goal_amount} onChange={(event) => set("goal_amount", event.target.value)} /></div>
-        </div>
-      </motion.section>
-
+    <form onSubmit={(e) => { e.preventDefault(); onSubmit(d); }} className="mx-auto w-full max-w-2xl">
+      
       <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className={sectionClass}>
         <div className="mb-6 flex items-center gap-3">
           <div className="rounded-xl bg-rose-500/10 p-2 text-rose-400"><MdFavorite size={20} /></div>
-          <h2 className="text-xl font-semibold tracking-tight text-foreground">2. Health Conditions &amp; Dietary Needs</h2>
+          <h2 className="text-xl font-semibold tracking-tight text-foreground">1. Health Conditions & Dietary Needs</h2>
         </div>
         <div className="space-y-6">
           <div className="rounded-2xl border border-amber-500/20 bg-amber-500/[0.05] p-4">
-            <label className="flex cursor-pointer items-center gap-2 text-sm font-semibold text-amber-200"><input type="checkbox" checked={Boolean(d.is_post_discharge)} onChange={(event) => set("is_post_discharge", event.target.checked)} className="accent-amber-400" />Post-discharge recovery protocol</label>
+            <label className="flex cursor-pointer items-center gap-2 text-sm font-semibold text-amber-600 dark:text-amber-200"><input type="checkbox" checked={Boolean(d.is_post_discharge)} onChange={(event) => set("is_post_discharge", event.target.checked)} className="accent-amber-400" />Post-discharge recovery protocol</label>
             {d.is_post_discharge && <div className="mt-4"><label className={labelClass}>Recovery focus</label><select className={inputClass} value={d.recovery_type || "Gastric Recovery (Bland & Soft)"} onChange={(event) => set("recovery_type", event.target.value)}><option>Gastric Recovery (Bland &amp; Soft)</option><option>Post-Surgery / Soft Food</option><option>Low BP / Hydration Focus</option><option>General Recovery</option></select></div>}
             <div className="mt-4"><label className={labelClass}>Spice preference</label><select className={inputClass} value={d.spice_tolerance || "Normal"} onChange={(event) => set("spice_tolerance", event.target.value)}><option value="Bland">Bland (Zero Spice)</option><option value="Low Spice">Low Spice</option><option value="Normal">Normal</option></select></div>
             <div className="mt-4"><label className={labelClass}>Doctor&apos;s medical notes</label><textarea className={`${inputClass} min-h-24 resize-y`} value={d.medical_history_notes || ""} onChange={(event) => set("medical_history_notes", event.target.value)} placeholder="Ongoing care instructions or dietary guidelines..." /></div>
           </div>
-          {listField("Chronic conditions", "conditions", CONDITIONS_PRESET, customCond, setCustomCond, "Add a condition...")}
-          {listField("Dietary restrictions", "dietary_restrictions", RESTRICTIONS_PRESET, customDiet, setCustomDiet, "Add a dietary restriction...")}
-          {listField("Allergies", "allergies", ALLERGIES_PRESET, customAllergy, setCustomAllergy, "Add an allergy...")}
-          <div className="border-t border-border pt-5">
-            <button type="button" onClick={() => setShowIllness(!showIllness)} className="flex items-center gap-2 rounded-xl bg-orange-500/10 px-4 py-2 text-[13px] font-medium text-orange-300 transition-colors hover:text-orange-200">
-              {showIllness ? <MdExpandLess size={18} /> : <MdExpandMore size={18} />} Feeling under the weather today?
-            </button>
-            <AnimatePresence>{showIllness && <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden"><div className="mt-4"><label className={labelClass}>Symptoms</label><input className={inputClass} value={d.acute_illness || ""} onChange={(event) => set("acute_illness", event.target.value)} placeholder="Flu, cough, sore throat, fever..." /><p className="ml-1 mt-2 text-xs text-muted-foreground">We&apos;ll account for this while building today&apos;s meal plan.</p></div></motion.div>}</AnimatePresence>
-          </div>
+          {listField("Chronic conditions (Optional)", "conditions", CONDITIONS_PRESET, customCond, setCustomCond, "Add a condition...")}
+          {listField("Dietary restrictions (Optional)", "dietary_restrictions", RESTRICTIONS_PRESET, customDiet, setCustomDiet, "Add a dietary restriction...")}
+          {listField("Allergies (Optional)", "allergies", ALLERGIES_PRESET, customAllergy, setCustomAllergy, "Add an allergy...")}
         </div>
       </motion.section>
 
       <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className={sectionClass}>
-        <div className="mb-6 flex items-center gap-3"><div className="rounded-xl bg-green-500/10 p-2 text-green-400"><MdHome size={20} /></div><h2 className="text-xl font-semibold tracking-tight text-foreground">3. Your Kitchen &amp; Budget</h2></div>
+        <div className="mb-6 flex items-center gap-3"><div className="rounded-xl bg-green-500/10 p-2 text-green-400"><MdHome size={20} /></div><h2 className="text-xl font-semibold tracking-tight text-foreground">2. Your Kitchen & Budget</h2></div>
         <p className="mb-5 text-[13px] leading-relaxed text-muted-foreground">Tell us what you have at home and we&apos;ll prioritize meals using those ingredients.</p>
         <textarea className={`${inputClass} min-h-28 resize-y rounded-3xl`} placeholder="e.g. Chicken, rice, tomatoes, onions, and eggs" value={d.pantry_input || ""} onChange={(event) => set("pantry_input", event.target.value)} />
         <div className="mt-5 grid gap-4 border-t border-border pt-5 sm:grid-cols-2">
           {planMode !== "recovery" && (
             <div><label className={labelClass}>Weekly food budget</label><select className={inputClass} value={d.weekly_budget || "No Limit"} onChange={(event) => set("weekly_budget", event.target.value)}><option>Under 5,000 PKR</option><option>5,000 - 10,000 PKR</option><option>10,000 - 15,000 PKR</option><option>No Limit</option></select></div>
           )}
-          <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-border bg-surface p-4 text-sm text-foreground"><input type="checkbox" className="mt-1 accent-emerald-400" checked={Boolean(d.strict_pantry_mode)} onChange={(event) => set("strict_pantry_mode", event.target.checked)} /><span><strong>Strict pantry mode</strong><br /><span className="text-xs text-muted-foreground">Restrict meals to your available ingredients and staples.</span></span></label>
+          <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-border bg-surface p-4 text-sm text-foreground"><input type="checkbox" className="mt-1 accent-emerald-400" checked={Boolean(d.strict_pantry_mode)} onChange={(event) => set("strict_pantry_mode", event.target.checked)} /><span><strong>Use only what I have</strong></span></label>
         </div>
       </motion.section>
 
@@ -224,7 +185,3 @@ export default function ClinicalIntakeForm({
     </form>
   );
 }
-
-
-
-
