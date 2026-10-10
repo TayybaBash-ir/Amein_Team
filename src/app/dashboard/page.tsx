@@ -125,24 +125,34 @@ const handleGenerate = async (data: IntakeData) => {
     }
   };
 
-  const navItemClass = (tab: AppTab, label: string) => 
+  const navItemClass = (tab: AppTab, label: string) =>
     `flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-      activeTab === tab ? "bg-[#4a7c59] text-white" : "text-neutral-400 hover:text-white hover:bg-white/5"
+      activeTab === tab ? "bg-indigo-500/20 text-indigo-300" : "text-neutral-400 hover:text-white hover:bg-white/5"
     }`;
 
   return (
-    <div className="min-h-screen bg-[#1A1D1E] selection:bg-[#4a7c59]/30">
-      <nav className="sticky top-0 z-50 flex items-center justify-between border-b border-white/[0.08] bg-[#1A1D1E]/80 px-4 py-3 backdrop-blur-xl print:hidden sm:px-8">
-        <div className="flex items-center gap-6">
+    <div className="min-h-screen bg-[#0F1117] selection:bg-indigo-500/30">
+      <nav className="sticky top-0 z-50 flex items-center justify-between border-b border-white/[0.06] bg-[#0F1117]/85 px-4 py-3 backdrop-blur-xl print:hidden sm:px-8">
+        <div className="flex items-center gap-3">
+          {/* Back arrow — shown when not on home screen */}
+          {step !== "home" && activeTab === "generate" && (
+            <button
+              onClick={() => { setStep("home"); }}
+              className="mr-1 flex items-center justify-center h-8 w-8 rounded-xl bg-white/5 hover:bg-white/10 text-neutral-400 hover:text-white transition-all"
+              title="Back to home"
+            >
+              <MdArrowBack size={18} />
+            </button>
+          )}
           <Link href="/" className="group flex items-center gap-2">
-            <div className="grid h-8 w-8 place-items-center rounded-xl bg-gradient-to-br from-[#4a7c59] to-[#2c4c36] shadow-lg transition-transform group-hover:scale-105">
+            <div className="grid h-8 w-8 place-items-center rounded-xl bg-gradient-to-br from-indigo-500 to-indigo-700 shadow-lg shadow-indigo-500/20 transition-transform group-hover:scale-105">
               <MdEco size={16} className="text-white" />
             </div>
             <span className="font-sans text-lg font-bold tracking-tight text-white">ClimaDiet</span>
           </Link>
           <div className="hidden h-6 w-px bg-white/10 sm:block" />
-          <div className="hidden sm:flex items-center gap-2">
-            <button onClick={() => setActiveTab("generate")} className={navItemClass("generate", "Generate")}>
+          <div className="hidden sm:flex items-center gap-1">
+            <button onClick={() => { setActiveTab("generate"); setStep("home"); }} className={navItemClass("generate", "Generate")}>
               <MdDashboard size={16} /> Home
             </button>
             <button onClick={() => setActiveTab("restaurants")} className={navItemClass("restaurants", "Restaurants")}>
@@ -157,25 +167,29 @@ const handleGenerate = async (data: IntakeData) => {
           </div>
         </div>
         <div className="flex items-center gap-3">
-          
-          <button 
-            onClick={() => setTheme(theme === "dark" ? "light" : "dark")} 
+          <button
+            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
             className="p-2 rounded-xl bg-white/5 hover:bg-white/10 text-white transition-colors"
             title="Toggle theme"
           >
             {theme === "dark" ? <MdWbSunny size={18} /> : <MdDarkMode size={18} />}
           </button>
-
           <AuthButton />
         </div>
       </nav>
 
-      <div className="flex sm:hidden overflow-x-auto p-3 border-b border-white/5 bg-[#1A1D1E] gap-2 print:hidden scrollbar-hide">
-        <button onClick={() => setActiveTab("generate")} className={navItemClass("generate", "Generate")}>Home</button>
+      <div className="flex sm:hidden overflow-x-auto p-3 border-b border-white/5 bg-[#0F1117] gap-2 print:hidden scrollbar-hide">
+        {step !== "home" && activeTab === "generate" && (
+          <button onClick={() => setStep("home")} className="flex items-center gap-1 px-3 py-2 rounded-lg text-sm font-medium text-neutral-400">
+            <MdArrowBack size={16} /> Back
+          </button>
+        )}
+        <button onClick={() => { setActiveTab("generate"); setStep("home"); }} className={navItemClass("generate", "Generate")}>Home</button>
         <button onClick={() => setActiveTab("restaurants")} className={navItemClass("restaurants", "Restaurants")}>Restaurants</button>
         <Link href="/profile" className="px-4 py-2 rounded-lg text-sm font-medium text-neutral-400">Profile</Link>
         <Link href="/plans" className="px-4 py-2 rounded-lg text-sm font-medium text-neutral-400">Saved Plans</Link>
       </div>
+
 
       <main className="mx-auto max-w-5xl p-4 sm:p-8">
         {(savedProfile?.is_post_discharge || savedProfile?.spice_tolerance === "Bland") && (

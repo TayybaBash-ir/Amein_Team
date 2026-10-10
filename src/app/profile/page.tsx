@@ -2,11 +2,9 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { Leaf, LayoutDashboard, UtensilsCrossed, User, List, ShieldCheck } from "lucide-react";
+import { MdEco, MdArrowBack, MdPerson, MdEdit, MdSave, MdFavorite, MdNoFood, MdRestaurant } from "react-icons/md";
 import AuthButton from "@/components/clima/AuthButton";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { motion, AnimatePresence } from "framer-motion";
 
 type Profile = {
   name: string;
@@ -33,24 +31,28 @@ const initialProfile: Profile = {
 };
 
 const conditionOptions = [
-  "High Cholesterol",
-  "Hypertension",
-  "Diabetes",
-  "Kidney Disease",
-  "Gastritis / GORD",
-  "Low BP",
+  "High Cholesterol", "Hypertension", "Diabetes",
+  "Kidney Disease", "Gastritis / GORD", "Low BP",
+  "PCOS", "Celiac Disease", "Gout", "Thyroid",
 ];
 
-const fieldClassName = "h-11 rounded-xl border-slate-700 bg-[#10131b] text-slate-100 placeholder:text-slate-500 focus-visible:border-emerald-500 focus-visible:ring-emerald-500";
-
 function getBmi(profile: Profile) {
-  const heightInMeters = Number(profile.height) / 100;
-  const weight = Number(profile.weight);
-  if (!heightInMeters || !weight || !Number.isFinite(heightInMeters) || !Number.isFinite(weight)) return null;
-  return weight / (heightInMeters * heightInMeters);
+  const h = Number(profile.height) / 100;
+  const w = Number(profile.weight);
+  if (!h || !w) return null;
+  return w / (h * h);
+}
+
+function getBmiCategory(bmi: number) {
+  if (bmi < 18.5) return { label: "Underweight", color: "text-blue-400" };
+  if (bmi < 25) return { label: "Healthy", color: "text-emerald-400" };
+  if (bmi < 30) return { label: "Overweight", color: "text-amber-400" };
+  return { label: "Obese", color: "text-red-400" };
 }
 
 function toProfile(stored: Record<string, unknown>): Profile {
+  const asList = (v: unknown): string[] =>
+    Array.isArray(v) ? v.filter((x): x is string => typeof x === "string") : [];
   return {
     ...initialProfile,
     name: typeof stored.name === "string" ? stored.name : initialProfile.name,
@@ -58,162 +60,269 @@ function toProfile(stored: Record<string, unknown>): Profile {
     gender: typeof stored.gender === "string" ? stored.gender : initialProfile.gender,
     height: Number(stored.height) || initialProfile.height,
     weight: Number(stored.weight) || initialProfile.weight,
-    allergies: Array.isArray(stored.allergies) ? stored.allergies.join(", ") : typeof stored.allergies === "string" ? stored.allergies : "",
-    dietary_restrictions: Array.isArray(stored.dietary_restrictions) ? stored.dietary_restrictions.join(", ") : typeof stored.dietary_restrictions === "string" ? stored.dietary_restrictions : "",
-    conditions: Array.isArray(stored.conditions) ? stored.conditions.filter((item): item is string => typeof item === "string") : [],
+    allergies: Array.isArray(stored.allergies)
+      ? (stored.allergies as string[]).join(", ")
+      : typeof stored.allergies === "string" ? stored.allergies : "",
+    dietary_restrictions: Array.isArray(stored.dietary_restrictions)
+      ? (stored.dietary_restrictions as string[]).join(", ")
+      : typeof stored.dietary_restrictions === "string" ? stored.dietary_restrictions : "",
+    conditions: asList(stored.conditions),
     medical_history_notes: typeof stored.medical_history_notes === "string" ? stored.medical_history_notes : "",
   };
 }
 
+const inputClass = "w-full rounded-xl border border-white/[0.08] bg-white/[0.04] px-4 py-3 text-sm text-white outline-none transition focus:border-indigo-500/60 focus:ring-2 focus:ring-indigo-500/20 placeholder:text-neutral-600 [&>option]:bg-[#0F1117]";
+const labelClass = "mb-1.5 block text-xs font-semibold uppercase tracking-wider text-neutral-500";
+
 export default function ProfilePage() {
   const [profile, setProfile] = useState<Profile>(initialProfile);
-  const [saved, setSaved] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const bmi = getBmi(profile);
+  const [saved, setSaved] = useState(false);
 
   useEffect(() => {
-    const storedData = localStorage.getItem("clima_patient_profile");
-    if (!storedData) {
-      setIsEditing(true);
-      return;
-    }
     try {
-      setProfile(toProfile(JSON.parse(storedData)));
-      setIsEditing(false);
-    } catch (error) {
-      console.error("Failed to parse local profile data", error);
-      setIsEditing(true);
-    }
+      const raw = localStorage.getItem("clima_patient_profile");
+      if (raw) setProfile(toProfile(JSON.parse(raw)));
+    } catch { /* ignore */ }
   }, []);
 
-  const toggleCondition = (condition: string) => setProfile((current) => ({
-    ...current,
-    conditions: current.conditions.includes(condition)
-      ? current.conditions.filter((item) => item !== condition)
-      : [...current.conditions, condition],
-  }));
+  const bmi = getBmi(profile);
+  const bmiCategory = bmi ? getBmiCategory(bmi) : null;
 
-  const handleSave = () => {
-    let existingData: Record<string, unknown> = {};
+  function toggleCondition(c: string) {
+    setProfile(prev => ({
+      ...prev,
+      conditions: prev.conditions.includes(c)
+        ? prev.conditions.filter(x => x !== c)
+        : [...prev.conditions, c],
+    }));
+  }
+
+  function handleSave() {
     try {
-      existingData = JSON.parse(localStorage.getItem("clima_patient_profile") || "{}");
-    } catch {
-      // Replace an invalid stored record with the valid permanent profile.
-    }
-    // Keep dashboard-owned temporary recovery preferences intact, but only edit
-    // permanent baseline fields from this page.
-    const permanentProfile = { ...existingData, ...profile };
-    localStorage.setItem("clima_patient_profile", JSON.stringify(permanentProfile));
-    setSaved(true);
-    setIsEditing(false);
-    window.setTimeout(() => setSaved(false), 3000);
-  };
+      const existing = JSON.parse(localStorage.getItem("clima_patient_profile") || "{}");
+      localStorage.setItem("clima_patient_profile", JSON.stringify({ ...existing, ...profile }));
+      setSaved(true);
+      setIsEditing(false);
+      setTimeout(() => setSaved(false), 3000);
+    } catch { /* ignore */ }
+  }
 
-  const summaryTile = (label: string, value: string) => (
-    <div key={label} className="rounded-xl border border-slate-800 bg-[#10131b] p-4">
-      <p className="text-xs text-slate-500">{label}</p>
-      <p className="mt-1 font-semibold text-white">{value}</p>
+  const statTile = (label: string, value: string, sub?: string) => (
+    <div className="rounded-2xl border border-white/[0.07] bg-white/[0.03] p-4">
+      <p className="text-xs font-semibold uppercase tracking-wider text-neutral-500 mb-1">{label}</p>
+      <p className="text-xl font-bold text-white">{value}</p>
+      {sub && <p className="text-xs text-neutral-500 mt-0.5">{sub}</p>}
     </div>
   );
 
   return (
-    <div className="min-h-screen bg-[#1A1D1E] text-slate-100 selection:bg-emerald-500/30">
-      <nav className="sticky top-0 z-50 flex items-center justify-between border-b border-white/[0.08] bg-[#1A1D1E]/85 px-4 py-3 backdrop-blur-xl print:hidden sm:px-8">
-        <div className="flex min-w-0 items-center gap-4 sm:gap-6">
-          <Link href="/" className="group flex shrink-0 items-center gap-2">
-            <span className="grid h-8 w-8 place-items-center rounded-xl bg-gradient-to-br from-[#4a7c59] to-[#2c4c36] shadow-lg transition-transform group-hover:scale-105"><Leaf size={16} className="text-white" /></span>
+    <div className="min-h-screen bg-[#0F1117]">
+      {/* Nav */}
+      <nav className="sticky top-0 z-50 flex items-center justify-between border-b border-white/[0.06] bg-[#0F1117]/85 px-4 py-3 backdrop-blur-xl sm:px-8">
+        <div className="flex items-center gap-3">
+          <Link
+            href="/dashboard"
+            className="flex items-center justify-center h-8 w-8 rounded-xl bg-white/5 hover:bg-white/10 text-neutral-400 hover:text-white transition-all"
+            title="Back to dashboard"
+          >
+            <MdArrowBack size={18} />
+          </Link>
+          <Link href="/dashboard" className="group flex items-center gap-2">
+            <div className="grid h-8 w-8 place-items-center rounded-xl bg-gradient-to-br from-indigo-500 to-indigo-700 shadow-lg shadow-indigo-500/20 transition-transform group-hover:scale-105">
+              <MdEco size={16} className="text-white" />
+            </div>
             <span className="font-sans text-lg font-bold tracking-tight text-white">ClimaDiet</span>
           </Link>
-          <span className="hidden h-6 w-px bg-white/10 sm:block" />
-          <div className="hidden items-center gap-1 md:flex">
-            <Link href="/dashboard" className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-neutral-400 transition-colors hover:bg-white/5 hover:text-white"><LayoutDashboard size={16} />Home</Link>
-            <Link href="/dashboard" className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-neutral-400 transition-colors hover:bg-white/5 hover:text-white"><UtensilsCrossed size={16} />Restaurants</Link>
-            <Link href="/profile" aria-current="page" className="flex items-center gap-2 rounded-lg bg-[#4a7c59] px-3 py-2 text-sm font-medium text-white"><User size={16} />Profile</Link>
-            <Link href="/plans" className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-neutral-400 transition-colors hover:bg-white/5 hover:text-white"><List size={16} />Saved Plans</Link>
-          </div>
         </div>
-        <div className="ml-2 shrink-0"><AuthButton /></div>
+        <AuthButton />
       </nav>
-      <div className="flex gap-2 overflow-x-auto border-b border-white/5 bg-[#1A1D1E] p-3 md:hidden print:hidden">
-        <Link href="/dashboard" className="whitespace-nowrap rounded-lg px-4 py-2 text-sm font-medium text-neutral-400">Home</Link>
-        <Link href="/dashboard" className="whitespace-nowrap rounded-lg px-4 py-2 text-sm font-medium text-neutral-400">Restaurants</Link>
-        <Link href="/profile" aria-current="page" className="whitespace-nowrap rounded-lg bg-[#4a7c59] px-4 py-2 text-sm font-medium text-white">Profile</Link>
-        <Link href="/plans" className="whitespace-nowrap rounded-lg px-4 py-2 text-sm font-medium text-neutral-400">Saved Plans</Link>
-      </div>
 
-      <main className="mx-auto max-w-5xl space-y-6 p-4 sm:p-8">
-        <header className="mb-8 flex flex-wrap items-start justify-between gap-4 pt-2">
-          <div className="space-y-3">
-            <p className="text-xs font-semibold tracking-wider text-emerald-400">PATIENT MASTER MEDICAL PROFILE</p>
-            <h1 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">Permanent Health Baseline</h1>
-            <p className="max-w-2xl text-base leading-relaxed text-neutral-400">Your long-term medical history and dietary constraints for personalized meal planning.</p>
-          </div>
-          {!isEditing && <Button onClick={() => setIsEditing(true)} className="h-auto shrink-0 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-2.5 font-semibold text-emerald-300 transition hover:bg-emerald-500/20">✏️ Edit Medical Profile</Button>}
-        </header>
-        {saved && <div role="status" className="rounded-xl border border-emerald-500/40 bg-emerald-500/10 p-4 text-emerald-300">Medical profile saved.</div>}
-
-        {!isEditing ? (
-          <section className="space-y-6 rounded-2xl border border-slate-800 bg-[#181C27] p-6 shadow-2xl">
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <h2 className="text-lg font-semibold text-white">Permanent Medical Baseline</h2>
-              <span className="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-[10px] font-bold tracking-wider text-emerald-300">PATIENT MASTER MEDICAL PROFILE</span>
+      <main className="mx-auto max-w-2xl px-4 py-8 sm:py-12">
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-8 flex items-start justify-between"
+        >
+          <div>
+            <div className="mb-2 inline-flex items-center gap-2 rounded-full border border-indigo-500/20 bg-indigo-500/10 px-3 py-1 text-xs font-semibold text-indigo-400">
+              <MdPerson size={12} /> Medical Profile
             </div>
-            <section>
-              <h3 className="mb-3 text-xs font-bold uppercase tracking-wider text-slate-400">Physical Metrics</h3>
-              <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
-                {summaryTile("Name", profile.name || "Patient")}
-                {summaryTile("Age", `${profile.age} years`)}
-                {summaryTile("Gender", profile.gender || "Unspecified")}
-                {summaryTile("Height", `${profile.height} cm`)}
-                {summaryTile("Weight", `${profile.weight} kg`)}
-                {summaryTile("BMI", bmi ? bmi.toFixed(1) : "—")}
-              </div>
-            </section>
-            <section>
-              <h3 className="mb-3 text-xs font-bold uppercase tracking-wider text-slate-400">Permanent Chronic Conditions</h3>
-              <div className="flex flex-wrap gap-2">
-                {profile.conditions.length ? profile.conditions.map((condition) => <span key={condition} className="rounded-full border border-cyan-500/40 bg-emerald-500/15 px-3 py-1.5 text-sm font-medium text-emerald-300">{condition}</span>) : <p className="text-sm text-slate-500">No chronic conditions recorded.</p>}
-              </div>
-            </section>
-            <section className="grid gap-3 sm:grid-cols-2">
-              <div className="rounded-xl border border-slate-800 bg-[#10131b] p-4"><h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">Allergies</h3><p className="mt-2 text-sm text-slate-200">{profile.allergies || "None recorded"}</p></div>
-              <div className="rounded-xl border border-slate-800 bg-[#10131b] p-4"><h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">Long-Term Dietary Restrictions</h3><p className="mt-2 text-sm text-slate-200">{profile.dietary_restrictions || "None recorded"}</p></div>
-            </section>
-            <section className="rounded-xl border border-slate-800 bg-[#10131b] p-4">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">Doctor&apos;s Clinical Notes</h3>
-              <p className="mt-2 whitespace-pre-wrap text-sm leading-relaxed text-slate-200">{profile.medical_history_notes || "No clinical notes recorded."}</p>
-            </section>
-          </section>
-        ) : (
-          <div className="space-y-6">
-            <section className="space-y-5 rounded-2xl border border-slate-800 bg-[#181C27] p-6 shadow-2xl">
-              <h2 className="text-xs font-bold tracking-wider text-slate-300">1. PERMANENT PHYSICAL METRICS</h2>
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
-                <div className="space-y-2"><Label htmlFor="patient-name" className="text-slate-300">Name</Label><Input id="patient-name" value={profile.name} onChange={(e) => setProfile({ ...profile, name: e.target.value })} className={fieldClassName} /></div>
-                <div className="space-y-2"><Label htmlFor="patient-age" className="text-slate-300">Age</Label><Input id="patient-age" type="number" min="1" value={profile.age} onChange={(e) => setProfile({ ...profile, age: Number(e.target.value) })} className={fieldClassName} /></div>
-                <div className="space-y-2"><Label htmlFor="patient-gender" className="text-slate-300">Gender</Label><select id="patient-gender" value={profile.gender} onChange={(e) => setProfile({ ...profile, gender: e.target.value })} className="h-11 w-full rounded-xl border border-slate-700 bg-[#10131b] px-3 text-slate-100 focus:border-emerald-500 focus:outline-none"><option>Unspecified</option><option>Female</option><option>Male</option><option>Other</option></select></div>
-                <div className="space-y-2"><Label htmlFor="patient-height" className="text-slate-300">Height (cm)</Label><Input id="patient-height" type="number" min="1" value={profile.height} onChange={(e) => setProfile({ ...profile, height: Number(e.target.value) })} className={fieldClassName} /></div>
-                <div className="space-y-2"><Label htmlFor="patient-weight" className="text-slate-300">Weight (kg)</Label><Input id="patient-weight" type="number" min="1" step="0.1" value={profile.weight} onChange={(e) => setProfile({ ...profile, weight: Number(e.target.value) })} className={fieldClassName} /></div>
-                <div className="space-y-2"><Label htmlFor="patient-bmi" className="text-slate-300">BMI (calculated)</Label><Input id="patient-bmi" readOnly value={bmi ? bmi.toFixed(1) : "—"} className={`${fieldClassName} text-emerald-300`} /></div>
-              </div>
-            </section>
-
-            <section className="space-y-5 rounded-2xl border border-slate-800 bg-[#181C27] p-6 shadow-2xl">
-              <h2 className="text-xs font-bold tracking-wider text-slate-300">2. PERMANENT MEDICAL HISTORY &amp; DIETARY BASELINES</h2>
-              <div>
-                <p className="mb-3 text-sm text-slate-400">Select any ongoing chronic conditions.</p>
-                <div className="flex flex-wrap gap-2">
-                  {conditionOptions.map((condition) => <button key={condition} type="button" onClick={() => toggleCondition(condition)} aria-pressed={profile.conditions.includes(condition)} className={`rounded-full border px-3.5 py-2 text-sm transition-all ${profile.conditions.includes(condition) ? "border-cyan-500 bg-emerald-500/20 font-semibold text-emerald-300" : "border-slate-700 bg-[#10131b] text-slate-400 hover:border-slate-600 hover:text-slate-200"}`}>{condition}</button>)}
-                </div>
-              </div>
-              <div className="grid gap-4 sm:grid-cols-2">
-                <div className="space-y-2"><Label htmlFor="patient-allergies" className="text-slate-300">Permanent Allergies</Label><Input id="patient-allergies" placeholder="e.g. Nuts, Dairy" value={profile.allergies} onChange={(e) => setProfile({ ...profile, allergies: e.target.value })} className={fieldClassName} /></div>
-                <div className="space-y-2"><Label htmlFor="patient-diet" className="text-slate-300">Long-Term Dietary Restrictions</Label><Input id="patient-diet" placeholder="e.g. Halal, Vegetarian" value={profile.dietary_restrictions} onChange={(e) => setProfile({ ...profile, dietary_restrictions: e.target.value })} className={fieldClassName} /></div>
-              </div>
-              <div className="space-y-2"><Label htmlFor="medical-notes" className="text-slate-300">Doctor&apos;s Clinical Notes</Label><textarea id="medical-notes" rows={4} placeholder="Permanent medical guidelines provided by your healthcare team..." value={profile.medical_history_notes} onChange={(e) => setProfile({ ...profile, medical_history_notes: e.target.value })} className="w-full rounded-xl border border-slate-700 bg-[#10131b] px-4 py-3 text-sm text-slate-100 placeholder:text-slate-500 focus:border-emerald-500 focus:outline-none" /></div>
-            </section>
-            <Button onClick={handleSave} className="h-auto w-full rounded-xl bg-emerald-600 py-3.5 text-base font-semibold text-white shadow-lg shadow-emerald-900/20 transition-all hover:bg-emerald-500"><ShieldCheck className="mr-2" size={18} />💾 Save Profile Settings</Button>
+            <h1 className="text-3xl font-bold tracking-tight text-white">
+              {profile.name || "Your Profile"}
+            </h1>
+            <p className="mt-1 text-sm text-neutral-500">
+              Saved locally — used automatically in every plan you generate.
+            </p>
           </div>
+          <button
+            onClick={() => isEditing ? handleSave() : setIsEditing(true)}
+            className={`flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition-all ${
+              isEditing
+                ? "bg-indigo-500 text-white hover:bg-indigo-600 shadow-lg shadow-indigo-500/25"
+                : "bg-white/[0.06] text-neutral-300 hover:bg-white/10 border border-white/[0.08]"
+            }`}
+          >
+            {isEditing ? <><MdSave size={16} /> Save</> : <><MdEdit size={16} /> Edit</>}
+          </button>
+        </motion.div>
+
+        {/* Saved toast */}
+        <AnimatePresence>
+          {saved && (
+            <motion.div
+              initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}
+              className="mb-6 flex items-center gap-3 rounded-2xl border border-emerald-500/20 bg-emerald-500/10 px-4 py-3 text-sm font-semibold text-emerald-400"
+            >
+              ✓ Profile saved successfully
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Stats row */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}
+          className="mb-5 grid grid-cols-3 gap-3"
+        >
+          {statTile("Age", `${profile.age}y`)}
+          {statTile("Weight", `${profile.weight} kg`)}
+          {statTile("BMI", bmi ? bmi.toFixed(1) : "—", bmiCategory?.label)}
+        </motion.div>
+
+        {/* Physical Metrics */}
+        <motion.section
+          initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
+          className="mb-4 rounded-3xl border border-white/[0.07] bg-white/[0.03] p-5 sm:p-6"
+        >
+          <h2 className="mb-4 text-xs font-bold uppercase tracking-wider text-neutral-500">Physical Metrics</h2>
+          {isEditing ? (
+            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+              <div><label className={labelClass}>Name</label><input className={inputClass} value={profile.name} onChange={e => setProfile({ ...profile, name: e.target.value })} /></div>
+              <div><label className={labelClass}>Age</label><input type="number" className={inputClass} value={profile.age} onChange={e => setProfile({ ...profile, age: +e.target.value })} /></div>
+              <div><label className={labelClass}>Gender</label>
+                <select className={inputClass} value={profile.gender} onChange={e => setProfile({ ...profile, gender: e.target.value })}>
+                  <option>Unspecified</option><option>Male</option><option>Female</option><option>Other</option>
+                </select>
+              </div>
+              <div><label className={labelClass}>Height (cm)</label><input type="number" className={inputClass} value={profile.height} onChange={e => setProfile({ ...profile, height: +e.target.value })} /></div>
+              <div><label className={labelClass}>Weight (kg)</label><input type="number" className={inputClass} value={profile.weight} onChange={e => setProfile({ ...profile, weight: +e.target.value })} /></div>
+              <div>
+                <label className={labelClass}>BMI</label>
+                <input readOnly className={`${inputClass} text-neutral-500`} value={bmi ? bmi.toFixed(1) : "—"} />
+              </div>
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+              {[
+                ["Name", profile.name], ["Age", `${profile.age} years`],
+                ["Gender", profile.gender], ["Height", `${profile.height} cm`],
+                ["Weight", `${profile.weight} kg`],
+                ["BMI", bmi ? `${bmi.toFixed(1)} — ${bmiCategory?.label}` : "—"],
+              ].map(([k, v]) => (
+                <div key={k} className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-3">
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-neutral-600 mb-1">{k}</p>
+                  <p className="text-sm font-semibold text-white">{v}</p>
+                </div>
+              ))}
+            </div>
+          )}
+        </motion.section>
+
+        {/* Conditions */}
+        <motion.section
+          initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}
+          className="mb-4 rounded-3xl border border-white/[0.07] bg-white/[0.03] p-5 sm:p-6"
+        >
+          <div className="flex items-center gap-2 mb-4">
+            <MdFavorite size={16} className="text-rose-400" />
+            <h2 className="text-xs font-bold uppercase tracking-wider text-neutral-500">Chronic Conditions</h2>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {conditionOptions.map(c => (
+              <button
+                key={c}
+                type="button"
+                disabled={!isEditing}
+                onClick={() => toggleCondition(c)}
+                className={`rounded-full border px-3.5 py-1.5 text-xs font-semibold transition-all ${
+                  profile.conditions.includes(c)
+                    ? "border-indigo-500/50 bg-indigo-500/15 text-indigo-300"
+                    : isEditing
+                      ? "border-white/[0.08] bg-white/[0.03] text-neutral-400 hover:border-white/20 hover:text-white"
+                      : "border-white/[0.06] bg-white/[0.02] text-neutral-600"
+                }`}
+              >
+                {c}
+              </button>
+            ))}
+          </div>
+          {!profile.conditions.length && (
+            <p className="mt-3 text-xs text-neutral-600">No chronic conditions recorded.</p>
+          )}
+        </motion.section>
+
+        {/* Diet & Allergies */}
+        <motion.section
+          initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
+          className="mb-4 rounded-3xl border border-white/[0.07] bg-white/[0.03] p-5 sm:p-6"
+        >
+          <div className="flex items-center gap-2 mb-4">
+            <MdRestaurant size={16} className="text-amber-400" />
+            <h2 className="text-xs font-bold uppercase tracking-wider text-neutral-500">Diet & Allergies</h2>
+          </div>
+          {isEditing ? (
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div><label className={labelClass}>Allergies</label><input placeholder="e.g. Nuts, Dairy" className={inputClass} value={profile.allergies} onChange={e => setProfile({ ...profile, allergies: e.target.value })} /></div>
+              <div><label className={labelClass}>Dietary Restrictions</label><input placeholder="e.g. Halal, Vegan" className={inputClass} value={profile.dietary_restrictions} onChange={e => setProfile({ ...profile, dietary_restrictions: e.target.value })} /></div>
+            </div>
+          ) : (
+            <div className="grid gap-3 sm:grid-cols-2">
+              <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-3">
+                <p className="text-[10px] font-bold uppercase tracking-wider text-neutral-600 mb-1">Allergies</p>
+                <p className="text-sm text-white">{profile.allergies || "None recorded"}</p>
+              </div>
+              <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-3">
+                <p className="text-[10px] font-bold uppercase tracking-wider text-neutral-600 mb-1">Dietary Restrictions</p>
+                <p className="text-sm text-white">{profile.dietary_restrictions || "None recorded"}</p>
+              </div>
+            </div>
+          )}
+        </motion.section>
+
+        {/* Clinical Notes */}
+        <motion.section
+          initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}
+          className="mb-8 rounded-3xl border border-white/[0.07] bg-white/[0.03] p-5 sm:p-6"
+        >
+          <div className="flex items-center gap-2 mb-4">
+            <MdNoFood size={16} className="text-blue-400" />
+            <h2 className="text-xs font-bold uppercase tracking-wider text-neutral-500">Doctor&apos;s Clinical Notes</h2>
+          </div>
+          {isEditing ? (
+            <textarea
+              rows={4}
+              placeholder="Permanent medical guidelines provided by your healthcare team..."
+              className={`${inputClass} resize-none`}
+              value={profile.medical_history_notes}
+              onChange={e => setProfile({ ...profile, medical_history_notes: e.target.value })}
+            />
+          ) : (
+            <p className="text-sm leading-relaxed text-neutral-400 whitespace-pre-wrap">
+              {profile.medical_history_notes || "No clinical notes recorded."}
+            </p>
+          )}
+        </motion.section>
+
+        {/* Save button (bottom) */}
+        {isEditing && (
+          <motion.button
+            initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+            onClick={handleSave}
+            className="w-full rounded-2xl bg-indigo-500 py-4 text-sm font-bold text-white shadow-lg shadow-indigo-500/25 hover:bg-indigo-600 transition-all"
+          >
+            <MdSave size={16} className="inline mr-2 -mt-0.5" /> Save Profile
+          </motion.button>
         )}
       </main>
     </div>

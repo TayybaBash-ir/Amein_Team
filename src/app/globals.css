@@ -1,4 +1,4 @@
-﻿@tailwind base;
+@tailwind base;
 @tailwind components;
 @tailwind utilities;
 
@@ -10,49 +10,89 @@
 
 @layer base {
   :root {
-    /* Dark theme (ClimaDiet clinical decision support) */
-    --background: #1A1D1E;
-    --foreground: #fafafa;
-    --card: #24282a;
-    --card-foreground: #fafafa;
-    --popover: #24282a;
-    --popover-foreground: #fafafa;
-    --primary: #fafafa;
-    --primary-foreground: #1c2022;
-    --secondary: #2c3133;
-    --secondary-foreground: #fafafa;
-    --muted: #2c3133;
-    --muted-foreground: #a1a1aa;
-    --accent: #2c3133;
-    --accent-foreground: #fafafa;
+    /* ── Dark Theme: Premium deep slate ── */
+    --background: #0F1117;
+    --foreground: #f0f0f5;
+    --card: #161922;
+    --card-foreground: #f0f0f5;
+    --popover: #161922;
+    --popover-foreground: #f0f0f5;
+    --primary: #f0f0f5;
+    --primary-foreground: #0F1117;
+    --secondary: #1e2130;
+    --secondary-foreground: #f0f0f5;
+    --muted: #1e2130;
+    --muted-foreground: #8b8fa8;
+    --accent: #1e2130;
+    --accent-foreground: #f0f0f5;
     --destructive: #7f1d1d;
-    --destructive-foreground: #fafafa;
-    --border: #2c3133;
-    --input: #2c3133;
-    --ring: #4a7c59;
-    --radius: 0.75rem;
-
-    /* Extra tokens still referenced by tailwind.config.ts */
-    --bg: #1A1D1E;
-    --surface: #24282a;
-    --surface-2: #2c3133;
+    --destructive-foreground: #f0f0f5;
+    --border: rgba(255,255,255,0.08);
+    --input: #1e2130;
+    --ring: #6366f1;
+    --radius: 0.85rem;
+    --bg: #0F1117;
+    --surface: #161922;
+    --surface-2: #1e2130;
     --forest: #4a7c59;
     --sage: #4a7c59;
     --climate: #5c9270;
     --heat: #e09438;
-    --success: #4a7c59;
-    --text: #fafafa;
+    --success: #22c55e;
+    --text: #f0f0f5;
+    --brand: #6366f1;
+    --brand-dark: #4f46e5;
   }
 }
 
 @layer base {
-  * {
-    @apply border-border;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
+  * { @apply border-border; }
+  body { background: var(--background); color: var(--foreground); }
 }
+
+/* ── Light Theme: Apple-style clean white ── */
+html.light {
+  --background: #ffffff;
+  --foreground: #111111;
+  --card: #f5f5f7;
+  --card-foreground: #111111;
+  --border: rgba(0,0,0,0.08);
+  --input: #f5f5f7;
+  --muted: #e8e8ed;
+  --muted-foreground: #6e6e73;
+  --surface: #f5f5f7;
+  --surface-2: #e8e8ed;
+  --brand: #111111;
+  --brand-dark: #333333;
+  background: #ffffff;
+  color: #111111;
+  color-scheme: light;
+}
+html.light body {
+  background: #ffffff !important;
+  color: #111111 !important;
+}
+html.light nav {
+  background: rgba(255,255,255,0.85) !important;
+  border-color: rgba(0,0,0,0.08) !important;
+}
+html.light .bg-\[#0F1117\],
+html.light .bg-\[#1A1D1E\],
+html.light .bg-\[#161922\] { background: #ffffff !important; }
+html.light .bg-\[#161922\]\/80,
+html.light .bg-\[#24282a\],
+html.light .bg-white\/\[0\.04\] { background: #f5f5f7 !important; }
+html.light .text-white { color: #111111 !important; }
+html.light .text-neutral-400,
+html.light .text-neutral-500 { color: #6e6e73 !important; }
+html.light .border-white\/\[0\.08\],
+html.light .border-white\/10 { border-color: rgba(0,0,0,0.08) !important; }
+html.light .text-\[#4a7c59\],
+html.light .text-\[#5c9270\] { color: #111111 !important; }
+html.light .bg-\[#4a7c59\] { background: #111111 !important; }
+html.light .bg-\[#4a7c59\]\/10,
+html.light .bg-\[#4a7c59\]\/20 { background: #f0f0f0 !important; }
+
 
 @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 .animate-marquee { animation: marquee 30s linear infinite; }
