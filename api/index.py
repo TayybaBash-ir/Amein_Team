@@ -226,7 +226,7 @@ def get_serving_text(items, multiplier):
                 base_g = 250
             amount = max(50, round(base_g * multiplier / 10.0) * 10)
             portions.append(f"{amount}g of {orig_name}")
-    return " + ".join(portions)
+    return " and ".join(portions)
 
 def resolve_direct_youtube_url(m_items, combo_name, categorized):
     from urllib.parse import urlparse
@@ -425,7 +425,7 @@ def generate_meal_plan(patient: PatientIntake):
             image_keyword = m['items'][0].get('name', 'Meal')
             
             serving_text = get_serving_text(m["items"], multiplier)
-            why_str = f"Portion to eat: {serving_text}. This provides exactly the energy ({round(cals)} kcal) your body needs for this meal."
+            why_str = f"Suggested serving: {serving_text}. Adjust the portion to fit your daily calorie target."
 
             dyn_benefits = []
             if pro > 25: dyn_benefits.append("Packed with protein to keep you full")
@@ -649,7 +649,7 @@ def swap_meal(req: SwapRequest):
         fat = sum(item.get('fat_g', 0) for item in cand['items']) * multiplier
         
         serving_text = get_serving_text(cand["items"], multiplier)
-        why_str = f"Portion to eat: {serving_text}. This provides exactly the energy ({round(cals)} kcal) your body needs for this meal."
+        why_str = f"Suggested serving: {serving_text}. Adjust the portion to fit your daily calorie target."
         
         dish = cand['items'][0] if cand.get('items') else {}
         dish_image_url = dish.get('image_url')

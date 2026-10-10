@@ -41,10 +41,10 @@ export default function MealCard({
           {meal.name}
         </h4>
         <div className="mb-2 font-mono text-xs text-muted-foreground print:inline-block print:ml-2 print:text-black print:mb-0 print:text-xs">
-          ({meal.calories} kcal â€¢ {meal.protein}g protein)
+          ({meal.calories} kcal{" · "}{meal.protein}g protein)
         </div>
         <p className="mb-3 line-clamp-2 flex-1 text-xs leading-relaxed text-muted-foreground print:line-clamp-none print:block print:text-black print:mb-0 print:mt-1">
-          Portion to eat: {meal.why}
+          {meal.why}
         </p>
         <div className="mt-auto hidden items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-brand opacity-0 transition-opacity group-hover:opacity-100 sm:flex no-print">
           View details <MdChevronRight size={12} strokeWidth={3} />

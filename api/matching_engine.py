@@ -130,10 +130,9 @@ def find_best_meal_plan(categorized, target_macros, preferences=None, iterations
             bfs.append(combine([s, random.choice(breads)]))
             if 'boiled' not in s.get('name', '').lower():
                 bfs.append(combine([s, random.choice(roti_paratha)]))
-            bfs.append(combine([s, random.choice(refreshments)]))
     else:
         for _ in range(10):
-            bfs.append(combine([random.choice(pure_snacks), random.choice(refreshments)]))
+            bfs.append(combine([random.choice(pure_snacks)]))
 
     easy_mains = []
     # Easy meats + simple carbs
@@ -208,8 +207,6 @@ def find_best_meal_plan(categorized, target_macros, preferences=None, iterations
     sks = []
     for _ in range(20):
         sks.append(combine([random.choice(pure_snacks)]))
-        sks.append(combine([random.choice(pure_snacks), random.choice(refreshments)]))
-        sks.append(combine([random.choice(refreshments)]))
 
     if not bfs: bfs = [combine([dummy])]
     if not easy_mains: easy_mains = [combine([dummy])]
@@ -360,15 +357,11 @@ def get_alternative_meals(categorized, slot, target_meal_macros, previously_sele
                 for b in breads: candidates.append(combine([s, b]))
                 if 'boiled' not in s.get('name', '').lower():
                     for r in roti_paratha: candidates.append(combine([s, r]))
-                for r in refreshments: candidates.append(combine([s, r]))
         else:
             for ps in pure_snacks:
-                for r in refreshments: candidates.append(combine([ps, r]))
+                candidates.append(combine([ps]))
     elif slot_lower == 'snack':
         for ps in pure_snacks: candidates.append(combine([ps]))
-        for ps in pure_snacks:
-            for r in refreshments: candidates.append(combine([ps, r]))
-        for r in refreshments: candidates.append(combine([r]))
     else: # Lunch or Dinner
         # Add all easy mains
         for em in easy_meats:

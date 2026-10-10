@@ -164,7 +164,9 @@ export default function MealPlanView({ plan: initialPlan, onGoToRestaurant }: { 
 
                 <div className="flex flex-1 flex-col p-4">
                   <h4 className="editorial-title mb-1 text-lg font-bold">{meal.name}</h4>
-                  <div className="mb-3 font-mono text-xs text-muted-foreground">{meal.calories} kcal â€¢ {meal.protein}g protein {meal.estimated_cost ? ` â€¢ ~Rs. ${Math.round(meal.estimated_cost)}` : ""}</div>
+                  <div className="mb-3 font-mono text-xs text-muted-foreground">
+                    {meal.calories} kcal{" · "}{meal.protein}g protein{meal.estimated_cost ? ` · ~Rs. ${Math.round(meal.estimated_cost)}` : ""}
+                  </div>
                   <p className="mb-4 line-clamp-2 flex-1 text-xs text-muted-foreground">
                     {meal.why}
                   </p>
@@ -203,6 +205,8 @@ export default function MealPlanView({ plan: initialPlan, onGoToRestaurant }: { 
             onClose={close}
             onPrev={prev}
             onNext={next}
+            externalDining={plan.external_dining || plan.outside_order_matches?.flat() || []}
+            onGoToRestaurant={onGoToRestaurant}
           />
         )}
       </div>

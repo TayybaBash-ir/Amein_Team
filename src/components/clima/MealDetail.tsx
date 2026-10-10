@@ -1,7 +1,7 @@
 ﻿"use client";
 
 import { useEffect } from "react";
-import { MdChevronLeft, MdChevronRight, MdAutoAwesome, MdRestaurant, MdPlayArrow } from "react-icons/md";
+import { MdChevronLeft, MdChevronRight, MdAutoAwesome, MdRestaurant, MdPlayArrow, MdClose } from "react-icons/md";
 import type { Meal, ExternalDiningRecommendation } from "@/lib/mock";
 import { ACCENT } from "@/lib/theme";
 import Ring from "./Ring";
@@ -96,7 +96,7 @@ export default function MealDetail({
             onClick={onClose}
             className="absolute top-3 right-3 w-8 h-8 flex items-center justify-center rounded-full bg-black/60 text-white hover:bg-black/80 text-sm font-bold"
           >
-            âœ•
+            <MdClose size={16} aria-hidden="true" />
           </button>
         </div>
 
@@ -136,9 +136,9 @@ export default function MealDetail({
 
         
         {/* Watch Recipe Button */}
-        {meal.recipe_link && (
+        {recipeLink && (
           <div className="mb-6">
-            <a href={meal.recipe_link} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 w-full py-3.5 px-4 rounded-xl font-bold text-white shadow-lg transition-all hover:opacity-90 active:scale-[0.98]" style={{ backgroundColor: ACCENT }}>
+            <a href={recipeLink} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 w-full py-3.5 px-4 rounded-xl font-bold text-white shadow-lg transition-all hover:opacity-90 active:scale-[0.98]" style={{ backgroundColor: ACCENT }}>
               <MdPlayArrow className="w-5 h-5 fill-current" />
               <span>Watch Recipe</span>
             </a>
@@ -186,7 +186,7 @@ export default function MealDetail({
           <div className="mb-6 p-4 rounded-2xl bg-surface-2 border border-white/5">
             <div className="flex items-center gap-2 text-xs font-bold tracking-wider text-brand uppercase mb-2">
               <MdAutoAwesome className="w-4 h-4" />
-              <span>Why This Meal</span>
+              <span>Serving &amp; meal note</span>
             </div>
             <p className="text-sm leading-relaxed text-muted-foreground">{meal.why}</p>
           </div>

@@ -361,7 +361,7 @@ function DashboardContent() {
               ) : (
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                   {plan.external_dining.map((item, i) => (
-                    <div key={`${item.restaurant_name}-${item.dish_name}-${i}`} className="transform transition duration-300 hover:scale-[1.02]">
+                    <div id={`restaurant-${item.restaurant_name}`} key={`${item.restaurant_name}-${item.dish_name}-${i}`} className="transform scroll-mt-24 transition duration-300 hover:scale-[1.02]">
                       <RestaurantRecommendationCard
                         restaurantName={item.restaurant_name}
                         dishName={item.item_name || item.dish_name}
@@ -388,6 +388,12 @@ function DashboardContent() {
                     hydrationLog={hydrationLog} 
                     onHydrate={() => handleHydrationChange(1)}
                     onUndoHydrate={() => handleHydrationChange(-1)}
+                    onGoToRestaurant={(restaurantName: string) => {
+                      setActiveTab("restaurants");
+                      window.setTimeout(() => {
+                        document.getElementById(`restaurant-${restaurantName}`)?.scrollIntoView({ behavior: "smooth", block: "start" });
+                      }, 300);
+                    }}
                   />
                 </div>
               )}
