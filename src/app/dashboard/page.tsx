@@ -370,7 +370,7 @@ function DashboardContent() {
         </div>
       </nav>
 
-      <main className="mx-auto max-w-5xl p-4 sm:p-8 pb-6 sm:pb-8">
+      <main className="mx-auto max-w-5xl w-full max-w-[100vw] overflow-x-hidden p-4 sm:p-8 pb-6 sm:pb-8">
         {(savedProfile?.is_post_discharge || savedProfile?.spice_tolerance === "Bland") && (
           <div role="status" className="mb-6 flex items-center gap-3 rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm font-semibold text-amber-200">
             <span aria-hidden="true">🏥</span>
@@ -417,7 +417,17 @@ function DashboardContent() {
           )}
 
           {activeTab === "generate" && (
-            <motion.div key="generate" initial={{ opacity: 0, x: 18 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -18 }} transition={{ duration: 0.2 }}>
+            <motion.div key="generate" initial={{ opacity: 0, x: 18 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -18 }} transition={{ duration: 0.2 }} className="w-full max-w-[100vw] overflow-x-hidden" {...(step !== "home" ? { "data-no-page-swipe": "true" } : {})}>
+              {step !== "home" && (
+                <style>{`
+                  nav[aria-label="Main navigation"] { display: none !important; }
+                `}</style>
+              )}
+              {step === "input" && (
+                <button onClick={() => setStep("home")} className="mb-4 flex items-center text-sm font-bold text-muted-foreground hover:text-foreground">
+                  <MdArrowBack size={18} className="mr-1" /> Back to Dashboard
+                </button>
+              )}
               {step === "home" && (
                 <div className="w-full">
                   <DashboardBento 

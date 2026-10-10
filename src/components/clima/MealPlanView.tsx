@@ -20,7 +20,24 @@ export default function MealPlanView({
   hideHeading?: boolean;
   compactActions?: boolean;
 }) {
-  const [plan, setPlan] = useState(initialPlan);
+    const [plan, setPlan] = useState(initialPlan);
+  const [foodLog, setFoodLog] = useState<Record<string, any>>({});
+  
+  // Load food log on mount
+  useState(() => {
+    if (typeof window !== "undefined") {
+      try {
+        setFoodLog(JSON.parse(localStorage.getItem("clima_food_log") || "{}"));
+      } catch {}
+    }
+  });
+
+  const updateLog = (mealId: string, status: string, customText?: string) => {
+    const newLog = { ...foodLog, [mealId]: { status, customText } };
+    setFoodLog(newLog);
+    localStorage.setItem("clima_food_log", JSON.stringify(newLog));
+  };
+
   const [swapMealInfo, setSwapMealInfo] = useState<{meal: Meal, dayIdx: number, mealIdx: number} | null>(null);
   const [selectedDay, setSelectedDay] = useState(0);
   const [openIdx, setOpenIdx] = useState<number | null>(null);
@@ -83,6 +100,34 @@ export default function MealPlanView({
 
       {/* INTERACTIVE WEB LAYOUT */}
       <div className="flex flex-col gap-5 w-full print:hidden">
+
+        {/* FOOD LOG SUMMARY */}
+        <div className="mb-2 p-4 rounded-2xl bg-surface-2 border border-border">
+          <h3 className="text-sm font-bold mb-2">Today's Intake</h3>
+          <div className="flex gap-4 text-xs font-mono">
+            {(() => {
+              let cals = 0, pro = 0, carb = 0, fat = 0;
+              currentDay.meals.forEach(m => {
+                const log = foodLog[m.id];
+                if (log?.status === 'logged') {
+                  cals += m.calories || 0;
+                  pro += (m as any).protein_g || m.protein || 0;
+                  carb += (m as any).carbs_g || m.carbs || 0;
+                  fat += (m as any).fat_g || m.fat || 0;
+                }
+              });
+              return (
+                <>
+                  <div className="text-brand">Cals: {Math.round(cals)}</div>
+                  <div className="text-blue-400">Pro: {Math.round(pro)}g</div>
+                  <div className="text-amber-400">Carbs: {Math.round(carb)}g</div>
+                  <div className="text-red-400">Fat: {Math.round(fat)}g</div>
+                </>
+              );
+            })()}
+          </div>
+        </div>
+
         <div className={`flex flex-wrap items-center gap-3 ${hideHeading ? "mb-0 justify-end" : "mb-6 justify-between"}`}>
           {!hideHeading && (
             <div>
