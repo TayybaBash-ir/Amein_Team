@@ -45,7 +45,7 @@
   }
 }
 
-/* ✨ Light Theme: Salt & Pepper with Coral Accent ✨ */
+/* Light theme uses the requested pistachio accent. */
 html.light {
   --background: #FFFFFF;
   --foreground: #222222;
@@ -57,10 +57,17 @@ html.light {
   --muted-foreground: #666666;
   --surface: #F3F3F3;
   --surface-2: #EAEAEA;
-  --brand: 241 122 126;
-  --brand-dark: 217 105 109;
+  --brand: 186 232 172;
+  --brand-dark: 74 124 89;
+  --brand-text: #365d37;
   color-scheme: light;
 }
+
+/* Keep pistachio surfaces and their labels readable in light mode. */
+html.light .text-brand { color: var(--brand-text); }
+html.light .bg-brand { color: #19311d; }
+html.light .hover\:bg-brand:hover { color: #19311d; }
+html.light .hover\:bg-brand-dark:hover { color: #fff; }
 
 @layer base {
   * { @apply border-border; }

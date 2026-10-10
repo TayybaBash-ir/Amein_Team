@@ -1,2 +1,2 @@
-// Single place to change the brand accent (calm forest green for clinical decision support).
-export const ACCENT = "#4a7c59";
+// Follows the active theme: forest green in dark mode, pistachio in light mode.
+export const ACCENT = "rgb(var(--brand))";

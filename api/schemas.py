@@ -141,4 +141,5 @@ class SwapResponse(BaseModel):
 class CheckInRequest(BaseModel):
     patient: PatientIntake
     feedback_text: str
-    new_weight: float
+    new_weight: float = Field(gt=0)
+    feedback_history: List[Dict[str, Any]] = Field(default_factory=list)

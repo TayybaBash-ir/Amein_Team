@@ -151,7 +151,7 @@ export default function ClinicalIntakeForm({
       
               <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className={sectionClass}>
           <div className="mb-6 flex items-center gap-3">
-            <div className="rounded-xl bg-rose-500/10 p-2 text-rose-400"><MdFavorite size={20} /></div>
+            <div className="rounded-xl bg-brand/10 p-2 text-brand"><MdFavorite size={20} /></div>
             <h2 className="text-xl font-semibold tracking-tight text-foreground">1. Goals & Temporary Needs</h2>
           </div>
           <div className="space-y-5">
@@ -183,6 +183,7 @@ export default function ClinicalIntakeForm({
             <div><label className={labelClass}>Weekly food budget</label><select className={inputClass} value={d.weekly_budget || "No Limit"} onChange={(event) => set("weekly_budget", event.target.value)}><option>Under 5,000 PKR</option><option>5,000 - 10,000 PKR</option><option>10,000 - 15,000 PKR</option><option>No Limit</option></select></div>
           )}
           <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-border bg-surface p-4 text-sm text-foreground"><input type="checkbox" className="mt-1 accent-brand" checked={Boolean(d.strict_pantry_mode)} onChange={(event) => set("strict_pantry_mode", event.target.checked)} /><span><strong>Use only what I have</strong></span></label>
+          <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-border bg-surface p-4 text-sm text-foreground"><input type="checkbox" className="mt-1 accent-brand" checked={Boolean(d.allow_external_dining)} onChange={(event) => set("allow_external_dining", event.target.checked)} /><span><strong>Show restaurant order options</strong><span className="mt-1 block text-xs text-muted-foreground">Add a matching restaurant for each planned meal.</span></span></label>
         </div>
       </motion.section>
 

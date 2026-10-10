@@ -31,7 +31,7 @@ export default function DashboardBackground() {
   return (
     <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none bg-background">
       
-      {/* Strong Pink Glowing Orbs */}
+      {/* Soft pistachio glows in light mode, forest-green glows in dark mode. */}
       <div className="absolute top-[-10%] left-[-10%] w-[80%] h-[80%] rounded-full bg-brand/40 blur-[130px] dark:bg-brand/20" />
       <div className="absolute bottom-[-10%] right-[-10%] w-[70%] h-[70%] rounded-full bg-brand/35 blur-[100px] dark:bg-brand/15" />
       <div className="absolute top-[40%] left-[30%] w-[50%] h-[50%] rounded-full bg-brand/30 blur-[150px] dark:bg-brand/10" />

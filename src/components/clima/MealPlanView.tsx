@@ -16,7 +16,7 @@ export default function MealPlanView({
   compactActions = false,
 }: {
   plan: PlanResponse;
-  onGoToRestaurant?: (r: string) => void;
+  onGoToRestaurant?: (r: string, mealId?: string) => void;
   hideHeading?: boolean;
   compactActions?: boolean;
 }) {

@@ -68,10 +68,13 @@ def clean_name(dish):
         dish['name'] = name.replace('Fitness ', '').replace('Fitness', '')
     return dish
 
-def find_best_meal_plan(categorized, target_macros, preferences=None, iterations=2500, previously_selected=None, daily_budget=None):
+def find_best_meal_plan(categorized, target_macros, preferences=None, iterations=2500, previously_selected=None, daily_budget=None, strict_pantry_mode=False):
     best_plan = None
     best_score = float('inf')
     best_mult = 1.0
+    best_within_budget_plan = None
+    best_within_budget_score = float('inf')
+    best_within_budget_mult = 1.0
     
     if previously_selected is None:
         previously_selected = set()
@@ -267,6 +270,41 @@ def find_best_meal_plan(categorized, target_macros, preferences=None, iterations
         }
         
         score = calculate_penalty(scaled_macros, target_macros) + variety_penalty
+        estimated_daily_cost = None
+        if daily_budget is not None and daily_budget > 0:
+            estimated_daily_cost = sum(
+                estimate_dish_cost(
+                    {"protein_g": meal["protein_g"], "carbs_g": meal["carbs_g"], "fat_g": meal["fat_g"]},
+                    meal["name"],
+                )
+                for meal in (b, l, s, d)
+            ) * multiplier
+            # Prefer affordable plans, and make going over the selected cap a
+            # meaningful penalty while still allowing nutrition fit if every
+            # catalog combination is over budget.
+            score += estimated_daily_cost * 0.05
+            score += max(0.0, estimated_daily_cost - daily_budget) * 40
+
+        if strict_pantry_mode and any(
+            item.get("name") == "Chef Special"
+            for meal in (b, l, s, d)
+            for item in meal.get("items", [])
+        ):
+            continue
+
+        if (
+            estimated_daily_cost is not None
+            and estimated_daily_cost <= daily_budget
+            and score < best_within_budget_score
+        ):
+            best_within_budget_score = score
+            best_within_budget_plan = [
+                {'slot': 'Breakfast', 'items': b['items']},
+                {'slot': 'Lunch', 'items': l['items']},
+                {'slot': 'Snack', 'items': s['items']},
+                {'slot': 'Dinner', 'items': d['items']},
+            ]
+            best_within_budget_mult = multiplier
         
         if score < best_score:
             best_score = score
@@ -278,6 +316,13 @@ def find_best_meal_plan(categorized, target_macros, preferences=None, iterations
             ]
             best_mult = multiplier
             
+    if best_within_budget_plan is not None:
+        best_plan = best_within_budget_plan
+        best_mult = best_within_budget_mult
+
+    if not best_plan and strict_pantry_mode:
+        return None, 1.0
+
     if not best_plan:
         b = random.choice(bfs)
         l = random.choice(easy_mains)
@@ -298,7 +343,7 @@ def find_best_meal_plan(categorized, target_macros, preferences=None, iterations
         
     return best_plan, best_mult
 
-def get_alternative_meals(categorized, slot, target_meal_macros, previously_selected=None, num_options=5):
+def get_alternative_meals(categorized, slot, target_meal_macros, previously_selected=None, num_options=5, daily_budget=None, strict_pantry_mode=False):
     if previously_selected is None:
         previously_selected = set()
         
@@ -385,6 +430,8 @@ def get_alternative_meals(categorized, slot, target_meal_macros, previously_sele
     
     for cand in candidates:
         if not cand: continue
+        if strict_pantry_mode and any(item.get("name") == "Chef Special" for item in cand.get("items", [])):
+            continue
         
         # Check variety penalty
         current_names = set()
@@ -415,12 +462,28 @@ def get_alternative_meals(categorized, slot, target_meal_macros, previously_sele
         fat_diff = abs(scaled_fat - target_meal_macros['fat']) * 9
         
         score = cal_diff + pro_diff + carb_diff + fat_diff
-        
+        estimated_meal_cost = None
+        if daily_budget is not None and daily_budget > 0:
+            estimated_meal_cost = estimate_dish_cost(
+                {"protein_g": scaled_pro, "carbs_g": scaled_carbs, "fat_g": scaled_fat},
+                cand["name"],
+            )
+            score += estimated_meal_cost * 0.05
+            score += max(0.0, estimated_meal_cost - daily_budget / 4) * 40
         valid_candidates.append({
             'candidate': cand,
             'multiplier': multiplier,
-            'score': score
+            'score': score,
+            'estimated_cost': estimated_meal_cost,
         })
+
+    if daily_budget is not None and daily_budget > 0:
+        within_meal_budget = [
+            option for option in valid_candidates
+            if option['estimated_cost'] is not None and option['estimated_cost'] <= daily_budget / 4
+        ]
+        if within_meal_budget:
+            valid_candidates = within_meal_budget
         
     # Sort by best macro match
     valid_candidates.sort(key=lambda x: x['score'])

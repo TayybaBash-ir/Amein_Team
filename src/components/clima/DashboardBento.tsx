@@ -300,9 +300,15 @@ export default function DashboardBento({
             return JSON.parse(localStorage.getItem("clima_patient_profile") || "{}");
           } catch { return {}; }
         })()}
-        onComplete={(newWeight: number, newModifier: number, macroTweak: string) => {
+        onComplete={(newWeight: number, newModifier: number, macroTweak: string, historyEntry: Record<string, unknown>) => {
           try {
             const profile = JSON.parse(localStorage.getItem("clima_patient_profile") || "{}");
+            let history: Record<string, unknown>[] = [];
+            try {
+              const storedHistory = JSON.parse(localStorage.getItem("clima_progress_history") || "[]");
+              if (Array.isArray(storedHistory)) history = storedHistory;
+            } catch { /* Start a new local history if storage is empty or invalid. */ }
+            localStorage.setItem("clima_progress_history", JSON.stringify([...history, historyEntry].slice(-30)));
             profile.weight = newWeight;
             profile.metabolic_modifier = newModifier;
             profile.macro_tweak = macroTweak;

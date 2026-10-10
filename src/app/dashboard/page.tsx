@@ -18,7 +18,6 @@ import MealPlanView from "@/components/clima/MealPlanView";
 import { RestaurantRecommendationCard } from "@/components/clima/RestaurantRecommendationCard";
 import { useRouter, useSearchParams } from "next/navigation";
 import { type PlanResponse, type IntakeData } from "@/lib/mock";
-import { ACCENT } from "@/lib/theme";
 import DashboardBento from "@/components/clima/DashboardBento";
 
 
@@ -35,6 +34,7 @@ function DashboardContent() {
   const activeTab: AppTab = searchParams.get("tab") === "restaurants" ? "restaurants" : "generate";
   const setActiveTab = (tab: AppTab) => router.push(tab === "restaurants" ? "/dashboard?tab=restaurants" : "/dashboard");
   const previousTab = useRef(activeTab);
+  const [pendingRestaurantTarget, setPendingRestaurantTarget] = useState<string | null>(null);
   
   const [user, setUser] = useState<any>(undefined);
   const [hasProfile, setHasProfile] = useState(true);
@@ -72,6 +72,11 @@ function DashboardContent() {
     if (previousTab.current === "restaurants" && activeTab === "generate") setStep("home");
     previousTab.current = activeTab;
   }, [activeTab]);
+
+  const goToRestaurant = (restaurantName: string, mealId?: string) => {
+    setPendingRestaurantTarget(mealId ? `restaurant-meal-${mealId}` : `restaurant-${restaurantName}`);
+    setActiveTab("restaurants");
+  };
 
   const handleHeroAction = (action: 'standard' | 'recovery' | 'restaurants' | 'saved') => {
     if (action === 'standard') {
@@ -116,6 +121,14 @@ function DashboardContent() {
   const [plan, setPlan] = useState<PlanResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [theme, setTheme] = useState<"dark" | "light">("light");
+  useEffect(() => {
+    if (activeTab !== "restaurants" || !pendingRestaurantTarget) return;
+    const frame = window.requestAnimationFrame(() => {
+      document.getElementById(pendingRestaurantTarget)?.scrollIntoView({ behavior: "smooth", block: "start" });
+      setPendingRestaurantTarget(null);
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, [activeTab, pendingRestaurantTarget, plan]);
   useEffect(() => {
     if (theme === "light") {
       document.documentElement.classList.add("light");
@@ -377,7 +390,7 @@ function DashboardContent() {
                   <p className="text-sm text-muted-foreground mt-2 max-w-sm mx-auto">
                     Generate a meal plan to discover health-safe dishes available from local delivery partners near you.
                   </p>
-                  <button onClick={() => setActiveTab("generate")} className="mt-6 rounded-lg bg-[#4a7c59] px-6 py-2 text-sm font-medium text-foreground hover:bg-[#3d6849]">
+                  <button onClick={() => setActiveTab("generate")} className="mt-6 rounded-lg bg-brand-dark px-6 py-2 text-sm font-medium text-white hover:bg-brand">
 
                     <MdAdd size={16} className="inline mr-2 -mt-0.5" />
                     Generate Plan
@@ -386,7 +399,7 @@ function DashboardContent() {
               ) : (
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                   {plan.external_dining.map((item, i) => (
-                    <div id={`restaurant-${item.restaurant_name}`} key={`${item.restaurant_name}-${item.dish_name}-${i}`} className="transform scroll-mt-24 transition duration-300 hover:scale-[1.02]">
+                    <div id={item.matched_meal_id ? `restaurant-meal-${item.matched_meal_id}` : `restaurant-${item.restaurant_name}`} key={`${item.restaurant_name}-${item.dish_name}-${i}`} className="transform scroll-mt-24 transition duration-300 hover:scale-[1.02]">
                       <RestaurantRecommendationCard
                         restaurantName={item.restaurant_name}
                         dishName={item.item_name || item.dish_name}
@@ -413,12 +426,7 @@ function DashboardContent() {
                     hydrationLog={hydrationLog} 
                     onHydrate={() => handleHydrationChange(1)}
                     onUndoHydrate={() => handleHydrationChange(-1)}
-                    onGoToRestaurant={(restaurantName: string) => {
-                      setActiveTab("restaurants");
-                      window.setTimeout(() => {
-                        document.getElementById(`restaurant-${restaurantName}`)?.scrollIntoView({ behavior: "smooth", block: "start" });
-                      }, 300);
-                    }}
+                    onGoToRestaurant={goToRestaurant}
                   />
                 </div>
               )}
@@ -478,7 +486,7 @@ function DashboardContent() {
                     </div>
                   </div>
                   <MacroScorecard plan={plan} />
-                  <MealPlanView plan={plan} onGoToRestaurant={(r) => { setActiveTab('restaurants'); setTimeout(() => { const el = document.getElementById('restaurant-' + r); if (el) el.scrollIntoView({ behavior: 'smooth' }); }, 100); }} />
+                  <MealPlanView plan={plan} onGoToRestaurant={goToRestaurant} />
                 </motion.div>
               )}
             </motion.div>

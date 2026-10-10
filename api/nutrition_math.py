@@ -60,24 +60,20 @@ def get_nutritional_targets(
     fat_g = (target_calories * 0.25) / 9.0
     carbs_g = max(0.0, (target_calories - (protein_g * 4.0) - (fat_g * 9.0)) / 4.0)
 
-    # Apply True ML logic tweaks based on natural language feedback
+    # Apply small macro shifts suggested by recent progress feedback.
     if macro_tweak == "higher_protein":
-        shift = target_calories * 0.10
-        protein_g += shift / 4.0
-        carbs_g = max(0.0, carbs_g - (shift / 4.0))
+        protein_g += 15
+        carbs_g = max(0.0, carbs_g - 15)
     elif macro_tweak == "higher_fat":
-        shift = target_calories * 0.10
-        fat_g += shift / 9.0
-        carbs_g = max(0.0, carbs_g - (shift / 4.0))
+        fat_g += 5
+        carbs_g = max(0.0, carbs_g - (45 / 4.0))
     elif macro_tweak == "higher_carb":
-        shift = target_calories * 0.10
-        carbs_g += shift / 4.0
-        fat_g = max(0.0, fat_g - (shift / 9.0))
+        carbs_g += 20
+        fat_g = max(0.0, fat_g - (80 / 9.0))
     elif macro_tweak == "lower_carb":
-        shift = target_calories * 0.15
-        carbs_g = max(0.0, carbs_g - (shift / 4.0))
-        protein_g += (shift / 2.0) / 4.0
-        fat_g += (shift / 2.0) / 9.0
+        carbs_g = max(0.0, carbs_g - 20)
+        protein_g += 10
+        fat_g += (40 / 9.0)
 
     return {
         "bmi": bmi,

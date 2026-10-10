@@ -47,16 +47,25 @@ def ingredient_is_available(ingredient: str, pantry_items: List[str]) -> bool:
     if not candidate:
         return False
 
-    allowed_names = {_normalized_words(item) for item in (pantry_items or []) if _normalized_words(item)}
-    allowed_names.update(HOUSEHOLD_STAPLES)
-    allowed_names = {_normalized_words(item) for item in allowed_names}
+    allowed_names = {
+        _normalized_words(item)
+        for item in [*(pantry_items or []), *HOUSEHOLD_STAPLES]
+        if _normalized_words(item)
+    }
 
     for allowed in allowed_names:
-        if re.search(rf"\b{re.escape(allowed)}\b", candidate):
+        if (
+            re.search(rf"\b{re.escape(allowed)}\b", candidate)
+            or re.search(rf"\b{re.escape(candidate)}\b", allowed)
+        ):
             return True
-        aliases = next((values for key, values in INGREDIENT_ALIASES.items() if allowed in values), set())
-        if any(re.search(rf"\b{re.escape(alias)}\b", candidate) for alias in aliases):
-            return True
+        for canonical, aliases in INGREDIENT_ALIASES.items():
+            if allowed == canonical or allowed in aliases:
+                if any(
+                    re.search(rf"\b{re.escape(_normalized_words(alias))}\b", candidate)
+                    for alias in aliases | {canonical}
+                ):
+                    return True
     return False
 
 def has_unselected_major_protein(text: str, pantry_items: List[str]) -> bool:
@@ -221,6 +230,17 @@ def get_safe_dishes(
                 if re.search(pattern, dish_text):
                     is_safe = False
                     break
+
+        # Strict pantry mode means every catalog ingredient must be present in
+        # the user's list (or a basic household staple). Unknown ingredient
+        # lists are rejected because we cannot safely claim the dish fits.
+        if is_safe and strict_pantry_mode:
+            if not pantry_terms or not ingredients_list:
+                is_safe = False
+            elif any(not ingredient_is_available(ingredient, pantry_terms) for ingredient in ingredients_list):
+                is_safe = False
+            elif has_unselected_major_protein(dish_text, pantry_terms):
+                is_safe = False
 
         if is_safe:
             d['ingredient_names'] = [ing.title() for ing in ingredients_list]

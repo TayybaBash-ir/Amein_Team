@@ -18,7 +18,7 @@ interface MealDetailProps {
   total?: number;
   tdee?: number;
   externalDining?: ExternalDiningRecommendation[];
-  onGoToRestaurant?: (r: string) => void;
+  onGoToRestaurant?: (r: string, mealId?: string) => void;
 }
 
 export default function MealDetail({
@@ -65,6 +65,9 @@ export default function MealDetail({
 
   const activeIndex = index !== undefined ? index : currentIndex;
   const activeTotal = total !== undefined ? total : totalMeals;
+  const matchedRestaurant =
+    externalDining?.find((item) => item.matched_meal_id === meal.id) ??
+    externalDining?.find((item) => item.matched_meal_name === meal.name);
 
   // Macro Calculation
   const proteinCals = (meal.protein || 0) * 4;
@@ -138,7 +141,7 @@ export default function MealDetail({
         {/* Watch Recipe Button */}
         {recipeLink && (
           <div className="mb-6">
-            <a href={recipeLink} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 w-full py-3.5 px-4 rounded-xl font-bold text-white shadow-lg transition-all hover:opacity-90 active:scale-[0.98]" style={{ backgroundColor: ACCENT }}>
+            <a href={recipeLink} target="_blank" rel="noopener noreferrer" className="flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3.5 font-bold text-foreground shadow-lg transition-all hover:opacity-90 active:scale-[0.98]" style={{ backgroundColor: ACCENT }}>
               <MdPlayArrow className="w-5 h-5 fill-current" />
               <span>Watch Recipe</span>
             </a>
@@ -146,23 +149,19 @@ export default function MealDetail({
         )}
         
         {/* Restaurant Order Button */}
-        {externalDining && externalDining.find(d => d.matched_meal_name === meal.name || d.matched_meal_id === meal.id) && (() => {
-          const matched = externalDining.find(d => d.matched_meal_name === meal.name || d.matched_meal_id === meal.id);
-          if (!matched) return null;
-          return (
+        {matchedRestaurant && (
             <div className="mb-6">
               <button
                 onClick={() => {
                   onClose();
-                  if (onGoToRestaurant) onGoToRestaurant(matched.restaurant_name);
+                  if (onGoToRestaurant) onGoToRestaurant(matchedRestaurant.restaurant_name, matchedRestaurant.matched_meal_id || meal.id);
                 }}
-                className="flex items-center justify-center gap-2 w-full py-3.5 px-4 rounded-xl font-bold text-white shadow-lg transition-all hover:opacity-90 active:scale-[0.98] bg-brand"
+                className="flex w-full items-center justify-center gap-2 rounded-xl bg-brand-dark px-4 py-3.5 font-bold text-white shadow-lg transition-all hover:opacity-90 active:scale-[0.98]"
               >
                 <span>Order online &rarr;</span>
               </button>
             </div>
-          );
-        })()}
+        )}
 
         {/* Ingredients Section */}
         {meal.ingredients && meal.ingredients.length > 0 && (

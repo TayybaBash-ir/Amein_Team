@@ -45,6 +45,16 @@ def _forbidden_proteins(pantry_items):
         forbidden = [protein for protein in forbidden if protein not in PLANT_PROTEIN_ALIASES]
     return forbidden
 
+def _daily_budget_from_weekly(weekly_budget):
+    value = (weekly_budget or "").lower()
+    if "under 5,000" in value:
+        return 5000 / 7
+    if "5,000 - 10,000" in value:
+        return 10000 / 7
+    if "10,000 - 15,000" in value:
+        return 15000 / 7
+    return None
+
 def _sanitize_candidate_plan(plan, categorized, forbidden_items):
     """Replace forbidden components with safe catalog components before assembly."""
     from api.db_manager import contains_forbidden_ingredient
@@ -275,6 +285,11 @@ def generate_meal_plan(patient: PatientIntake):
     print("STRICT PANTRY MODE:", patient.strict_pantry_mode)
     print("="*50 + "\n")
     pantry_items = [item.strip() for item in (patient.pantry_items or []) if item.strip()]
+    if patient.strict_pantry_mode and not pantry_items and not (patient.pantry_input or "").strip():
+        raise HTTPException(
+            status_code=422,
+            detail="Use only what I have needs a pantry list. Add ingredients you currently have, then try again.",
+        )
     forbidden_items = _forbidden_proteins(pantry_items)
     recovery_mode = bool(
         patient.is_post_discharge
@@ -315,6 +330,16 @@ def generate_meal_plan(patient: PatientIntake):
         pantry_items.extend(ai_rules.extracted_pantry)
         forbidden_items = _forbidden_proteins(pantry_items)
         print("AI EXTRACTED PANTRY:", ai_rules.extracted_pantry)
+
+    # Return the normalized list with the plan too, so swaps remain subject to
+    # the same pantry rules without needing another extraction call.
+    patient.pantry_items = list(dict.fromkeys(pantry_items))
+
+    if patient.strict_pantry_mode and not pantry_items:
+        raise HTTPException(
+            status_code=422,
+            detail="Use only what I have needs a pantry list. Add ingredients you currently have, then try again.",
+        )
 
     targets = get_nutritional_targets(
         plan_mode=str(patient.plan_mode),
@@ -381,15 +406,7 @@ def generate_meal_plan(patient: PatientIntake):
 
     forbidden_items.extend(getattr(ai_rules, 'forbidden_ingredients', []))
     # Parse weekly budget into a daily limit
-    daily_budget = None
-    if hasattr(patient, 'weekly_budget') and patient.weekly_budget:
-        b = patient.weekly_budget.lower()
-        if 'under 5,000' in b:
-            daily_budget = 5000 / 7
-        elif '5,000 - 10,000' in b:
-            daily_budget = 10000 / 7
-        elif '10,000 - 15,000' in b:
-            daily_budget = 15000 / 7
+    daily_budget = None if patient.plan_mode == "recovery" else _daily_budget_from_weekly(patient.weekly_budget)
 
     categorized = get_safe_dishes(
         allergies,
@@ -402,7 +419,12 @@ def generate_meal_plan(patient: PatientIntake):
     print("MEAT/MAIN POOL DISHES:", [d.get('name') for d in categorized.get('meat', [])])
 
     if not categorized.get('meat') and not categorized.get('veg'):
-        raise HTTPException(status_code=422, detail="No suitable dishes found for these dietary restrictions.")
+        detail = (
+            "No cataloged meals could be verified using only the pantry ingredients you listed. Add more ingredients or turn off 'Use only what I have'."
+            if patient.strict_pantry_mode
+            else "No suitable dishes found for these dietary restrictions."
+        )
+        raise HTTPException(status_code=422, detail=detail)
         
     all_final_meals = []
     prefs = patient.preferences.dict() if patient.preferences else {}
@@ -410,10 +432,23 @@ def generate_meal_plan(patient: PatientIntake):
     used_dishes = set()
     num_days = 3 if patient.plan_mode == "recovery" else 7
     for day_num in range(1, num_days + 1):
-        best_plan, multiplier = find_best_meal_plan(categorized, final_targets.dict(), preferences=prefs, iterations=2500, previously_selected=used_dishes)
+        best_plan, multiplier = find_best_meal_plan(
+            categorized,
+            final_targets.dict(),
+            preferences=prefs,
+            iterations=2500,
+            previously_selected=used_dishes,
+            daily_budget=daily_budget,
+            strict_pantry_mode=bool(patient.strict_pantry_mode),
+        )
         
         if not best_plan:
-            raise HTTPException(status_code=422, detail="Math engine failed to find a combination.")
+            detail = (
+                "Your pantry list does not contain enough cataloged ingredients to build all meals in strict mode. Add more ingredients or turn off 'Use only what I have'."
+                if patient.strict_pantry_mode
+                else "Math engine failed to find a combination."
+            )
+            raise HTTPException(status_code=422, detail=detail)
 
         if forbidden_items:
             best_plan = _sanitize_candidate_plan(best_plan, categorized, forbidden_items)
@@ -538,6 +573,18 @@ def generate_meal_plan(patient: PatientIntake):
             msgs.append("AI clinical guidance applied")
     else:
         msgs = errs
+    if daily_budget is not None:
+        over_budget_days = [
+            day.day_label
+            for day in day_plans
+            if sum(meal.estimated_cost or 0 for meal in day.meals) > daily_budget
+        ]
+        if over_budget_days:
+            msgs.append(
+                "Estimated meal costs may exceed your selected daily budget on "
+                + ", ".join(over_budget_days)
+                + ". Costs are approximate catalog estimates."
+            )
     meal_plan = MealPlan(
         days=day_plans,
         overall_validation=ValidationInfo(valid=is_valid, messages=msgs)
@@ -553,7 +600,7 @@ def generate_meal_plan(patient: PatientIntake):
                 day_recommendations = [
                     build_outside_order_recommendation(meal)
                     for meal in day_plan.meals
-                    if meal.slot.lower() in {"lunch", "dinner", "snack"}
+                    if meal.slot.lower() in {"breakfast", "lunch", "dinner", "snack"}
                 ]
                 outside_order_matches[day_index] = day_recommendations
                 external_dining.extend(day_recommendations)
@@ -588,13 +635,13 @@ def swap_meal(req: SwapRequest):
     dietary_restrictions = req.patient.dietary_restrictions or []
     from api.db_manager import get_safe_dishes, contains_forbidden_ingredient
     pantry_items = [item.strip() for item in (req.patient.pantry_items or []) if item.strip()]
+    if req.patient.strict_pantry_mode and not pantry_items:
+        raise HTTPException(
+            status_code=422,
+            detail="Use only what I have needs a pantry list. Add ingredients you currently have, then try again.",
+        )
     forbidden_items = _forbidden_proteins(pantry_items)
-    daily_budget = None
-    if hasattr(req.patient, 'weekly_budget') and req.patient.weekly_budget:
-        b = req.patient.weekly_budget.lower()
-        if 'under 5,000' in b: daily_budget = 5000 / 7
-        elif '5,000 - 10,000' in b: daily_budget = 10000 / 7
-        elif '10,000 - 15,000' in b: daily_budget = 15000 / 7
+    daily_budget = None if req.patient.plan_mode == "recovery" else _daily_budget_from_weekly(req.patient.weekly_budget)
         
     recovery_mode = bool(
         req.patient.is_post_discharge
@@ -609,7 +656,7 @@ def swap_meal(req: SwapRequest):
         pantry_items=pantry_items,
         strict_pantry_mode=bool(req.patient.strict_pantry_mode),
         forbidden_items=forbidden_items,
-        recovery_mode=getattr(patient, "is_post_discharge", False),
+        recovery_mode=getattr(req.patient, "is_post_discharge", False),
     )
     
     target_macros = {
@@ -627,7 +674,9 @@ def swap_meal(req: SwapRequest):
         req.slot, 
         target_macros, 
         previously_selected=set(req.previously_selected), 
-        num_options=3
+        num_options=3,
+        daily_budget=daily_budget,
+        strict_pantry_mode=bool(req.patient.strict_pantry_mode),
     )
     
     if not alts:
@@ -758,18 +807,25 @@ def get_plan(plan_id: str):
 def process_checkin(req: CheckInRequest):
     try:
         weight_change = req.new_weight - req.patient.weight
-        ai_analysis = analyze_feedback(req.feedback_text, req.patient.goal or "maintain", weight_change)
+        feedback_analysis = analyze_feedback(
+            req.feedback_text,
+            req.patient.goal or "maintain",
+            weight_change,
+            req.feedback_history,
+        )
         
         # update the modifier
-        new_modifier = req.patient.metabolic_modifier * ai_analysis.get("recommended_tdee_multiplier", 1.0)
+        new_modifier = req.patient.metabolic_modifier * feedback_analysis.get("recommended_tdee_multiplier", 1.0)
         # bound the modifier
         new_modifier = max(0.6, min(1.5, new_modifier))
         
         return {
             "new_weight": req.new_weight,
             "new_modifier": round(new_modifier, 3),
-            "macro_tweak": ai_analysis.get("macro_tweak", "none"),
-            "explanation": ai_analysis.get("explanation", "Adjusted based on feedback.")
+            "macro_tweak": feedback_analysis.get("macro_tweak", "none"),
+            "explanation": feedback_analysis.get("explanation", "Adjusted based on feedback."),
+            "history_points_used": feedback_analysis.get("history_points_used", 1),
+            "weight_trend_kg_per_checkin": feedback_analysis.get("weight_trend_kg_per_checkin", round(weight_change, 2)),
         }
     except Exception as e:
         return {"error": str(e)}

@@ -46,7 +46,7 @@ export const RestaurantRecommendationCard: React.FC<Props> = ({
       </div>
 
       <div className="rounded-lg border border-border bg-card p-2.5 text-xs leading-relaxed text-foreground">
-        <strong className="text-neutral-200">Kitchen note: </strong>
+        <strong className="text-foreground">Kitchen note: </strong>
         {kitchenNote}
       </div>
 
@@ -56,7 +56,7 @@ export const RestaurantRecommendationCard: React.FC<Props> = ({
         className="w-full rounded-md bg-brand px-3 py-2.5 text-sm font-semibold text-foreground transition hover:bg-brand active:scale-[0.98] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand disabled:cursor-not-allowed disabled:opacity-50"
         onClick={() => link && window.open(link, "_blank", "noopener,noreferrer")}
       >
-        View Menu / Order Item
+        Open restaurant in Maps
       </button>
     </article>
   );

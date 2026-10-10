@@ -276,7 +276,7 @@ export default function ProfilePage() {
           className="mb-4 rounded-3xl border border-border bg-surface p-5 sm:p-6"
         >
           <div className="flex items-center gap-2 mb-4">
-            <MdFavorite size={16} className="text-rose-400" />
+            <MdFavorite size={16} className="text-brand" />
             <h2 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Chronic Conditions</h2>
           </div>
           <div className="flex flex-wrap gap-2">
