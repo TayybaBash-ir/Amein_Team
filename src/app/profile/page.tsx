@@ -71,8 +71,8 @@ function toProfile(stored: Record<string, unknown>): Profile {
   };
 }
 
-const inputClass = "w-full rounded-xl border border-white/[0.08] bg-white/[0.04] px-4 py-3 text-sm text-white outline-none transition focus:border-indigo-500/60 focus:ring-2 focus:ring-indigo-500/20 placeholder:text-neutral-600 [&>option]:bg-[#0F1117]";
-const labelClass = "mb-1.5 block text-xs font-semibold uppercase tracking-wider text-neutral-500";
+const inputClass = "w-full rounded-xl border border-border bg-card px-4 py-3 text-sm text-foreground outline-none transition focus:border-indigo-500/60 focus:ring-2 focus:ring-indigo-500/20 placeholder:text-neutral-600 [&>option]:bg-background";
+const labelClass = "mb-1.5 block text-xs font-semibold uppercase tracking-wider text-muted-foreground";
 
 export default function ProfilePage() {
   const [profile, setProfile] = useState<Profile>(initialProfile);
@@ -109,30 +109,30 @@ export default function ProfilePage() {
   }
 
   const statTile = (label: string, value: string, sub?: string) => (
-    <div className="rounded-2xl border border-white/[0.07] bg-white/[0.03] p-4">
-      <p className="text-xs font-semibold uppercase tracking-wider text-neutral-500 mb-1">{label}</p>
-      <p className="text-xl font-bold text-white">{value}</p>
-      {sub && <p className="text-xs text-neutral-500 mt-0.5">{sub}</p>}
+    <div className="rounded-2xl border border-border bg-surface p-4">
+      <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1">{label}</p>
+      <p className="text-xl font-bold text-foreground">{value}</p>
+      {sub && <p className="text-xs text-muted-foreground mt-0.5">{sub}</p>}
     </div>
   );
 
   return (
-    <div className="min-h-screen bg-[#0F1117]">
+    <div className="min-h-screen bg-background">
       {/* Nav */}
-      <nav className="sticky top-0 z-50 flex items-center justify-between border-b border-white/[0.06] bg-[#0F1117]/85 px-4 py-3 backdrop-blur-xl sm:px-8">
+      <nav className="sticky top-0 z-50 flex items-center justify-between border-b border-border bg-background/85 px-4 py-3 backdrop-blur-xl sm:px-8">
         <div className="flex items-center gap-3">
           <Link
             href="/dashboard"
-            className="flex items-center justify-center h-8 w-8 rounded-xl bg-white/5 hover:bg-white/10 text-neutral-400 hover:text-white transition-all"
+            className="flex items-center justify-center h-8 w-8 rounded-xl bg-surface hover:bg-surface-2 text-muted-foreground hover:text-foreground transition-all"
             title="Back to dashboard"
           >
             <MdArrowBack size={18} />
           </Link>
           <Link href="/dashboard" className="group flex items-center gap-2">
             <div className="grid h-8 w-8 place-items-center rounded-xl bg-gradient-to-br from-indigo-500 to-indigo-700 shadow-lg shadow-indigo-500/20 transition-transform group-hover:scale-105">
-              <MdEco size={16} className="text-white" />
+              <MdEco size={16} className="text-foreground" />
             </div>
-            <span className="font-sans text-lg font-bold tracking-tight text-white">ClimaDiet</span>
+            <span className="font-sans text-lg font-bold tracking-tight text-foreground">ClimaDiet</span>
           </Link>
         </div>
       </nav>
@@ -148,10 +148,10 @@ export default function ProfilePage() {
             <div className="mb-2 inline-flex items-center gap-2 rounded-full border border-indigo-500/20 bg-indigo-500/10 px-3 py-1 text-xs font-semibold text-indigo-400">
               <MdPerson size={12} /> Medical Profile
             </div>
-            <h1 className="text-3xl font-bold tracking-tight text-white">
+            <h1 className="text-3xl font-bold tracking-tight text-foreground">
               {profile.name || "Your Profile"}
             </h1>
-            <p className="mt-1 text-sm text-neutral-500">
+            <p className="mt-1 text-sm text-muted-foreground">
               Saved locally — used automatically in every plan you generate.
             </p>
           </div>
@@ -159,8 +159,8 @@ export default function ProfilePage() {
             onClick={() => isEditing ? handleSave() : setIsEditing(true)}
             className={`flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition-all ${
               isEditing
-                ? "bg-indigo-500 text-white hover:bg-indigo-600 shadow-lg shadow-indigo-500/25"
-                : "bg-white/[0.06] text-neutral-300 hover:bg-white/10 border border-white/[0.08]"
+                ? "bg-indigo-500 text-foreground hover:bg-indigo-600 shadow-lg shadow-indigo-500/25"
+                : "bg-surface text-foreground hover:bg-surface-2 border border-border"
             }`}
           >
             {isEditing ? <><MdSave size={16} /> Save</> : <><MdEdit size={16} /> Edit</>}
@@ -192,9 +192,9 @@ export default function ProfilePage() {
         {/* Physical Metrics */}
         <motion.section
           initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
-          className="mb-4 rounded-3xl border border-white/[0.07] bg-white/[0.03] p-5 sm:p-6"
+          className="mb-4 rounded-3xl border border-border bg-surface p-5 sm:p-6"
         >
-          <h2 className="mb-4 text-xs font-bold uppercase tracking-wider text-neutral-500">Physical Metrics</h2>
+          <h2 className="mb-4 text-xs font-bold uppercase tracking-wider text-muted-foreground">Physical Metrics</h2>
           {isEditing ? (
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
               <div><label className={labelClass}>Name</label><input className={inputClass} value={profile.name} onChange={e => setProfile({ ...profile, name: e.target.value })} /></div>
@@ -208,7 +208,7 @@ export default function ProfilePage() {
               <div><label className={labelClass}>Weight (kg)</label><input type="number" className={inputClass} value={profile.weight} onChange={e => setProfile({ ...profile, weight: +e.target.value })} /></div>
               <div>
                 <label className={labelClass}>BMI</label>
-                <input readOnly className={`${inputClass} text-neutral-500`} value={bmi ? bmi.toFixed(1) : "—"} />
+                <input readOnly className={`${inputClass} text-muted-foreground`} value={bmi ? bmi.toFixed(1) : "—"} />
               </div>
             </div>
           ) : (
@@ -219,9 +219,9 @@ export default function ProfilePage() {
                 ["Weight", `${profile.weight} kg`],
                 ["BMI", bmi ? `${bmi.toFixed(1)} — ${bmiCategory?.label}` : "—"],
               ].map(([k, v]) => (
-                <div key={k} className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-3">
+                <div key={k} className="rounded-xl border border-border bg-surface p-3">
                   <p className="text-[10px] font-bold uppercase tracking-wider text-neutral-600 mb-1">{k}</p>
-                  <p className="text-sm font-semibold text-white">{v}</p>
+                  <p className="text-sm font-semibold text-foreground">{v}</p>
                 </div>
               ))}
             </div>
@@ -231,11 +231,11 @@ export default function ProfilePage() {
         {/* Conditions */}
         <motion.section
           initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}
-          className="mb-4 rounded-3xl border border-white/[0.07] bg-white/[0.03] p-5 sm:p-6"
+          className="mb-4 rounded-3xl border border-border bg-surface p-5 sm:p-6"
         >
           <div className="flex items-center gap-2 mb-4">
             <MdFavorite size={16} className="text-rose-400" />
-            <h2 className="text-xs font-bold uppercase tracking-wider text-neutral-500">Chronic Conditions</h2>
+            <h2 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Chronic Conditions</h2>
           </div>
           <div className="flex flex-wrap gap-2">
             {conditionOptions.map(c => (
@@ -248,8 +248,8 @@ export default function ProfilePage() {
                   profile.conditions.includes(c)
                     ? "border-indigo-500/50 bg-indigo-500/15 text-indigo-300"
                     : isEditing
-                      ? "border-white/[0.08] bg-white/[0.03] text-neutral-400 hover:border-white/20 hover:text-white"
-                      : "border-white/[0.06] bg-white/[0.02] text-neutral-600"
+                      ? "border-border bg-surface text-muted-foreground hover:border-border hover:text-foreground"
+                      : "border-border bg-surface text-neutral-600"
                 }`}
               >
                 {c}
@@ -264,11 +264,11 @@ export default function ProfilePage() {
         {/* Diet & Allergies */}
         <motion.section
           initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
-          className="mb-4 rounded-3xl border border-white/[0.07] bg-white/[0.03] p-5 sm:p-6"
+          className="mb-4 rounded-3xl border border-border bg-surface p-5 sm:p-6"
         >
           <div className="flex items-center gap-2 mb-4">
             <MdRestaurant size={16} className="text-amber-400" />
-            <h2 className="text-xs font-bold uppercase tracking-wider text-neutral-500">Diet & Allergies</h2>
+            <h2 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Diet & Allergies</h2>
           </div>
           {isEditing ? (
             <div className="grid gap-4 sm:grid-cols-2">
@@ -277,13 +277,13 @@ export default function ProfilePage() {
             </div>
           ) : (
             <div className="grid gap-3 sm:grid-cols-2">
-              <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-3">
+              <div className="rounded-xl border border-border bg-surface p-3">
                 <p className="text-[10px] font-bold uppercase tracking-wider text-neutral-600 mb-1">Allergies</p>
-                <p className="text-sm text-white">{profile.allergies || "None recorded"}</p>
+                <p className="text-sm text-foreground">{profile.allergies || "None recorded"}</p>
               </div>
-              <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-3">
+              <div className="rounded-xl border border-border bg-surface p-3">
                 <p className="text-[10px] font-bold uppercase tracking-wider text-neutral-600 mb-1">Dietary Restrictions</p>
-                <p className="text-sm text-white">{profile.dietary_restrictions || "None recorded"}</p>
+                <p className="text-sm text-foreground">{profile.dietary_restrictions || "None recorded"}</p>
               </div>
             </div>
           )}
@@ -292,11 +292,11 @@ export default function ProfilePage() {
         {/* Clinical Notes */}
         <motion.section
           initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}
-          className="mb-8 rounded-3xl border border-white/[0.07] bg-white/[0.03] p-5 sm:p-6"
+          className="mb-8 rounded-3xl border border-border bg-surface p-5 sm:p-6"
         >
           <div className="flex items-center gap-2 mb-4">
             <MdNoFood size={16} className="text-blue-400" />
-            <h2 className="text-xs font-bold uppercase tracking-wider text-neutral-500">Doctor&apos;s Clinical Notes</h2>
+            <h2 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Doctor&apos;s Clinical Notes</h2>
           </div>
           {isEditing ? (
             <textarea
@@ -307,7 +307,7 @@ export default function ProfilePage() {
               onChange={e => setProfile({ ...profile, medical_history_notes: e.target.value })}
             />
           ) : (
-            <p className="text-sm leading-relaxed text-neutral-400 whitespace-pre-wrap">
+            <p className="text-sm leading-relaxed text-muted-foreground whitespace-pre-wrap">
               {profile.medical_history_notes || "No clinical notes recorded."}
             </p>
           )}
@@ -325,11 +325,13 @@ export default function ProfilePage() {
           )}
 
           {/* Sign Out Button at the very bottom */}
-          <div className="mt-8 pt-8 border-t border-white/[0.06] flex flex-col items-center">
-            <p className="text-xs text-neutral-500 mb-4">Account Management</p>
+          <div className="mt-8 pt-8 border-t border-border flex flex-col items-center">
+            <p className="text-xs text-muted-foreground mb-4">Account Management</p>
             <AuthButton />
           </div>
         </main>
       </div>
     );
   }
+
+

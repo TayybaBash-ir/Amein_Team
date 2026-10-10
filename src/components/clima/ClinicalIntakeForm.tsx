@@ -90,9 +90,9 @@ export default function ClinicalIntakeForm({
     localStorage.setItem("patientProfile", JSON.stringify(d));
   }, [d]);
 
-  const inputClass = "w-full rounded-2xl border border-white/5 bg-white/5 px-4 py-3 text-sm text-white outline-none transition-all placeholder:text-neutral-500 hover:bg-white/[0.07] focus:border-white/20 focus:bg-white/10 md:text-base";
-  const labelClass = "mb-2 ml-1 block text-[13px] font-medium text-neutral-400";
-  const sectionClass = "rounded-[2rem] border border-white/[0.06] bg-white/[0.025] p-5 shadow-xl backdrop-blur-2xl sm:p-7 md:p-8";
+  const inputClass = "w-full rounded-2xl border border-border bg-surface px-4 py-3 text-sm text-foreground outline-none transition-all placeholder:text-muted-foreground hover:bg-surface-2 focus:border-indigo-500 focus:bg-surface-2 md:text-base";
+  const labelClass = "mb-2 ml-1 block text-[13px] font-medium text-muted-foreground";
+  const sectionClass = "rounded-[2rem] border border-border bg-card p-5 shadow-xl sm:p-7 md:p-8";
 
   const set = (key: keyof IntakeData, value: unknown) => {
     setD((current) => ({ ...current, [key]: value }));
@@ -146,13 +146,13 @@ export default function ClinicalIntakeForm({
       <div className="mb-3 flex flex-wrap gap-2">
         {presets.map((item) => {
           const active = d[key].includes(item);
-          return <button key={item} type="button" aria-pressed={active} onClick={() => toggle(key, item)} className={`rounded-full border px-4 py-2 text-sm font-medium transition-all ${active ? "border-emerald-400/50 bg-emerald-400/15 text-emerald-200" : "border-white/10 bg-white/[0.04] text-neutral-300 hover:bg-white/10"}`}>{item}</button>;
+          return <button key={item} type="button" aria-pressed={active} onClick={() => toggle(key, item)} className={`rounded-full border px-4 py-2 text-sm font-medium transition-all ${active ? "border-emerald-400/50 bg-emerald-400/15 text-emerald-200" : "border-border bg-surface-2 text-foreground hover:bg-border"}`}>{item}</button>;
         })}
         {d[key].filter((item) => !presets.includes(item)).map((item) => <button key={item} type="button" onClick={() => toggle(key, item)} className="rounded-full border border-emerald-400/40 bg-emerald-400/10 px-4 py-2 text-sm font-medium text-emerald-200">{item} ×</button>)}
       </div>
       <div className="flex gap-2">
         <input className={inputClass} value={draft} onChange={(event) => setDraft(event.target.value)} onKeyDown={(event) => event.key === "Enter" && (event.preventDefault(), addCustom(key, draft, setDraft))} placeholder={placeholder} />
-        <button type="button" onClick={() => addCustom(key, draft, setDraft)} className="rounded-xl border border-white/10 bg-white/5 px-4 text-neutral-300 hover:bg-white/10">Add</button>
+        <button type="button" onClick={() => addCustom(key, draft, setDraft)} className="rounded-xl border border-border bg-surface-2 px-4 text-foreground hover:bg-border">Add</button>
       </div>
     </div>
   );
@@ -160,14 +160,14 @@ export default function ClinicalIntakeForm({
   return (
     <form onSubmit={handleSubmit} className="mx-auto flex max-w-4xl flex-col gap-6 pb-12 font-sans sm:gap-8">
       <div className="mb-2 text-center">
-        <h2 className="mb-3 text-3xl font-semibold tracking-tight text-white sm:text-4xl">Tailor your plan.</h2>
-        <p className="text-sm text-neutral-400 sm:text-base">Tell us about your health, your goals, and what&apos;s in your kitchen.</p>
+        <h2 className="mb-3 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">Tailor your plan.</h2>
+        <p className="text-sm text-muted-foreground sm:text-base">Tell us about your health, your goals, and what&apos;s in your kitchen.</p>
       </div>
 
       <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className={sectionClass}>
         <div className="mb-6 flex items-center gap-3">
           <div className="rounded-xl bg-blue-500/10 p-2 text-blue-400"><MdDirectionsRun size={20} /></div>
-          <h2 className="text-xl font-semibold tracking-tight text-white">1. Personal Information</h2>
+          <h2 className="text-xl font-semibold tracking-tight text-foreground">1. Personal Information</h2>
         </div>
         <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
           <div className="col-span-2"><label className={labelClass}>Name</label><input className={inputClass} value={d.name || "Patient"} onChange={(event) => set("name", event.target.value)} /></div>
@@ -185,7 +185,7 @@ export default function ClinicalIntakeForm({
       <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className={sectionClass}>
         <div className="mb-6 flex items-center gap-3">
           <div className="rounded-xl bg-rose-500/10 p-2 text-rose-400"><MdFavorite size={20} /></div>
-          <h2 className="text-xl font-semibold tracking-tight text-white">2. Health Conditions &amp; Dietary Needs</h2>
+          <h2 className="text-xl font-semibold tracking-tight text-foreground">2. Health Conditions &amp; Dietary Needs</h2>
         </div>
         <div className="space-y-6">
           <div className="rounded-2xl border border-amber-500/20 bg-amber-500/[0.05] p-4">
@@ -197,30 +197,33 @@ export default function ClinicalIntakeForm({
           {listField("Chronic conditions", "conditions", CONDITIONS_PRESET, customCond, setCustomCond, "Add a condition...")}
           {listField("Dietary restrictions", "dietary_restrictions", RESTRICTIONS_PRESET, customDiet, setCustomDiet, "Add a dietary restriction...")}
           {listField("Allergies", "allergies", ALLERGIES_PRESET, customAllergy, setCustomAllergy, "Add an allergy...")}
-          <div className="border-t border-white/5 pt-5">
+          <div className="border-t border-border pt-5">
             <button type="button" onClick={() => setShowIllness(!showIllness)} className="flex items-center gap-2 rounded-xl bg-orange-500/10 px-4 py-2 text-[13px] font-medium text-orange-300 transition-colors hover:text-orange-200">
               {showIllness ? <MdExpandLess size={18} /> : <MdExpandMore size={18} />} Feeling under the weather today?
             </button>
-            <AnimatePresence>{showIllness && <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden"><div className="mt-4"><label className={labelClass}>Symptoms</label><input className={inputClass} value={d.acute_illness || ""} onChange={(event) => set("acute_illness", event.target.value)} placeholder="Flu, cough, sore throat, fever..." /><p className="ml-1 mt-2 text-xs text-neutral-500">We&apos;ll account for this while building today&apos;s meal plan.</p></div></motion.div>}</AnimatePresence>
+            <AnimatePresence>{showIllness && <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden"><div className="mt-4"><label className={labelClass}>Symptoms</label><input className={inputClass} value={d.acute_illness || ""} onChange={(event) => set("acute_illness", event.target.value)} placeholder="Flu, cough, sore throat, fever..." /><p className="ml-1 mt-2 text-xs text-muted-foreground">We&apos;ll account for this while building today&apos;s meal plan.</p></div></motion.div>}</AnimatePresence>
           </div>
         </div>
       </motion.section>
 
       <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className={sectionClass}>
-        <div className="mb-6 flex items-center gap-3"><div className="rounded-xl bg-green-500/10 p-2 text-green-400"><MdHome size={20} /></div><h2 className="text-xl font-semibold tracking-tight text-white">3. Your Kitchen &amp; Budget</h2></div>
-        <p className="mb-5 text-[13px] leading-relaxed text-neutral-400">Tell us what you have at home and we&apos;ll prioritize meals using those ingredients.</p>
+        <div className="mb-6 flex items-center gap-3"><div className="rounded-xl bg-green-500/10 p-2 text-green-400"><MdHome size={20} /></div><h2 className="text-xl font-semibold tracking-tight text-foreground">3. Your Kitchen &amp; Budget</h2></div>
+        <p className="mb-5 text-[13px] leading-relaxed text-muted-foreground">Tell us what you have at home and we&apos;ll prioritize meals using those ingredients.</p>
         <textarea className={`${inputClass} min-h-28 resize-y rounded-3xl`} placeholder="e.g. Chicken, rice, tomatoes, onions, and eggs" value={d.pantry_input || ""} onChange={(event) => set("pantry_input", event.target.value)} />
-        <div className="mt-5 grid gap-4 border-t border-white/5 pt-5 sm:grid-cols-2">
+        <div className="mt-5 grid gap-4 border-t border-border pt-5 sm:grid-cols-2">
           {planMode !== "recovery" && (
             <div><label className={labelClass}>Weekly food budget</label><select className={inputClass} value={d.weekly_budget || "No Limit"} onChange={(event) => set("weekly_budget", event.target.value)}><option>Under 5,000 PKR</option><option>5,000 - 10,000 PKR</option><option>10,000 - 15,000 PKR</option><option>No Limit</option></select></div>
           )}
-          <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-white/5 bg-white/[0.03] p-4 text-sm text-neutral-300"><input type="checkbox" className="mt-1 accent-emerald-400" checked={Boolean(d.strict_pantry_mode)} onChange={(event) => set("strict_pantry_mode", event.target.checked)} /><span><strong>Strict pantry mode</strong><br /><span className="text-xs text-neutral-500">Restrict meals to your available ingredients and staples.</span></span></label>
+          <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-border bg-surface p-4 text-sm text-foreground"><input type="checkbox" className="mt-1 accent-emerald-400" checked={Boolean(d.strict_pantry_mode)} onChange={(event) => set("strict_pantry_mode", event.target.checked)} /><span><strong>Strict pantry mode</strong><br /><span className="text-xs text-muted-foreground">Restrict meals to your available ingredients and staples.</span></span></label>
         </div>
       </motion.section>
 
-      <motion.button whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.98 }} type="submit" disabled={loading} className="mt-2 flex w-full items-center justify-center gap-2 rounded-full bg-white px-8 py-5 text-[17px] font-semibold text-black shadow-[0_0_40px_rgba(255,255,255,0.15)] transition-all hover:bg-neutral-200 disabled:cursor-not-allowed disabled:opacity-70">
+      <motion.button whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.98 }} type="submit" disabled={loading} className="mt-2 flex w-full items-center justify-center gap-2 rounded-full bg-foreground px-8 py-5 text-[17px] font-semibold text-background shadow-[0_0_40px_rgba(255,255,255,0.15)] transition-all hover:bg-neutral-200 disabled:cursor-not-allowed disabled:opacity-70">
         {loading ? <><MdAutorenew className="animate-spin" size={20} /> Preparing your plan...</> : "Generate Personal Plan"}
       </motion.button>
     </form>
   );
 }
+
+
+

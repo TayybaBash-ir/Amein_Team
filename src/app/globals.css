@@ -10,7 +10,7 @@
 
 @layer base {
   :root {
-    /* ── Dark Theme: Premium deep slate ── */
+    /* ✨ Dark Theme: Premium deep slate ✨ */
     --background: #0F1117;
     --foreground: #f0f0f5;
     --card: #161922;
@@ -45,12 +45,7 @@
   }
 }
 
-@layer base {
-  * { @apply border-border; }
-  body { background: var(--background); color: var(--foreground); }
-}
-
-/* ── Light Theme: Apple-style clean white ── */
+/* ✨ Light Theme: Apple-style clean white ✨ */
 html.light {
   --background: #ffffff;
   --foreground: #111111;
@@ -64,35 +59,14 @@ html.light {
   --surface-2: #e8e8ed;
   --brand: #111111;
   --brand-dark: #333333;
-  background: #ffffff;
-  color: #111111;
   color-scheme: light;
 }
-html.light body {
-  background: #ffffff !important;
-  color: #111111 !important;
-}
-html.light nav {
-  background: rgba(255,255,255,0.85) !important;
-  border-color: rgba(0,0,0,0.08) !important;
-}
-html.light .bg-\[#0F1117\],
-html.light .bg-\[#1A1D1E\],
-html.light .bg-\[#161922\] { background: #ffffff !important; }
-html.light .bg-\[#161922\]\/80,
-html.light .bg-\[#24282a\],
-html.light .bg-white\/\[0\.04\] { background: #f5f5f7 !important; }
-html.light .text-white { color: #111111 !important; }
-html.light .text-neutral-400,
-html.light .text-neutral-500 { color: #6e6e73 !important; }
-html.light .border-white\/\[0\.08\],
-html.light .border-white\/10 { border-color: rgba(0,0,0,0.08) !important; }
-html.light .text-\[#4a7c59\],
-html.light .text-\[#5c9270\] { color: #111111 !important; }
-html.light .bg-\[#4a7c59\] { background: #111111 !important; }
-html.light .bg-\[#4a7c59\]\/10,
-html.light .bg-\[#4a7c59\]\/20 { background: #f0f0f0 !important; }
 
+@layer base {
+  * { @apply border-border; }
+  body { background: var(--background); color: var(--foreground); }
+  html { scroll-behavior: smooth; background: var(--background); }
+}
 
 @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 .animate-marquee { animation: marquee 30s linear infinite; }
@@ -103,20 +77,18 @@ details[open] .chev { transform: rotate(180deg); }
 @keyframes fade-up { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
 .fade-up { opacity: 0; animation: fade-up .6s cubic-bezier(.2,.7,.2,1) forwards; }
 
-html { scroll-behavior: smooth; color-scheme: dark; background: #1A1D1E; }
-
 /* Shared form / card helpers (clinical dark styling) */
 .clinical-input {
-  @apply w-full rounded-xl border border-white/[0.08] bg-white/[0.04] px-4 py-3 text-sm text-white outline-none transition focus:border-[#4a7c59] focus:ring-4 focus:ring-[#4a7c59]/15 placeholder:text-neutral-500 [&>option]:bg-[#1A1D1E];
+  @apply w-full rounded-xl border border-border bg-input px-4 py-3 text-sm text-foreground outline-none transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/15 placeholder:text-muted-foreground [&>option]:bg-background;
 }
 .clinical-label {
-  @apply mb-1.5 block text-xs font-semibold uppercase tracking-wide text-neutral-400;
+  @apply mb-1.5 block text-xs font-semibold uppercase tracking-wide text-muted-foreground;
 }
 .clinical-card {
-  @apply rounded-3xl border border-white/[0.08] bg-[#24282a] p-5 sm:p-7 shadow-xl shadow-black/20;
+  @apply rounded-3xl border border-border bg-card p-5 sm:p-7 shadow-xl shadow-black/5;
 }
 .editorial-title {
-  @apply font-sans font-extrabold tracking-tight text-white;
+  @apply font-sans font-extrabold tracking-tight text-foreground;
 }
 
 /* Hide scrollbar but keep functionality */
@@ -132,25 +104,16 @@ html { scroll-behavior: smooth; color-scheme: dark; background: #1A1D1E; }
     background: white !important;
     color: black !important;
   }
-  .clinical-card, .bg-[#111113], .bg-white\/\\[0\.04\\] {
+  .clinical-card {
     background: white !important;
     border: 1px solid #ddd !important;
     color: black !important;
-  }
-  .text-white {
-    color: black !important;
-  }
-  .text-neutral-400, .text-neutral-500 {
-    color: #444 !important;
-  }
-  .border-white\/10 {
-    border-color: #ddd !important;
   }
   button, .no-print, nav, header {
     display: none !important;
   }
   /* Ensure the grid of meals looks good */
-  .grid-cols-2, .md\\:grid-cols-4, .lg\\:grid-cols-4 {
+  .grid-cols-2, .md\:grid-cols-4, .lg\:grid-cols-4 {
     display: grid !important;
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
     gap: 10px !important;
@@ -160,14 +123,3 @@ html { scroll-behavior: smooth; color-scheme: dark; background: #1A1D1E; }
   }
 }
 
-
-/* Automatic Light/Dark Mode Toggle Trick */
-html.light {
-  filter: invert(1) hue-rotate(180deg);
-  background: white; /* After invert, becomes black, but wait: if background is #1A1D1E, invert makes it light gray. Let's just let it be. */
-}
-html.light img, 
-html.light video,
-html.light [data-no-invert] {
-  filter: invert(1) hue-rotate(180deg);
-}

@@ -63,7 +63,7 @@ export default function MealPlanView({ plan: initialPlan }: { plan: PlanResponse
             <div className="flex flex-col gap-2 mt-3">
               {day.meals.map((meal) => (
                 <div key={meal.id} className="text-base lowercase mb-1">
-                  {meal.name} {meal.estimated_cost ? <span className="text-neutral-500 font-normal ml-1">({Math.round(meal.estimated_cost)} PKR)</span> : ""}
+                  {meal.name} {meal.estimated_cost ? <span className="text-muted-foreground font-normal ml-1">({Math.round(meal.estimated_cost)} PKR)</span> : ""}
                 </div>
               ))}
             </div>
@@ -76,12 +76,12 @@ export default function MealPlanView({ plan: initialPlan }: { plan: PlanResponse
         <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
           <div>
             <h2 className="text-2xl font-bold editorial-title">Your Custom Menu</h2>
-            <p className="text-sm text-neutral-400 mt-1">Crafted specifically for your body, taste, and goals.</p>
+            <p className="text-sm text-muted-foreground mt-1">Crafted specifically for your body, taste, and goals.</p>
           </div>
           <div className="flex items-center gap-2">
             <button 
               onClick={() => window.print()}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 transition-colors text-sm font-bold"
+              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-surface hover:bg-surface-2 border border-border transition-colors text-sm font-bold"
             >
               <MdPrint size={16} /> Download PDF
             </button>
@@ -124,12 +124,12 @@ export default function MealPlanView({ plan: initialPlan }: { plan: PlanResponse
                 className={`flex min-h-16 min-w-24 flex-shrink-0 flex-col items-center justify-center rounded-2xl border px-4 text-sm font-bold transition ${
                   isSelected
                     ? "border-transparent text-neutral-900"
-                    : "border-white/10 bg-white/[0.04] text-neutral-300 hover:bg-white/10"
+                    : "border-border bg-card text-foreground hover:bg-surface-2"
                 }`}
                 style={isSelected ? { background: ACCENT } : undefined}
               >
                 <span className="text-xs font-bold uppercase tracking-wider">{day.day_label}</span>
-                <span className={`mt-1 text-xs font-medium ${isSelected ? "text-neutral-800" : "text-neutral-500"}`}>{day.date}</span>
+                <span className={`mt-1 text-xs font-medium ${isSelected ? "text-neutral-800" : "text-muted-foreground"}`}>{day.date}</span>
               </button>
             );
           })}
@@ -145,30 +145,30 @@ export default function MealPlanView({ plan: initialPlan }: { plan: PlanResponse
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ delay: idx * 0.08 }}
-                className="group flex w-full cursor-pointer flex-col overflow-hidden rounded-[2rem] border border-white/[0.04] bg-white/[0.02] backdrop-blur-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all hover:scale-[1.01] hover:bg-white/[0.04]"
+                className="group flex w-full cursor-pointer flex-col overflow-hidden rounded-[2rem] border border-border bg-surface backdrop-blur-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all hover:scale-[1.01] hover:bg-card"
                 onClick={() => go(dayStart(selectedDay) + idx)}
               >
                 <div className="relative">
                   <MealImage meal={meal} className="aspect-[4/3] h-36 md:h-40 w-full rounded-none border-0 shadow-none object-cover" />
-                  <div className="absolute right-3 top-3 rounded-full border border-white/10 bg-black/70 p-2 text-white backdrop-blur hover:bg-white/20 transition-colors z-10"
+                  <div className="absolute right-3 top-3 rounded-full border border-border bg-black/70 p-2 text-foreground backdrop-blur hover:bg-surface-2 transition-colors z-10"
                     onClick={(e) => {
                       e.stopPropagation();
                       setSwapMealInfo({meal, dayIdx: selectedDay, mealIdx: idx});
                     }}>
                     <MdRefresh size={14} />
                   </div>
-                  <div className="absolute left-3 top-3 rounded-full border border-white/10 bg-black/70 px-3 py-1 text-xs font-bold uppercase tracking-wider text-white backdrop-blur">
+                  <div className="absolute left-3 top-3 rounded-full border border-border bg-black/70 px-3 py-1 text-xs font-bold uppercase tracking-wider text-foreground backdrop-blur">
                     {meal.slot}
                   </div>
                 </div>
 
                 <div className="flex flex-1 flex-col p-4">
                   <h4 className="editorial-title mb-1 text-lg font-bold">{meal.name}</h4>
-                  <div className="mb-3 font-mono text-xs text-neutral-400">{meal.calories} kcal • {meal.protein}g protein {meal.estimated_cost ? ` • ~Rs. ${Math.round(meal.estimated_cost)}` : ""}</div>
-                  <p className="mb-4 line-clamp-2 flex-1 text-xs text-neutral-400">
+                  <div className="mb-3 font-mono text-xs text-muted-foreground">{meal.calories} kcal • {meal.protein}g protein {meal.estimated_cost ? ` • ~Rs. ${Math.round(meal.estimated_cost)}` : ""}</div>
+                  <p className="mb-4 line-clamp-2 flex-1 text-xs text-muted-foreground">
                     {meal.why}
                   </p>
-                  <div className="mt-auto flex items-center border-t border-white/10 pt-3 text-xs font-bold uppercase tracking-wider transition-opacity group-hover:opacity-80" style={{ color: ACCENT }}>
+                  <div className="mt-auto flex items-center border-t border-border pt-3 text-xs font-bold uppercase tracking-wider transition-opacity group-hover:opacity-80" style={{ color: ACCENT }}>
                     View details <MdChevronRight size={14} className="ml-1" />
                   </div>
                 </div>
@@ -179,10 +179,10 @@ export default function MealPlanView({ plan: initialPlan }: { plan: PlanResponse
 
         {/* OUTSIDE ORDER MATCHES */}
         {plan.outside_order_matches && plan.outside_order_matches[selectedDay]?.length > 0 && (
-          <div className="mt-10 rounded-2xl border border-white/10 bg-[#222627] p-6 shadow-xl">
+          <div className="mt-10 rounded-2xl border border-border bg-[#222627] p-6 shadow-xl">
             <div className="mb-4">
-              <h3 className="text-xl font-bold text-white">Outside-order matches</h3>
-              <p className="text-xs text-neutral-400">
+              <h3 className="text-xl font-bold text-foreground">Outside-order matches</h3>
+              <p className="text-xs text-muted-foreground">
                 Restaurant items aligned with today's plan. Home-cooked meals remain the default.
               </p>
             </div>

@@ -65,14 +65,14 @@ export default function SwapMealModal({
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.95 }}
-        className="w-full max-w-md bg-[#111113] border border-white/10 rounded-3xl text-white overflow-hidden shadow-2xl flex flex-col max-h-[85vh]"
+        className="w-full max-w-md bg-[#111113] border border-border rounded-3xl text-foreground overflow-hidden shadow-2xl flex flex-col max-h-[85vh]"
       >
-        <div className="flex justify-between items-center p-5 border-b border-white/10">
+        <div className="flex justify-between items-center p-5 border-b border-border">
           <div>
             <h2 className="text-xl editorial-title">Swap Meal</h2>
-            <p className="text-neutral-400 text-xs mt-1">Choose an alternative {meal?.slot}</p>
+            <p className="text-muted-foreground text-xs mt-1">Choose an alternative {meal?.slot}</p>
           </div>
-          <button onClick={onClose} className="p-2 bg-white/5 rounded-full hover:bg-white/10 transition-colors">
+          <button onClick={onClose} className="p-2 bg-surface-2 rounded-full hover:bg-surface-2 transition-colors">
             <MdClose size={16} />
           </button>
         </div>
@@ -80,8 +80,8 @@ export default function SwapMealModal({
         <div className="p-5 overflow-y-auto">
           {loading && (
             <div className="flex flex-col items-center justify-center py-8">
-              <div className="h-8 w-8 animate-spin rounded-full border-2 border-white/20 border-t-white"></div>
-              <p className="mt-4 text-xs text-neutral-400">Finding delicious alternatives...</p>
+              <div className="h-8 w-8 animate-spin rounded-full border-2 border-border border-t-white"></div>
+              <p className="mt-4 text-xs text-muted-foreground">Finding delicious alternatives...</p>
             </div>
           )}
 
@@ -97,14 +97,14 @@ export default function SwapMealModal({
                 <div 
                   key={alt.id}
                   onClick={() => onSwap(alt)}
-                  className="group flex gap-3 p-3 rounded-2xl border border-white/10 bg-white/[0.02] cursor-pointer hover:border-white/30 hover:bg-white/[0.06] transition-all"
+                  className="group flex gap-3 p-3 rounded-2xl border border-border bg-surface cursor-pointer hover:border-white/30 hover:bg-surface transition-all"
                 >
-                  <div className="h-20 w-20 flex-shrink-0 overflow-hidden rounded-xl border border-white/10">
+                  <div className="h-20 w-20 flex-shrink-0 overflow-hidden rounded-xl border border-border">
                     <MealImage meal={alt} className="h-full w-full object-cover" />
                   </div>
                   <div className="flex flex-col justify-center flex-1">
                     <h4 className="font-bold text-sm line-clamp-2 leading-tight mb-1">{alt.name}</h4>
-                    <div className="text-[11px] text-neutral-400 font-mono">
+                    <div className="text-[11px] text-muted-foreground font-mono">
                       {alt.calories} kcal · {(alt as any).protein_g || alt.protein}g pro
                     </div>
                   </div>

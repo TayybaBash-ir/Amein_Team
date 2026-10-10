@@ -158,18 +158,18 @@ const handleGenerate = async (data: IntakeData) => {
 
   const navItemClass = (tab: AppTab, label: string) =>
     `flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-      activeTab === tab ? "bg-indigo-500/20 text-indigo-300" : "text-neutral-400 hover:text-white hover:bg-white/5"
+      activeTab === tab ? "bg-indigo-500/20 text-indigo-300" : "text-muted-foreground hover:text-foreground hover:bg-surface-2"
     }`;
 
   return (
-    <div className="min-h-screen bg-[#0F1117] selection:bg-indigo-500/30">
-      <nav className="sticky top-0 z-50 flex items-center justify-between border-b border-white/[0.06] bg-[#0F1117]/85 px-4 py-3 backdrop-blur-xl print:hidden sm:px-8">
+    <div className="min-h-screen bg-background text-foreground selection:bg-indigo-500/30">
+      <nav className="sticky top-0 z-50 flex items-center justify-between border-b border-border bg-background/85 px-4 py-3 backdrop-blur-xl print:hidden sm:px-8">
         <div className="flex items-center gap-3">
           {/* Back arrow — shown when not on home screen */}
           {step !== "home" && activeTab === "generate" && (
             <button
               onClick={() => { setStep("home"); }}
-              className="mr-1 flex items-center justify-center h-8 w-8 rounded-xl bg-white/5 hover:bg-white/10 text-neutral-400 hover:text-white transition-all"
+              className="mr-1 flex items-center justify-center h-8 w-8 rounded-xl bg-surface hover:bg-surface-2 text-muted-foreground hover:text-foreground transition-all"
               title="Back to home"
             >
               <MdArrowBack size={18} />
@@ -177,11 +177,11 @@ const handleGenerate = async (data: IntakeData) => {
           )}
           <Link href="/" className="group flex items-center gap-2">
             <div className="grid h-8 w-8 place-items-center rounded-xl bg-gradient-to-br from-indigo-500 to-indigo-700 shadow-lg shadow-indigo-500/20 transition-transform group-hover:scale-105">
-              <MdEco size={16} className="text-white" />
+              <MdEco size={16} className="text-foreground" />
             </div>
-            <span className="font-sans text-lg font-bold tracking-tight text-white">ClimaDiet</span>
+            <span className="font-sans text-lg font-bold tracking-tight text-foreground">ClimaDiet</span>
           </Link>
-          <div className="hidden h-6 w-px bg-white/10 sm:block" />
+          <div className="hidden h-6 w-px bg-border sm:block" />
           <div className="hidden sm:flex items-center gap-1">
             <button onClick={() => { setActiveTab("generate"); setStep("home"); }} className={navItemClass("generate", "Generate")}>
               <MdDashboard size={16} /> Home
@@ -189,10 +189,10 @@ const handleGenerate = async (data: IntakeData) => {
             <button onClick={() => setActiveTab("restaurants")} className={navItemClass("restaurants", "Restaurants")}>
               <MdRestaurantMenu size={16} /> Restaurants
             </button>
-            <Link href="/profile" className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-neutral-400 hover:text-white hover:bg-white/5 transition-colors">
+            <Link href="/profile" className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-surface transition-colors">
               <MdPerson size={16} /> Profile
             </Link>
-            <Link href="/plans" className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-neutral-400 hover:text-white hover:bg-white/5 transition-colors">
+            <Link href="/plans" className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-surface transition-colors">
               <MdList size={16} /> Saved Plans
             </Link>
           </div>
@@ -200,7 +200,7 @@ const handleGenerate = async (data: IntakeData) => {
         <div className="flex items-center gap-3">
           <button
             onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-            className="p-2 rounded-xl bg-white/5 hover:bg-white/10 text-white transition-colors"
+            className="p-2 rounded-xl bg-surface hover:bg-surface-2 text-foreground transition-colors"
             title="Toggle theme"
           >
             {theme === "dark" ? <MdWbSunny size={18} /> : <MdDarkMode size={18} />}
@@ -209,16 +209,16 @@ const handleGenerate = async (data: IntakeData) => {
         </div>
       </nav>
 
-      <div className="flex sm:hidden overflow-x-auto p-3 border-b border-white/5 bg-[#0F1117] gap-2 print:hidden scrollbar-hide">
+      <div className="flex sm:hidden overflow-x-auto p-3 border-b border-border bg-background gap-2 print:hidden scrollbar-hide">
         {step !== "home" && activeTab === "generate" && (
-          <button onClick={() => setStep("home")} className="flex items-center gap-1 px-3 py-2 rounded-lg text-sm font-medium text-neutral-400">
+          <button onClick={() => setStep("home")} className="flex items-center gap-1 px-3 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground">
             <MdArrowBack size={16} /> Back
           </button>
         )}
         <button onClick={() => { setActiveTab("generate"); setStep("home"); }} className={navItemClass("generate", "Generate")}>Home</button>
         <button onClick={() => setActiveTab("restaurants")} className={navItemClass("restaurants", "Restaurants")}>Restaurants</button>
-        <Link href="/profile" className="px-4 py-2 rounded-lg text-sm font-medium text-neutral-400">Profile</Link>
-        <Link href="/plans" className="px-4 py-2 rounded-lg text-sm font-medium text-neutral-400">Saved Plans</Link>
+        <Link href="/profile" className="px-4 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground">Profile</Link>
+        <Link href="/plans" className="px-4 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground">Saved Plans</Link>
       </div>
 
 
@@ -234,14 +234,14 @@ const handleGenerate = async (data: IntakeData) => {
 
           {activeTab === "restaurants" && (
             <motion.div key="restaurants" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="pt-4">
-              <h2 className="text-2xl font-bold text-white mb-2">Local Restaurant Matches</h2>
-              <p className="text-neutral-400 mb-8">Dishes available to order from nearby restaurants that perfectly match your generated meal plan.</p>
+              <h2 className="text-2xl font-bold text-foreground mb-2">Local Restaurant Matches</h2>
+              <p className="text-muted-foreground mb-8">Dishes available to order from nearby restaurants that perfectly match your generated meal plan.</p>
               
               {!plan || !plan.external_dining || plan.external_dining.length === 0 ? (
-                <div className="text-center py-20 border border-dashed border-white/10 rounded-3xl bg-white/[0.02]">
+                <div className="text-center py-20 border border-dashed border-border rounded-3xl bg-surface">
                   <MdRestaurantMenu size={32} className="mx-auto text-neutral-600 mb-4" />
-                  <h3 className="text-lg font-bold text-neutral-300">No restaurants matched</h3>
-                  <p className="text-sm text-neutral-500 mt-2 max-w-sm mx-auto">Generate a new clinical meal plan first. If any meals match our Foodpanda catalog, they will appear here!</p>
+                  <h3 className="text-lg font-bold text-muted-foreground">No restaurants matched</h3>
+                  <p className="text-sm text-muted-foreground mt-2 max-w-sm mx-auto">Generate a new clinical meal plan first. If any meals match our Foodpanda catalog, they will appear here!</p>
                   <button onClick={() => setActiveTab("generate")} className="mt-6 rounded-lg bg-[#4a7c59] px-6 py-2 text-sm font-medium text-white hover:bg-[#3d6849]">
                     <MdAdd size={16} className="inline mr-2 -mt-0.5" />
                     Generate Plan
@@ -293,12 +293,12 @@ const handleGenerate = async (data: IntakeData) => {
 
               {step === "loading" && (
                 <motion.div key="loading" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex min-h-[60vh] flex-col items-center justify-center text-center">
-                  <div className="relative mb-8 grid h-24 w-24 place-items-center rounded-full bg-white/5">
+                  <div className="relative mb-8 grid h-24 w-24 place-items-center rounded-full bg-surface-2">
                     <div className="absolute inset-0 animate-ping rounded-full border-2 border-[#4a7c59] opacity-20" />
                     <MdEco size={32} className="animate-pulse text-[#4a7c59]" />
                   </div>
                   <h3 className="editorial-title text-2xl">Computing Clinical Targets</h3>
-                  <div className="mt-4 flex flex-col gap-2 text-sm text-neutral-500">
+                  <div className="mt-4 flex flex-col gap-2 text-sm text-muted-foreground">
                     <p className="animate-pulse">Resolving location via Open-Meteo API...</p>
                     <p className="animate-pulse delay-100">Applying Harris-Benedict thermodynamics...</p>
                     <p className="animate-pulse delay-200">Matching dishes with strict AI constraints...</p>
@@ -308,15 +308,15 @@ const handleGenerate = async (data: IntakeData) => {
 
               {step === "results" && plan && (
                 <motion.div key="results" initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} className="space-y-8 pb-20">
-                  <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/[0.08] pb-4 print:hidden">
+                  <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-4 print:hidden">
                     <div>
-                      <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight text-white mb-1">Your Health Overview</h2>
-                      <p className="text-xs sm:text-sm text-neutral-400">
+                      <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight text-foreground mb-1">Your Health Overview</h2>
+                      <p className="text-xs sm:text-sm text-muted-foreground">
                         Perfectly balanced for {plan.patient.age}y {plan.patient.gender} â€¢ {plan.patient.goal}
                       </p>
                     </div>
                     <div className="flex items-center gap-2">
-                      <button onClick={() => window.print()} className="flex items-center gap-2 rounded-xl bg-white/10 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-white/20">
+                      <button onClick={() => window.print()} className="flex items-center gap-2 rounded-xl bg-surface-2 px-4 py-2 text-sm font-semibold text-foreground transition-colors hover:bg-surface-2">
                         Print PDF
                       </button>
                       <button onClick={() => setStep("home")} className="flex items-center gap-2 rounded-xl bg-[#4a7c59] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#3d6849]">

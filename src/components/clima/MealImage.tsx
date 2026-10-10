@@ -39,7 +39,7 @@ const sources = Array.from(
   }, [meal.id]);
 
   return (
-    <div className={`relative overflow-hidden rounded-2xl border border-white/10 bg-[#18181b] ${className}`}>
+    <div className={`relative overflow-hidden rounded-2xl border border-border bg-[#18181b] ${className}`}>
       <AnimatePresence mode="wait">
         {hasImage ? (
           <motion.div
@@ -81,7 +81,7 @@ const sources = Array.from(
               alt=""
               className="h-14 w-14 object-contain drop-shadow-md sm:h-16 sm:w-16"
             />
-            <span className="text-xs font-semibold text-neutral-300">{meal.name}</span>
+            <span className="text-xs font-semibold text-muted-foreground">{meal.name}</span>
           </motion.div>
         )}
       </AnimatePresence>

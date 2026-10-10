@@ -79,7 +79,7 @@ export default function MealDetail({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
       <div
-        className="relative w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-3xl p-6 shadow-2xl border border-white/10"
+        className="relative w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-3xl p-6 shadow-2xl border border-border"
         style={{ backgroundColor: "#18181b", color: "#f4f4f5" }}
       >
         {/* Meal Image Header */}
@@ -99,33 +99,33 @@ export default function MealDetail({
         <h2 className="text-xl font-bold mb-4">{meal.name}</h2>
 
         {/* Macro Rings / Percentages (Including Calories Ring) */}
-        <div className="grid grid-cols-4 gap-2 mb-6 p-4 rounded-2xl bg-white/5 border border-white/5 text-center">
+        <div className="grid grid-cols-4 gap-2 mb-6 p-4 rounded-2xl bg-surface-2 border border-white/5 text-center">
           <div className="flex flex-col items-center">
             <Ring pct={caloriePct} color="#f97316" size={48} stroke={4}>
-              <span className="text-[9px] font-bold text-zinc-300">{caloriePct}%</span>
+              <span className="text-[9px] font-bold text-muted-foreground">{caloriePct}%</span>
             </Ring>
-            <p className="text-xs font-semibold mt-2 text-zinc-400">Calories</p>
+            <p className="text-xs font-semibold mt-2 text-muted-foreground">Calories</p>
             <p className="text-xs font-bold">{meal.calories || 0}kcal</p>
           </div>
           <div className="flex flex-col items-center">
             <Ring pct={proteinPct} color="#34d399" size={48} stroke={4}>
-              <span className="text-[9px] font-bold text-zinc-300">{proteinPct}%</span>
+              <span className="text-[9px] font-bold text-muted-foreground">{proteinPct}%</span>
             </Ring>
-            <p className="text-xs font-semibold mt-2 text-zinc-400">Protein</p>
+            <p className="text-xs font-semibold mt-2 text-muted-foreground">Protein</p>
             <p className="text-xs font-bold">{meal.protein || 0}g</p>
           </div>
           <div className="flex flex-col items-center">
             <Ring pct={fatPct} color="#fbbf24" size={48} stroke={4}>
-              <span className="text-[9px] font-bold text-zinc-300">{fatPct}%</span>
+              <span className="text-[9px] font-bold text-muted-foreground">{fatPct}%</span>
             </Ring>
-            <p className="text-xs font-semibold mt-2 text-zinc-400">Fat</p>
+            <p className="text-xs font-semibold mt-2 text-muted-foreground">Fat</p>
             <p className="text-xs font-bold">{meal.fat || 0}g</p>
           </div>
           <div className="flex flex-col items-center">
             <Ring pct={carbsPct} color="#60a5fa" size={48} stroke={4}>
-              <span className="text-[9px] font-bold text-zinc-300">{carbsPct}%</span>
+              <span className="text-[9px] font-bold text-muted-foreground">{carbsPct}%</span>
             </Ring>
-            <p className="text-xs font-semibold mt-2 text-zinc-400">Carbs</p>
+            <p className="text-xs font-semibold mt-2 text-muted-foreground">Carbs</p>
             <p className="text-xs font-bold">{meal.carbs || 0}g</p>
           </div>
         </div>
@@ -148,14 +148,14 @@ export default function MealDetail({
 
         {/* Ingredients Section */}
         {meal.ingredients && meal.ingredients.length > 0 && (
-          <div className="mb-6 p-4 rounded-2xl bg-white/5 border border-white/5">
+          <div className="mb-6 p-4 rounded-2xl bg-surface-2 border border-white/5">
             <div className="flex items-center gap-2 text-xs font-bold tracking-wider text-emerald-400 uppercase mb-3">
               <MdRestaurant className="w-4 h-4" />
               <span>Ingredients</span>
             </div>
             <div className="flex flex-wrap gap-2">
               {meal.ingredients.map((ing, i) => (
-                <span key={i} className="px-3 py-1 text-xs font-medium rounded-full bg-white/10 text-zinc-300">
+                <span key={i} className="px-3 py-1 text-xs font-medium rounded-full bg-surface-2 text-muted-foreground">
                   {ing}
                 </span>
               ))}
@@ -165,21 +165,21 @@ export default function MealDetail({
 
         {/* Why This Meal */}
         {meal.why && (
-          <div className="mb-6 p-4 rounded-2xl bg-white/5 border border-white/5">
+          <div className="mb-6 p-4 rounded-2xl bg-surface-2 border border-white/5">
             <div className="flex items-center gap-2 text-xs font-bold tracking-wider text-emerald-400 uppercase mb-2">
               <MdAutoAwesome className="w-4 h-4" />
               <span>Why This Meal</span>
             </div>
-            <p className="text-sm leading-relaxed text-zinc-300">{meal.why}</p>
+            <p className="text-sm leading-relaxed text-muted-foreground">{meal.why}</p>
           </div>
         )}
 
         {/* Footer Navigation */}
-        <div className="flex items-center justify-between pt-4 border-t border-white/10">
+        <div className="flex items-center justify-between pt-4 border-t border-border">
           {onPrev ? (
             <button
               onClick={onPrev}
-              className="flex items-center gap-1 text-sm font-medium px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-zinc-300 transition"
+              className="flex items-center gap-1 text-sm font-medium px-4 py-2 rounded-xl bg-surface-2 hover:bg-surface-2 text-muted-foreground transition"
             >
               <MdChevronLeft className="w-4 h-4" />
               Previous
@@ -187,7 +187,7 @@ export default function MealDetail({
           ) : <div />}
 
           {activeIndex !== undefined && activeTotal !== undefined && (
-            <span className="text-xs font-medium text-zinc-500">
+            <span className="text-xs font-medium text-muted-foreground">
               {activeIndex + 1} / {activeTotal}
             </span>
           )}

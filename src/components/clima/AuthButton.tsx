@@ -27,7 +27,7 @@ export default function AuthButton() {
     return (
       <button 
         onClick={() => supabase.auth.signOut()}
-        className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 hover:bg-red-500/10 border border-white/10 transition-colors text-sm font-bold no-print"
+        className="flex items-center gap-2 px-4 py-2 rounded-xl bg-surface-2 hover:bg-red-500/10 border border-border transition-colors text-sm font-bold no-print"
       >
         <MdLogout size={16} /> Sign Out
       </button>

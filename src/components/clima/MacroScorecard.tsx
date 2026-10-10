@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useEffect, useState } from "react";
 import { type PlanResponse } from "@/lib/mock";
@@ -26,23 +26,23 @@ export default function MacroScorecard({ plan }: { plan: PlanResponse }) {
   let offset = 0;
 
   const tile = (label: string, value: string, detail: string, Icon: any, isDouble: boolean = false) => (
-    <div key={label} className={`rounded-3xl border border-white/[0.03] bg-white/[0.03] p-4 transition-transform hover:scale-[1.02] ${isDouble ? "col-span-2 sm:col-span-1" : ""}`}>
-      <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-wide text-neutral-400">
+    <div key={label} className={`rounded-3xl border border-border bg-surface p-4 transition-transform hover:scale-[1.02] ${isDouble ? "col-span-2 sm:col-span-1" : ""}`}>
+      <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
         <Icon size={14} style={{ color: ACCENT }} /> {label}
       </div>
-      <div className="mt-1.5 font-mono text-xl font-bold text-white">{value}</div>
-      <div className="mt-0.5 text-xs text-neutral-500">{detail}</div>
+      <div className="mt-1.5 font-mono text-xl font-bold text-foreground">{value}</div>
+      <div className="mt-0.5 text-xs text-muted-foreground">{detail}</div>
     </div>
   );
 
   return (
     <div className="flex flex-col gap-4 print:hidden">
-      <section className="rounded-[2rem] border border-white/[0.04] bg-white/[0.02] p-5 sm:p-7 backdrop-blur-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] fade-up" aria-labelledby="calculated-summary-title">
-        <div className="mb-4 flex flex-wrap items-start justify-between gap-3 border-b border-white/10 pb-3">
+      <section className="rounded-[2rem] border border-border bg-surface p-5 sm:p-7 backdrop-blur-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] fade-up" aria-labelledby="calculated-summary-title">
+        <div className="mb-4 flex flex-wrap items-start justify-between gap-3 border-b border-border pb-3">
           <div>
             <h2 id="calculated-summary-title" className="editorial-title text-xl">Your Daily Targets</h2>
-            <p className="mt-1 text-sm text-neutral-400">
-              {patient.age} years • {patient.gender} • {patient.weight} kg • {patient.height} cm • {patient.goal}
+            <p className="mt-1 text-sm text-muted-foreground">
+              {patient.age} years � {patient.gender} � {patient.weight} kg � {patient.height} cm � {patient.goal}
             </p>
           </div>
         </div>
@@ -65,8 +65,8 @@ export default function MacroScorecard({ plan }: { plan: PlanResponse }) {
             <div className="absolute inset-0 grid place-items-center text-center">
               <div>
                 <MdLocalFireDepartment className="mx-auto text-orange-400" size={18} />
-                <b className="block text-2xl leading-none text-white">{nutrition.target_calories}</b>
-                <span className="text-[10px] text-neutral-400">kcal/day</span>
+                <b className="block text-2xl leading-none text-foreground">{nutrition.target_calories}</b>
+                <span className="text-[10px] text-muted-foreground">kcal/day</span>
               </div>
             </div>
           </div>
@@ -79,3 +79,4 @@ export default function MacroScorecard({ plan }: { plan: PlanResponse }) {
     </div>
   );
 }
+

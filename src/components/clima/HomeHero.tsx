@@ -156,11 +156,11 @@ export default function HomeHero({ onAction }: { onAction: (action: 'standard' |
           <span className="h-1.5 w-1.5 rounded-full bg-indigo-500 animate-pulse" />
           AI-Powered Clinical Nutrition
         </div>
-        <h1 className="text-4xl sm:text-5xl font-bold tracking-tight text-white leading-[1.15] mb-4">
+        <h1 className="text-4xl sm:text-5xl font-bold tracking-tight text-foreground leading-[1.15] mb-4">
           Your body. Your climate.<br />
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-indigo-600">Your perfect diet.</span>
         </h1>
-        <p className="text-neutral-400 text-base sm:text-lg max-w-lg mx-auto leading-relaxed">
+        <p className="text-muted-foreground text-base sm:text-lg max-w-lg mx-auto leading-relaxed">
           ClimaDiet builds a personalized 7-day meal plan based on your health, real-time local weather, and what's already in your kitchen.
         </p>
       </motion.div>
@@ -173,14 +173,14 @@ export default function HomeHero({ onAction }: { onAction: (action: 'standard' |
         className="relative w-full max-w-sm mx-auto mb-10 px-4"
       >
         {/* Glassmorphic card */}
-        <div className="relative rounded-3xl border border-white/[0.08] bg-white/[0.04] backdrop-blur-xl p-6 shadow-2xl shadow-black/40">
+        <div className="relative rounded-3xl border border-border bg-card backdrop-blur-xl p-6 shadow-2xl shadow-black/40">
           {/* Top tag */}
           <div className="flex items-center justify-between mb-4">
-            <span className="text-xs font-semibold text-neutral-400 uppercase tracking-widest">Weekly</span>
+            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">Weekly</span>
             <span className="rounded-full bg-indigo-500/20 px-3 py-1 text-xs font-bold text-indigo-400">Active</span>
           </div>
-          <h2 className="text-xl font-bold text-white mb-1">Wellness Journey</h2>
-          <p className="text-sm text-neutral-400 mb-5 leading-relaxed">
+          <h2 className="text-xl font-bold text-foreground mb-1">Wellness Journey</h2>
+          <p className="text-sm text-muted-foreground mb-5 leading-relaxed">
             Embark on a holistic journey guided by AI, real weather data, and your personal health signals.
           </p>
           {/* Illustration */}
@@ -201,10 +201,10 @@ export default function HomeHero({ onAction }: { onAction: (action: 'standard' |
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.5 }}
-          className="absolute -right-2 top-8 rounded-2xl border border-white/10 bg-[#0F1117]/80 backdrop-blur-lg px-3 py-2 shadow-xl"
+          className="absolute -right-2 top-8 rounded-2xl border border-border bg-background/80 backdrop-blur-lg px-3 py-2 shadow-xl"
         >
-          <p className="text-[10px] text-neutral-400">BMI</p>
-          <p className="text-base font-bold text-white">22.4</p>
+          <p className="text-[10px] text-muted-foreground">BMI</p>
+          <p className="text-base font-bold text-foreground">22.4</p>
           <p className="text-[10px] text-indigo-400">Healthy ✓</p>
         </motion.div>
 
@@ -212,11 +212,11 @@ export default function HomeHero({ onAction }: { onAction: (action: 'standard' |
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.6 }}
-          className="absolute -left-2 bottom-16 rounded-2xl border border-white/10 bg-[#0F1117]/80 backdrop-blur-lg px-3 py-2 shadow-xl"
+          className="absolute -left-2 bottom-16 rounded-2xl border border-border bg-background/80 backdrop-blur-lg px-3 py-2 shadow-xl"
         >
-          <p className="text-[10px] text-neutral-400">Today&apos;s Calories</p>
-          <p className="text-base font-bold text-white">1,840 kcal</p>
-          <div className="mt-1 h-1 w-20 rounded-full bg-white/10 overflow-hidden">
+          <p className="text-[10px] text-muted-foreground">Today&apos;s Calories</p>
+          <p className="text-base font-bold text-foreground">1,840 kcal</p>
+          <div className="mt-1 h-1 w-20 rounded-full bg-surface-2 overflow-hidden">
             <div className="h-full w-[72%] rounded-full bg-indigo-500" />
           </div>
         </motion.div>
@@ -238,14 +238,14 @@ export default function HomeHero({ onAction }: { onAction: (action: 'standard' |
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 + i * 0.08 }}
-            className="flex flex-col items-center gap-2 rounded-2xl border border-white/[0.07] bg-white/[0.04] backdrop-blur-md p-3 text-center hover:border-white/20 transition-all duration-200"
+            className="flex flex-col items-center gap-2 rounded-2xl border border-border bg-card backdrop-blur-md p-3 text-center hover:border-border transition-all duration-200"
             style={{ boxShadow: `0 4px 24px ${f.glow}` }}
           >
             <div className="h-14 w-14">
               {f.icon}
             </div>
-            <p className="text-xs font-bold text-white leading-tight">{f.label}</p>
-            <p className="text-[10px] text-neutral-500 leading-tight">{f.sub}</p>
+            <p className="text-xs font-bold text-foreground leading-tight">{f.label}</p>
+            <p className="text-[10px] text-muted-foreground leading-tight">{f.sub}</p>
           </motion.button>
         ))}
       </motion.div>
@@ -255,3 +255,5 @@ export default function HomeHero({ onAction }: { onAction: (action: 'standard' |
     </div>
   );
 }
+
+
