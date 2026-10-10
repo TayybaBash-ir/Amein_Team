@@ -154,40 +154,7 @@ export default function DashboardBento({
                 </span>
               </button>
 
-              <div className="mt-2 w-full border-t border-border pt-2 sm:mt-3 sm:pt-3">
-                <div className="mb-1.5 flex items-center justify-between gap-1">
-                  <span className="flex items-center gap-1 text-[10px] font-bold text-foreground sm:text-xs">
-                    <MdLocalDrink className="text-blue-500" size={14} /> Water
-                  </span>
-                  <span className="text-[9px] text-muted-foreground sm:text-xs">{hydrationLog}/{cupsGoal}</span>
-                </div>
-                <div className="flex flex-wrap gap-0.5" aria-label="Hydration log. Tap once to add a glass; double tap to undo one.">
-                  {Array.from({ length: cupsGoal }).map((_, index) => {
-                    const drank = index < hydrationLog;
-                    return (
-                      <button
-                        key={index}
-                        type="button"
-                        onClick={handleHydrationTap}
-                        aria-label={`Glass ${index + 1}${drank ? " logged; double tap to undo" : "; tap to log"}`}
-                        className={`grid h-3.5 w-3.5 shrink-0 place-items-center rounded-full border transition-colors sm:h-4 sm:w-4 ${drank ? "border-blue-500 bg-blue-500" : "border-border bg-surface-2 hover:border-blue-400"}`}
-                      >
-                        {drank && <MdCheckCircle size={9} className="text-white" />}
-                      </button>
-                    );
-                  })}
-                  {hydrationLog > 0 && (
-                    <button
-                      type="button"
-                      onClick={onUndoHydrate}
-                      className="ml-auto rounded-md px-1 text-[9px] font-semibold text-muted-foreground hover:bg-surface-2 hover:text-foreground sm:text-[10px]"
-                      aria-label="Undo last glass"
-                    >
-                      Undo
-                    </button>
-                  )}
-                </div>
-              </div>
+              
             </>
           ) : (
             <button
@@ -229,9 +196,58 @@ export default function DashboardBento({
         />
       </div>
 
-      <p className="mt-3 px-1 text-center text-[10px] leading-relaxed text-muted-foreground sm:mt-5 sm:text-sm">
-        Generate a 7-day meal plan shaped around your health goals and local climate.
-      </p>
+      
+
+      
+      {/* Hydration Tile (Full Width) */}
+      <motion.div 
+        initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}
+        className="mt-4 flex w-full items-center justify-between rounded-3xl border border-border bg-card p-5 sm:p-6 shadow-[0_6px_22px_rgba(59,130,246,0.08)]"
+      >
+        <div className="flex flex-col">
+          <span className="text-xs font-bold uppercase tracking-widest text-blue-500">Daily Hydration</span>
+          <span className="mt-0.5 flex items-baseline gap-1 text-4xl font-black text-foreground">
+            {hydrationLog}
+            <span className="text-xl text-muted-foreground">/{cupsGoal}</span>
+          </span>
+          <span className="mt-1 text-[11px] font-medium text-muted-foreground">
+            {hydrationLog >= cupsGoal ? "Goal reached! 🎉" : `${cupsGoal - hydrationLog} more to reach your goal`}
+          </span>
+        </div>
+
+        <div className="flex items-center gap-4">
+          {hydrationLog > 0 && (
+            <button 
+              onClick={onUndoHydrate} 
+              className="grid h-10 w-10 place-items-center rounded-full bg-surface-2 text-muted-foreground hover:bg-border transition-colors"
+              aria-label="Undo hydration"
+            >
+              <MdRemove size={20} />
+            </button>
+          )}
+          
+          <button 
+            onClick={handleHydrationTap}
+            className="group relative flex h-20 w-14 flex-col justify-end overflow-hidden rounded-b-2xl rounded-t-lg border-2 border-blue-200/60 bg-blue-50 shadow-inner dark:border-blue-900/50 dark:bg-blue-950/20 transition-transform active:scale-95"
+            aria-label="Add a glass of water"
+          >
+            {/* Liquid Fill */}
+            <div 
+              className="w-full bg-gradient-to-t from-blue-600 to-blue-400 transition-all duration-700 ease-out" 
+              style={{ height: `${Math.min(100, (hydrationLog / cupsGoal) * 100)}%` }} 
+            />
+            {/* Glass glint / reflection */}
+            <div className="absolute inset-y-1 left-1.5 w-1.5 rounded-full bg-white/30 mix-blend-overlay" />
+            
+            {/* Plus Icon Overlay */}
+            <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition-colors group-hover:bg-blue-500/10">
+              <div className="grid h-8 w-8 scale-95 place-items-center rounded-full bg-white text-blue-500 shadow-lg transition-transform group-hover:scale-110">
+                <MdAdd size={24} />
+              </div>
+            </div>
+          </button>
+        </div>
+      </motion.div>
 
       <AnimatePresence>
         {mealDetailsOpen && todayPlanResponse && (
