@@ -58,7 +58,12 @@ export default function PlansPage() {
         </div>
       </nav>
 
-      <main className="mx-auto max-w-5xl px-4 py-8 sm:py-12">
+      <main className="mx-auto max-w-5xl px-4 py-8 sm:py-12" {...(selectedPlan ? { "data-no-page-swipe": "true" } : {})}>
+        {selectedPlan && (
+          <style>{`
+            nav[aria-label="Main navigation"] { display: none !important; }
+          `}</style>
+        )}
         {selectedPlan ? (
           <div>
             <div className="mb-6 flex flex-wrap items-center gap-x-4 gap-y-3">
