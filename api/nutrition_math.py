@@ -2,6 +2,8 @@ from __future__ import annotations
 from typing import Any, Dict
 
 def get_nutritional_targets(
+    plan_mode: str = "standard",
+    metabolic_modifier: float = 1.0,
     weight_kg: float,
     height_cm: float,
     age: int,
@@ -41,8 +43,11 @@ def get_nutritional_targets(
     act_key = str(activity_level).lower().strip()
     tdee = bmr * multipliers.get(act_key, 1.375)
 
+    tdee = tdee * metabolic_modifier
     goal_key = str(goal).lower().strip()
-    if "lose" in goal_key:
+    if plan_mode == "recovery":
+        target_calories = tdee
+    elif "lose" in goal_key:
         target_calories = tdee - 500
     elif "gain" in goal_key:
         target_calories = tdee + 300

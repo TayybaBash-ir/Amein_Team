@@ -312,6 +312,8 @@ def generate_meal_plan(patient: PatientIntake):
         print("AI EXTRACTED PANTRY:", ai_rules.extracted_pantry)
 
     targets = get_nutritional_targets(
+        plan_mode=str(patient.plan_mode),
+        metabolic_modifier=float(patient.metabolic_modifier),
         weight_kg=float(patient.weight),
         height_cm=float(patient.height),
         age=int(patient.age),

@@ -155,14 +155,11 @@ export default function ClinicalIntakeForm({
           <h2 className="text-xl font-semibold tracking-tight text-foreground">1. Health Conditions & Dietary Needs</h2>
         </div>
         <div className="space-y-6">
-          <div className="mb-6">
+          {planMode !== "recovery" && (<div className="mb-6">
             <label className={labelClass}>AI Health Goal</label>
             <input className={inputClass} value={d.goal || ""} placeholder="e.g. 'I want to lose 5 kg weight in 1 month'" onChange={(e) => set("goal", e.target.value)} />
-          </div>
-          {listField("Chronic conditions (Optional)", "conditions", CONDITIONS_PRESET, customCond, setCustomCond, "Add a condition...")}
-          {listField("Dietary restrictions (Optional)", "dietary_restrictions", RESTRICTIONS_PRESET, customDiet, setCustomDiet, "Add a dietary restriction...")}
-          {listField("Allergies (Optional)", "allergies", ALLERGIES_PRESET, customAllergy, setCustomAllergy, "Add an allergy...")}
-        </div>
+          </div>)}
+                                      </div>
       </motion.section>
 
       <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className={sectionClass}>
