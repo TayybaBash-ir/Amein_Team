@@ -21,6 +21,7 @@ type Profile = {
   goal_amount: string;
   city: string;
   country: string;
+  metabolic_modifier?: number;
 };
 
 const initialProfile: Profile = {
@@ -38,6 +39,7 @@ const initialProfile: Profile = {
   goal_amount: "",
   city: "Lahore",
   country: "Pakistan",
+  metabolic_modifier: 1.0,
 };
 
 const conditionOptions = [
@@ -81,6 +83,30 @@ function toProfile(stored: Record<string, unknown>): Profile {
   };
 }
 
+
+function getBmr(profile: Profile) {
+  if (!profile.weight || !profile.height || !profile.age) return null;
+  const isMale = profile.gender.toLowerCase() === "male";
+  if (isMale) {
+    return 10 * profile.weight + 6.25 * profile.height - 5 * profile.age + 5;
+  }
+  return 10 * profile.weight + 6.25 * profile.height - 5 * profile.age - 161;
+}
+
+function getTdee(profile: Profile, bmr: number | null) {
+  if (!bmr) return null;
+  let mult = 1.375;
+  const act = (profile.activity || "").toLowerCase();
+  if (act.includes("sedentary")) mult = 1.2;
+  else if (act.includes("moderately")) mult = 1.55;
+  else if (act.includes("very")) mult = 1.9;
+  else if (act.includes("active")) mult = 1.725;
+  else if (act.includes("lightly") || act.includes("light")) mult = 1.375;
+
+  const mod = profile.metabolic_modifier || 1.0;
+  return bmr * mult * mod;
+}
+
 const inputClass = "w-full rounded-xl border border-border bg-card px-4 py-3 text-sm text-foreground outline-none transition focus:border-brand/60 focus:ring-2 focus:ring-brand/20 placeholder:text-neutral-600 [&>option]:bg-background";
 const labelClass = "mb-1.5 block text-xs font-semibold uppercase tracking-wider text-muted-foreground";
 
@@ -98,6 +124,8 @@ export default function ProfilePage() {
 
   const bmi = getBmi(profile);
   const bmiCategory = bmi ? getBmiCategory(bmi) : null;
+  const bmr = getBmr(profile);
+  const tdee = getTdee(profile, bmr);
 
   function toggleCondition(c: string) {
     setProfile(prev => ({
