@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import CheckInModal from "@/components/clima/CheckInModal";
-import { MdAssessment } from "react-icons/md";
+import { MdAssessment, MdAdd, MdRemove } from "react-icons/md";
 import {
   MdBookmarks,
   MdCheckCircle,
