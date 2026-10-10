@@ -453,7 +453,7 @@ def generate_meal_plan(patient: PatientIntake):
 
             # Calculate estimated cost
             from api.matching_engine import estimate_dish_cost
-            dish_cost = estimate_dish_cost(d, name)
+            dish_cost = estimate_dish_cost({'protein_g': pro, 'carbs_g': carb, 'fat_g': fat}, name)
             
             meal_obj = Meal(
                 estimated_cost=dish_cost,
@@ -642,7 +642,7 @@ def swap_meal(req: SwapRequest):
         
         
         from api.matching_engine import estimate_dish_cost
-        dish_cost = estimate_dish_cost(cand['candidate'], name)
+        dish_cost = estimate_dish_cost({'protein_g': pro, 'carbs_g': carb, 'fat_g': fat}, name)
         final_meal = Meal(
             estimated_cost=dish_cost,
             id=f"swap-{uuid.uuid4().hex[:8]}",
