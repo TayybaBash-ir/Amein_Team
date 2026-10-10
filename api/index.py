@@ -13,7 +13,7 @@ from api.schemas import (
     CheckInRequest,
     PatientIntake, PlanResponse, Meal, NutritionTargets,
     WeatherInfo, DailyTotals, ValidationInfo, DayPlan, MealPlan,
-    SwapRequest, SwapResponse, ExternalDiningRecommendation
+    SwapRequest, SwapResponse, ExternalDiningRecommendation, InteractionLog
 )
 from api.nutrition_math import get_nutritional_targets
 from api.meal_validator import validate_meals, structure_day_plans

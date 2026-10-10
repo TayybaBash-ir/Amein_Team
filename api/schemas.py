@@ -143,3 +143,11 @@ class CheckInRequest(BaseModel):
     feedback_text: str
     new_weight: float = Field(gt=0)
     feedback_history: List[Dict[str, Any]] = Field(default_factory=list)
+
+
+class InteractionLog(BaseModel):
+    action: str
+    meal_id: str
+    dish_name: str
+    user_id: str = "anon"
+    context: dict = {}
