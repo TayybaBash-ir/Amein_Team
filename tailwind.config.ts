@@ -12,7 +12,7 @@ const config: Config = {
       colors: {
         border: "var(--border)",
         input: "var(--input)",
-        ring: "var(--ring)",
+        ring: "rgb(var(--ring) / <alpha-value>)",
         background: "var(--background)",
         foreground: "var(--foreground)",
         primary: {
@@ -45,6 +45,8 @@ const config: Config = {
         },
         surface: "var(--surface)",
         "surface-2": "var(--surface-2)",
+        brand: "rgb(var(--brand) / <alpha-value>)",
+        "brand-dark": "rgb(var(--brand-dark) / <alpha-value>)",
         forest: "var(--forest)",
         sage: "var(--sage)",
         climate: "var(--climate)",

@@ -53,7 +53,7 @@ export const RestaurantRecommendationCard: React.FC<Props> = ({
       <button
         type="button"
         disabled={!link}
-        className="w-full rounded-md bg-emerald-600 px-3 py-2.5 text-sm font-semibold text-foreground transition hover:bg-emerald-500 active:scale-[0.98] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-400 disabled:cursor-not-allowed disabled:opacity-50"
+        className="w-full rounded-md bg-brand px-3 py-2.5 text-sm font-semibold text-foreground transition hover:bg-brand active:scale-[0.98] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand disabled:cursor-not-allowed disabled:opacity-50"
         onClick={() => link && window.open(link, "_blank", "noopener,noreferrer")}
       >
         View Menu / Order Item

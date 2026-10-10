@@ -117,7 +117,7 @@ export default function ClinicalIntakeForm({
                 set(key, nextList);
               }}
               className={`rounded-full border px-3 py-1.5 text-xs font-semibold transition-all ${
-                active ? "border-[#4a7c59]/50 bg-[#4a7c59]/15 text-emerald-600 dark:text-emerald-300" : "border-border bg-surface text-foreground hover:bg-surface-2 hover:border-[#4a7c59]/30"
+                active ? "border-brand/50 bg-brand/15 text-brand dark:text-brand" : "border-border bg-surface text-foreground hover:bg-surface-2 hover:border-brand/30"
               }`}
             >
               {c}
@@ -125,9 +125,9 @@ export default function ClinicalIntakeForm({
           );
         })}
         {d[key].filter((c) => !presets.includes(c)).map((c) => (
-          <span key={c} className="flex items-center gap-1 rounded-full border border-emerald-500/30 bg-[#4a7c59]/10 pl-3 pr-2 py-1.5 text-xs font-semibold text-emerald-600 dark:text-emerald-300">
+          <span key={c} className="flex items-center gap-1 rounded-full border border-brand/30 bg-brand/10 pl-3 pr-2 py-1.5 text-xs font-semibold text-brand dark:text-brand">
             {c}
-            <button type="button" onClick={() => set(key, d[key].filter((x) => x !== c))} className="rounded-full p-0.5 hover:bg-emerald-500/20 text-emerald-500 hover:text-emerald-700 dark:hover:text-emerald-200">
+            <button type="button" onClick={() => set(key, d[key].filter((x) => x !== c))} className="rounded-full p-0.5 hover:bg-brand/20 text-brand hover:text-brand-dark dark:hover:text-brand">
               <MdExpandLess className="rotate-45" size={12} />
             </button>
           </span>
@@ -135,7 +135,7 @@ export default function ClinicalIntakeForm({
       </div>
       <div className="mt-3 flex gap-2">
         <input className={inputClass} value={customVal} onChange={(e) => setCustom(e.target.value)} placeholder={placeholder} onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); handleListAdd(key, customVal, () => setCustom("")); } }} />
-        <button type="button" onClick={() => handleListAdd(key, customVal, () => setCustom(""))} className="rounded-xl bg-[#4a7c59] px-4 text-sm font-bold text-white hover:bg-[#3d6849] transition-colors">
+        <button type="button" onClick={() => handleListAdd(key, customVal, () => setCustom(""))} className="rounded-xl bg-brand px-4 text-sm font-bold text-white hover:bg-brand-dark transition-colors">
           Add
         </button>
       </div>
@@ -144,7 +144,7 @@ export default function ClinicalIntakeForm({
 
   const sectionClass = "mb-4 rounded-3xl border border-border bg-card p-4 sm:p-5 shadow-xl shadow-black/5";
   const labelClass = "mb-1.5 block text-xs font-semibold uppercase tracking-wide text-muted-foreground";
-  const inputClass = "w-full rounded-2xl border border-border bg-surface px-4 py-3 text-sm text-foreground outline-none transition-all placeholder:text-muted-foreground hover:bg-surface-2 focus:border-[#4a7c59] focus:bg-surface-2 md:text-base";
+  const inputClass = "w-full rounded-2xl border border-border bg-surface px-4 py-3 text-sm text-foreground outline-none transition-all placeholder:text-muted-foreground hover:bg-surface-2 focus:border-brand focus:bg-surface-2 md:text-base";
 
   return (
     <form onSubmit={(e) => { e.preventDefault(); onSubmit(d); }} className="mx-auto w-full max-w-2xl">
@@ -175,7 +175,7 @@ export default function ClinicalIntakeForm({
           {planMode !== "recovery" && (
             <div><label className={labelClass}>Weekly food budget</label><select className={inputClass} value={d.weekly_budget || "No Limit"} onChange={(event) => set("weekly_budget", event.target.value)}><option>Under 5,000 PKR</option><option>5,000 - 10,000 PKR</option><option>10,000 - 15,000 PKR</option><option>No Limit</option></select></div>
           )}
-          <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-border bg-surface p-4 text-sm text-foreground"><input type="checkbox" className="mt-1 accent-emerald-400" checked={Boolean(d.strict_pantry_mode)} onChange={(event) => set("strict_pantry_mode", event.target.checked)} /><span><strong>Use only what I have</strong></span></label>
+          <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-border bg-surface p-4 text-sm text-foreground"><input type="checkbox" className="mt-1 accent-brand" checked={Boolean(d.strict_pantry_mode)} onChange={(event) => set("strict_pantry_mode", event.target.checked)} /><span><strong>Use only what I have</strong></span></label>
         </div>
       </motion.section>
 

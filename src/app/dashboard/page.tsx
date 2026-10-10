@@ -158,11 +158,11 @@ const handleGenerate = async (data: IntakeData) => {
 
   const navItemClass = (tab: AppTab, label: string) =>
     `flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-      activeTab === tab ? "bg-[#4a7c59]/20 text-emerald-300" : "text-muted-foreground hover:text-foreground hover:bg-surface-2"
+      activeTab === tab ? "bg-brand/20 text-brand" : "text-muted-foreground hover:text-foreground hover:bg-surface-2"
     }`;
 
   return (
-    <div className="min-h-screen bg-background text-foreground selection:bg-[#4a7c59]/30">
+    <div className="min-h-screen bg-background text-foreground selection:bg-brand/30">
       <nav className="sticky top-0 z-50 flex items-center justify-between border-b border-border bg-background/85 px-4 py-3 backdrop-blur-xl print:hidden sm:px-8">
         <div className="flex items-center gap-3">
           {/* Back arrow â€” shown when not on home screen */}
@@ -176,7 +176,7 @@ const handleGenerate = async (data: IntakeData) => {
             </button>
           )}
           <Link href="/" className="group flex items-center gap-2">
-            <div className="grid h-8 w-8 place-items-center rounded-xl bg-gradient-to-br from-[#4a7c59] to-[#3d6849] shadow-lg shadow-emerald-500/20 transition-transform group-hover:scale-105">
+            <div className="grid h-8 w-8 place-items-center rounded-xl bg-gradient-to-br from-brand to-brand-dark shadow-lg shadow-brand/20 transition-transform group-hover:scale-105">
               <MdEco size={16} className="text-foreground" />
             </div>
             <span className="font-sans text-lg font-bold tracking-tight text-foreground">ClimaDiet</span>
@@ -242,7 +242,7 @@ const handleGenerate = async (data: IntakeData) => {
                   <MdRestaurantMenu size={32} className="mx-auto text-neutral-600 mb-4" />
                   <h3 className="text-lg font-bold text-muted-foreground">No restaurants matched</h3>
                   <p className="text-sm text-muted-foreground mt-2 max-w-sm mx-auto">Generate a new clinical meal plan first. If any meals match our Foodpanda catalog, they will appear here!</p>
-                  <button onClick={() => setActiveTab("generate")} className="mt-6 rounded-lg bg-[#4a7c59] px-6 py-2 text-sm font-medium text-white hover:bg-[#3d6849]">
+                  <button onClick={() => setActiveTab("generate")} className="mt-6 rounded-lg bg-brand px-6 py-2 text-sm font-medium text-white hover:bg-brand-dark">
                     <MdAdd size={16} className="inline mr-2 -mt-0.5" />
                     Generate Plan
                   </button>
@@ -282,9 +282,9 @@ const handleGenerate = async (data: IntakeData) => {
                     </div>
                   )}
                   {planMode === "recovery" && (
-                    <div className="mb-6 rounded-xl border border-[#4a7c59]/20 bg-[#4a7c59]/10 p-4">
-                      <h3 className="text-sm font-bold text-emerald-400 mb-1 flex items-center gap-2"><MdPerson size={16}/> Sickness & Recovery Mode</h3>
-                      <p className="text-xs text-emerald-300/80">Tell us what you're feeling and we will generate a fast 3-day recovery meal plan with foods to eat and avoid. Budget filtering is disabled to prioritize your health.</p>
+                    <div className="mb-6 rounded-xl border border-brand/20 bg-brand/10 p-4">
+                      <h3 className="text-sm font-bold text-brand mb-1 flex items-center gap-2"><MdPerson size={16}/> Sickness & Recovery Mode</h3>
+                      <p className="text-xs text-brand/80">Tell us what you're feeling and we will generate a fast 3-day recovery meal plan with foods to eat and avoid. Budget filtering is disabled to prioritize your health.</p>
                     </div>
                   )}
                   <ClinicalIntakeForm onSubmit={handleGenerate} loading={false} planMode={planMode} onInputChange={() => {}} />
@@ -294,8 +294,8 @@ const handleGenerate = async (data: IntakeData) => {
               {step === "loading" && (
                 <motion.div key="loading" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex min-h-[60vh] flex-col items-center justify-center text-center">
                   <div className="relative mb-8 grid h-24 w-24 place-items-center rounded-full bg-surface-2">
-                    <div className="absolute inset-0 animate-ping rounded-full border-2 border-[#4a7c59] opacity-20" />
-                    <MdEco size={32} className="animate-pulse text-[#4a7c59]" />
+                    <div className="absolute inset-0 animate-ping rounded-full border-2 border-brand opacity-20" />
+                    <MdEco size={32} className="animate-pulse text-brand" />
                   </div>
                   <h3 className="editorial-title text-2xl">Computing Clinical Targets</h3>
                   <div className="mt-4 flex flex-col gap-2 text-sm text-muted-foreground">
@@ -319,7 +319,7 @@ const handleGenerate = async (data: IntakeData) => {
                       <button onClick={() => window.print()} className="flex items-center gap-2 rounded-xl bg-surface-2 px-4 py-2 text-sm font-semibold text-foreground transition-colors hover:bg-surface-2">
                         Print PDF
                       </button>
-                      <button onClick={() => setStep("home")} className="flex items-center gap-2 rounded-xl bg-[#4a7c59] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#3d6849]">
+                      <button onClick={() => setStep("home")} className="flex items-center gap-2 rounded-xl bg-brand px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-brand-dark">
                         Start Over
                       </button>
                     </div>

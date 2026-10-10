@@ -9,28 +9,28 @@ function WellnessIllustration() {
   return (
     <svg viewBox="0 0 220 180" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
       {/* Person sitting, reading / meditating */}
-      <circle cx="110" cy="60" r="22" stroke="#4a7c59" strokeWidth="2" fill="none" />
-      <path d="M98 82 Q110 72 122 82" stroke="#4a7c59" strokeWidth="2" fill="none" strokeLinecap="round"/>
+      <circle cx="110" cy="60" r="22" stroke="var(--brand)" strokeWidth="2" fill="none" />
+      <path d="M98 82 Q110 72 122 82" stroke="var(--brand)" strokeWidth="2" fill="none" strokeLinecap="round"/>
       {/* Body */}
-      <path d="M90 100 Q110 88 130 100 L135 145 H85 Z" stroke="#4a7c59" strokeWidth="1.5" fill="none" />
+      <path d="M90 100 Q110 88 130 100 L135 145 H85 Z" stroke="var(--brand)" strokeWidth="1.5" fill="none" />
       {/* Legs crossed */}
-      <path d="M85 145 Q75 160 65 158" stroke="#4a7c59" strokeWidth="2" fill="none" strokeLinecap="round"/>
-      <path d="M135 145 Q145 160 155 158" stroke="#4a7c59" strokeWidth="2" fill="none" strokeLinecap="round"/>
+      <path d="M85 145 Q75 160 65 158" stroke="var(--brand)" strokeWidth="2" fill="none" strokeLinecap="round"/>
+      <path d="M135 145 Q145 160 155 158" stroke="var(--brand)" strokeWidth="2" fill="none" strokeLinecap="round"/>
       {/* Arms resting */}
-      <path d="M90 110 Q75 118 70 128" stroke="#4a7c59" strokeWidth="2" fill="none" strokeLinecap="round"/>
-      <path d="M130 110 Q145 118 150 128" stroke="#4a7c59" strokeWidth="2" fill="none" strokeLinecap="round"/>
+      <path d="M90 110 Q75 118 70 128" stroke="var(--brand)" strokeWidth="2" fill="none" strokeLinecap="round"/>
+      <path d="M130 110 Q145 118 150 128" stroke="var(--brand)" strokeWidth="2" fill="none" strokeLinecap="round"/>
       {/* Floating leaves / sparkles */}
-      <path d="M40 40 Q50 30 55 40 Q50 50 40 40Z" stroke="#4a7c59" strokeWidth="1.5" fill="none"/>
-      <path d="M165 50 Q175 40 180 50 Q175 60 165 50Z" stroke="#4a7c59" strokeWidth="1.5" fill="none"/>
-      <path d="M30 80 L36 74 M33 74 L33 80" stroke="#4a7c59" strokeWidth="1.5" strokeLinecap="round"/>
-      <path d="M180 90 L186 84 M183 84 L183 90" stroke="#4a7c59" strokeWidth="1.5" strokeLinecap="round"/>
+      <path d="M40 40 Q50 30 55 40 Q50 50 40 40Z" stroke="var(--brand)" strokeWidth="1.5" fill="none"/>
+      <path d="M165 50 Q175 40 180 50 Q175 60 165 50Z" stroke="var(--brand)" strokeWidth="1.5" fill="none"/>
+      <path d="M30 80 L36 74 M33 74 L33 80" stroke="var(--brand)" strokeWidth="1.5" strokeLinecap="round"/>
+      <path d="M180 90 L186 84 M183 84 L183 90" stroke="var(--brand)" strokeWidth="1.5" strokeLinecap="round"/>
       {/* Food items floating */}
-      <circle cx="55" cy="120" r="8" stroke="#4a7c59" strokeWidth="1.5" fill="none"/>
-      <path d="M51 116 Q55 112 59 116" stroke="#4a7c59" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
-      <circle cx="168" cy="115" r="7" stroke="#4a7c59" strokeWidth="1.5" fill="none"/>
-      <path d="M165 115 Q168 110 171 115" stroke="#4a7c59" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
+      <circle cx="55" cy="120" r="8" stroke="var(--brand)" strokeWidth="1.5" fill="none"/>
+      <path d="M51 116 Q55 112 59 116" stroke="var(--brand)" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
+      <circle cx="168" cy="115" r="7" stroke="var(--brand)" strokeWidth="1.5" fill="none"/>
+      <path d="M165 115 Q168 110 171 115" stroke="var(--brand)" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
       {/* Small hearts */}
-      <path d="M100 38 Q102 35 104 38 Q106 35 108 38 Q108 42 104 46 Q100 42 100 38Z" stroke="#4a7c59" strokeWidth="1" fill="none"/>
+      <path d="M100 38 Q102 35 104 38 Q106 35 108 38 Q108 42 104 46 Q100 42 100 38Z" stroke="var(--brand)" strokeWidth="1" fill="none"/>
     </svg>
   );
 }
@@ -142,8 +142,8 @@ export default function HomeHero({ onAction }: { onAction: (action: 'standard' |
     <div className="relative flex flex-col items-center justify-start min-h-[85vh] pt-10 pb-32 overflow-hidden">
 
       {/* â”€â”€ Ambient background blobs â”€â”€ */}
-      <div className="pointer-events-none absolute -top-32 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full bg-[#4a7c59]/10 blur-[120px]" />
-      <div className="pointer-events-none absolute top-60 -right-20 w-[300px] h-[300px] rounded-full bg-emerald-500/8 blur-[100px]" />
+      <div className="pointer-events-none absolute -top-32 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full bg-brand/10 blur-[120px]" />
+      <div className="pointer-events-none absolute top-60 -right-20 w-[300px] h-[300px] rounded-full bg-brand/8 blur-[100px]" />
 
       {/* â”€â”€ Hero Text â”€â”€ */}
       <motion.div
@@ -152,13 +152,13 @@ export default function HomeHero({ onAction }: { onAction: (action: 'standard' |
         transition={{ duration: 0.6, ease: [0.2, 0.8, 0.2, 1] }}
         className="text-center px-4 max-w-2xl mx-auto mb-10"
       >
-        <div className="inline-flex items-center gap-2 rounded-full border border-[#4a7c59]/30 bg-[#4a7c59]/10 px-4 py-1.5 text-xs font-semibold text-emerald-400 mb-6 backdrop-blur-sm">
-          <span className="h-1.5 w-1.5 rounded-full bg-[#4a7c59] animate-pulse" />
+        <div className="inline-flex items-center gap-2 rounded-full border border-brand/30 bg-brand/10 px-4 py-1.5 text-xs font-semibold text-brand mb-6 backdrop-blur-sm">
+          <span className="h-1.5 w-1.5 rounded-full bg-brand animate-pulse" />
           AI-Powered Clinical Nutrition
         </div>
         <h1 className="text-4xl sm:text-5xl font-bold tracking-tight text-foreground leading-[1.15] mb-4">
           Your body. Your climate.<br />
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-emerald-600">Your perfect diet.</span>
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand to-brand-dark">Your perfect diet.</span>
         </h1>
         <p className="text-muted-foreground text-base sm:text-lg max-w-lg mx-auto leading-relaxed">
           ClimaDiet builds a personalized 7-day meal plan based on your health, real-time local weather, and what's already in your kitchen.
@@ -177,7 +177,7 @@ export default function HomeHero({ onAction }: { onAction: (action: 'standard' |
           {/* Top tag */}
           <div className="flex items-center justify-between mb-4">
             <span className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">Weekly</span>
-            <span className="rounded-full bg-[#4a7c59]/20 px-3 py-1 text-xs font-bold text-emerald-400">Active</span>
+            <span className="rounded-full bg-brand/20 px-3 py-1 text-xs font-bold text-brand">Active</span>
           </div>
           <h2 className="text-xl font-bold text-foreground mb-1">Wellness Journey</h2>
           <p className="text-sm text-muted-foreground mb-5 leading-relaxed">
@@ -190,7 +190,7 @@ export default function HomeHero({ onAction }: { onAction: (action: 'standard' |
           {/* CTA inside card */}
           <button
             onClick={() => onAction('standard')}
-            className="w-full flex items-center justify-center gap-2 rounded-2xl bg-[#4a7c59] hover:bg-[#3d6849] active:scale-[0.98] px-6 py-3.5 text-sm font-bold text-white transition-all duration-200"
+            className="w-full flex items-center justify-center gap-2 rounded-2xl bg-brand hover:bg-brand-dark active:scale-[0.98] px-6 py-3.5 text-sm font-bold text-white transition-all duration-200"
           >
             Build my plan <MdArrowForward size={18} />
           </button>
@@ -205,7 +205,7 @@ export default function HomeHero({ onAction }: { onAction: (action: 'standard' |
         >
           <p className="text-[10px] text-muted-foreground">BMI</p>
           <p className="text-base font-bold text-foreground">22.4</p>
-          <p className="text-[10px] text-emerald-400">Healthy âœ“</p>
+          <p className="text-[10px] text-brand">Healthy âœ“</p>
         </motion.div>
 
         <motion.div
@@ -217,7 +217,7 @@ export default function HomeHero({ onAction }: { onAction: (action: 'standard' |
           <p className="text-[10px] text-muted-foreground">Today&apos;s Calories</p>
           <p className="text-base font-bold text-foreground">1,840 kcal</p>
           <div className="mt-1 h-1 w-20 rounded-full bg-surface-2 overflow-hidden">
-            <div className="h-full w-[72%] rounded-full bg-[#4a7c59]" />
+            <div className="h-full w-[72%] rounded-full bg-brand" />
           </div>
         </motion.div>
       </motion.div>

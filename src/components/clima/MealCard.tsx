@@ -46,7 +46,7 @@ export default function MealCard({
         <p className="mb-3 line-clamp-2 flex-1 text-xs leading-relaxed text-muted-foreground print:line-clamp-none print:block print:text-black print:mb-0 print:mt-1">
           Portion to eat: {meal.why}
         </p>
-        <div className="mt-auto hidden items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-[#4a7c59] opacity-0 transition-opacity group-hover:opacity-100 sm:flex no-print">
+        <div className="mt-auto hidden items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-brand opacity-0 transition-opacity group-hover:opacity-100 sm:flex no-print">
           View details <MdChevronRight size={12} strokeWidth={3} />
         </div>
       </div>

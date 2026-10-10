@@ -1,4 +1,4 @@
-﻿@tailwind base;
+@tailwind base;
 @tailwind components;
 @tailwind utilities;
 
@@ -10,7 +10,7 @@
 
 @layer base {
   :root {
-    /* âœ¨ Dark Theme: Premium deep slate âœ¨ */
+    /* ✨ Dark Theme: Premium deep slate ✨ */
     --background: #0F1117;
     --foreground: #f0f0f5;
     --card: #161922;
@@ -29,7 +29,7 @@
     --destructive-foreground: #f0f0f5;
     --border: rgba(255,255,255,0.08);
     --input: #1e2130;
-    --ring: #4a7c59;
+    --ring: 74 124 89;
     --radius: 0.85rem;
     --bg: #0F1117;
     --surface: #161922;
@@ -40,25 +40,25 @@
     --heat: #e09438;
     --success: #22c55e;
     --text: #f0f0f5;
-    --brand: #4a7c59;
-    --brand-dark: #3d6849;
+    --brand: 74 124 89;
+    --brand-dark: 61 104 73;
   }
 }
 
-/* âœ¨ Light Theme: User Palette âœ¨ */
+/* ✨ Light Theme: Salt & Pepper with Coral Accent ✨ */
 html.light {
-  --background: #E9ECE6;
-  --foreground: #545B5A;
-  --card: #D0DFD9;
-  --card-foreground: #545B5A;
-  --border: #AAB8B6;
-  --input: #D0DFD9;
-  --muted: #BCCBC9;
-  --muted-foreground: #545B5A;
-  --surface: #D0DFD9;
-  --surface-2: #BCCBC9;
-  --brand: #545B5A;
-  --brand-dark: #3F4444;
+  --background: #FFFFFF;
+  --foreground: #222222;
+  --card: #F9F9F9;
+  --card-foreground: #222222;
+  --border: #DFDFDF;
+  --input: #F9F9F9;
+  --muted: #EAEAEA;
+  --muted-foreground: #666666;
+  --surface: #F3F3F3;
+  --surface-2: #EAEAEA;
+  --brand: 241 122 126;
+  --brand-dark: 217 105 109;
   color-scheme: light;
 }
 
@@ -74,12 +74,12 @@ details > summary { list-style: none; }
 details > summary::-webkit-details-marker { display: none; }
 details[open] .chev { transform: rotate(180deg); }
 
-@keyframes fade-up { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+@keyframes fade-up { from { opacity: 0; transform: translateY(16px); } to { transform: none; } }
 .fade-up { opacity: 0; animation: fade-up .6s cubic-bezier(.2,.7,.2,1) forwards; }
 
 /* Shared form / card helpers (clinical dark styling) */
 .clinical-input {
-  @apply w-full rounded-xl border border-border bg-input px-4 py-3 text-sm text-foreground outline-none transition focus:border-[#4a7c59] focus:ring-4 focus:ring-[#4a7c59]/15 placeholder:text-muted-foreground [&>option]:bg-background;
+  @apply w-full rounded-xl border border-border bg-input px-4 py-3 text-sm text-foreground outline-none transition focus:border-brand focus:ring-4 focus:ring-brand/15 placeholder:text-muted-foreground [&>option]:bg-background;
 }
 .clinical-label {
   @apply mb-1.5 block text-xs font-semibold uppercase tracking-wide text-muted-foreground;
@@ -92,7 +92,6 @@ details[open] .chev { transform: rotate(180deg); }
 }
 
 /* Hide scrollbar but keep functionality */
-/* fixed scrollbar-hide display */
 .scrollbar-hide, .scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
 .scrollbar-hide::-webkit-scrollbar, .scrollbar-none::-webkit-scrollbar { display: none; }
 
@@ -112,7 +111,6 @@ details[open] .chev { transform: rotate(180deg); }
   button, .no-print, nav, header {
     display: none !important;
   }
-  /* Ensure the grid of meals looks good */
   .grid-cols-2, .md\:grid-cols-4, .lg\:grid-cols-4 {
     display: grid !important;
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
@@ -122,4 +120,3 @@ details[open] .chev { transform: rotate(180deg); }
     page-break-before: always;
   }
 }
-

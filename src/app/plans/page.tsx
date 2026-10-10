@@ -27,7 +27,7 @@ export default function PlansPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-background selection:bg-[#4a7c59]/30">
+    <div className="min-h-screen bg-background selection:bg-brand/30">
       <nav className="sticky top-0 z-50 flex items-center justify-between border-b border-border bg-background/85 px-4 py-3 backdrop-blur-xl sm:px-8">
         <div className="flex items-center gap-3">
           <Link
@@ -38,7 +38,7 @@ export default function PlansPage() {
             <MdArrowBack size={18} />
           </Link>
           <Link href="/dashboard" className="group flex items-center gap-2">
-            <div className="grid h-8 w-8 place-items-center rounded-xl bg-gradient-to-br from-[#4a7c59] to-[#3d6849] shadow-lg shadow-emerald-500/20 transition-transform group-hover:scale-105">
+            <div className="grid h-8 w-8 place-items-center rounded-xl bg-gradient-to-br from-brand to-brand-dark shadow-lg shadow-brand/20 transition-transform group-hover:scale-105">
               <MdEco size={16} className="text-foreground" />
             </div>
             <span className="font-sans text-lg font-bold tracking-tight text-foreground">ClimaDiet</span>
@@ -79,7 +79,7 @@ export default function PlansPage() {
               <div className="rounded-2xl border border-white/5 bg-surface py-20 text-center">
                 <MdCalendarToday size={48} className="mx-auto mb-4 text-foreground/10" />
                 <p className="text-muted-foreground">No saved plans yet.</p>
-                <Link href="/dashboard" className="mt-4 inline-block text-emerald-400 hover:text-emerald-300 font-semibold text-sm">
+                <Link href="/dashboard" className="mt-4 inline-block text-brand hover:text-brand font-semibold text-sm">
                   Build your first plan &rarr;
                 </Link>
               </div>
@@ -89,13 +89,13 @@ export default function PlansPage() {
                   <button
                     key={p.id}
                     onClick={() => setSelectedPlan(p)}
-                    className="flex flex-col items-start rounded-2xl border border-border bg-card p-5 text-left transition-all hover:bg-surface hover:border-[#4a7c59]/30 group"
+                    className="flex flex-col items-start rounded-2xl border border-border bg-card p-5 text-left transition-all hover:bg-surface hover:border-brand/30 group"
                   >
                     <div className="mb-3 flex items-center gap-2">
-                      <div className="rounded-full bg-surface-2 p-2 text-foreground group-hover:bg-[#4a7c59] group-hover:text-foreground transition-colors">
+                      <div className="rounded-full bg-surface-2 p-2 text-foreground group-hover:bg-brand group-hover:text-foreground transition-colors">
                         <MdCalendarToday size={16} />
                       </div>
-                      <span className={`text-xs font-bold uppercase tracking-wider ${p.mode === "recovery" ? "text-emerald-400" : "text-emerald-400"}`}>
+                      <span className={`text-xs font-bold uppercase tracking-wider ${p.mode === "recovery" ? "text-brand" : "text-brand"}`}>
                         {p.mode === "recovery" ? "Recovery (3-Day)" : "Standard (7-Day)"}
                       </span>
                     </div>

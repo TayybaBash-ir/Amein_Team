@@ -149,7 +149,7 @@ export default function MealDetail({
         {/* Ingredients Section */}
         {meal.ingredients && meal.ingredients.length > 0 && (
           <div className="mb-6 p-4 rounded-2xl bg-surface-2 border border-white/5">
-            <div className="flex items-center gap-2 text-xs font-bold tracking-wider text-emerald-400 uppercase mb-3">
+            <div className="flex items-center gap-2 text-xs font-bold tracking-wider text-brand uppercase mb-3">
               <MdRestaurant className="w-4 h-4" />
               <span>Ingredients</span>
             </div>
@@ -166,7 +166,7 @@ export default function MealDetail({
         {/* Why This Meal */}
         {meal.why && (
           <div className="mb-6 p-4 rounded-2xl bg-surface-2 border border-white/5">
-            <div className="flex items-center gap-2 text-xs font-bold tracking-wider text-emerald-400 uppercase mb-2">
+            <div className="flex items-center gap-2 text-xs font-bold tracking-wider text-brand uppercase mb-2">
               <MdAutoAwesome className="w-4 h-4" />
               <span>Why This Meal</span>
             </div>
