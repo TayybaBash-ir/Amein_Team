@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { Points, PointMaterial } from "@react-three/drei";
 import { useState, useRef, Suspense } from "react";
@@ -56,3 +56,4 @@ export default function Scene3D() {
     </div>
   );
 }
+

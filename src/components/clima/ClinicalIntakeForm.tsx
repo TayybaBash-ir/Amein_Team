@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState } from "react";
 import { MdAutorenew, MdFavorite, MdDirectionsRun, MdHome, MdExpandLess, MdExpandMore } from "react-icons/md";
@@ -148,7 +148,7 @@ export default function ClinicalIntakeForm({
           const active = d[key].includes(item);
           return <button key={item} type="button" aria-pressed={active} onClick={() => toggle(key, item)} className={`rounded-full border px-4 py-2 text-sm font-medium transition-all ${active ? "border-emerald-400/50 bg-emerald-400/15 text-emerald-200" : "border-border bg-surface-2 text-foreground hover:bg-border"}`}>{item}</button>;
         })}
-        {d[key].filter((item) => !presets.includes(item)).map((item) => <button key={item} type="button" onClick={() => toggle(key, item)} className="rounded-full border border-emerald-400/40 bg-emerald-400/10 px-4 py-2 text-sm font-medium text-emerald-200">{item} ×</button>)}
+        {d[key].filter((item) => !presets.includes(item)).map((item) => <button key={item} type="button" onClick={() => toggle(key, item)} className="rounded-full border border-emerald-400/40 bg-emerald-400/10 px-4 py-2 text-sm font-medium text-emerald-200">{item} Ã—</button>)}
       </div>
       <div className="flex gap-2">
         <input className={inputClass} value={draft} onChange={(event) => setDraft(event.target.value)} onKeyDown={(event) => event.key === "Enter" && (event.preventDefault(), addCustom(key, draft, setDraft))} placeholder={placeholder} />
@@ -175,7 +175,7 @@ export default function ClinicalIntakeForm({
           <div><label className={labelClass}>Gender</label><select className={inputClass} value={d.gender} onChange={(event) => set("gender", event.target.value)}><option value="male">Male</option><option value="female">Female</option><option value="unspecified">Unspecified</option></select></div>
           <div><label className={labelClass}>Weight (kg)</label><input className={inputClass} type="number" value={d.weight} onChange={(event) => set("weight", Number(event.target.value))} /></div>
           <div><label className={labelClass}>Height (cm)</label><input className={inputClass} type="number" value={d.height} onChange={(event) => set("height", Number(event.target.value))} /></div>
-          <div className="col-span-2"><label className={labelClass}>Daily activity</label><select className={inputClass} value={d.activity} onChange={(event) => set("activity", event.target.value)}><option value="sedentary">Sedentary (desk job)</option><option value="lightly active">Lightly active (1–3 days/wk)</option><option value="moderately active">Moderately active (3–5 days/wk)</option><option value="very active">Very active (6–7 days/wk)</option><option value="extra active">Extra active (athlete)</option></select></div>
+          <div className="col-span-2"><label className={labelClass}>Daily activity</label><select className={inputClass} value={d.activity} onChange={(event) => set("activity", event.target.value)}><option value="sedentary">Sedentary (desk job)</option><option value="lightly active">Lightly active (1â€“3 days/wk)</option><option value="moderately active">Moderately active (3â€“5 days/wk)</option><option value="very active">Very active (6â€“7 days/wk)</option><option value="extra active">Extra active (athlete)</option></select></div>
           <div className="col-span-2"><label className={labelClass}>Location for climate-based foods</label><div className="grid grid-cols-2 gap-3"><input className={inputClass} placeholder="City" value={d.city || "Lahore"} onChange={(event) => set("city", event.target.value)} /><input className={inputClass} placeholder="Country" value={d.country || "Pakistan"} onChange={(event) => set("country", event.target.value)} /></div></div>
           <div className="col-span-2"><label className={labelClass}>Main goal</label><select className={inputClass} value={d.goal} onChange={(event) => set("goal", event.target.value)}><option value="Lose weight">Lose weight</option><option value="Gain muscle">Gain muscle</option><option value="Maintain weight">Maintain weight</option><option value="Improve overall health">Improve overall health</option></select></div>
           <div className="col-span-2"><label className={labelClass}>Specific target</label><input className={inputClass} placeholder="Optional, e.g. 5kg" value={d.goal_amount} onChange={(event) => set("goal_amount", event.target.value)} /></div>
@@ -224,6 +224,7 @@ export default function ClinicalIntakeForm({
     </form>
   );
 }
+
 
 
 

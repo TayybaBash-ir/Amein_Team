@@ -1,9 +1,9 @@
-"use client";
+﻿"use client";
 
 import { motion } from "framer-motion";
 import { MdArrowForward } from "react-icons/md";
 
-// ── Inline SVG Illustrations ──────────────────────────────────────────────────
+// â”€â”€ Inline SVG Illustrations â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function WellnessIllustration() {
   return (
@@ -111,7 +111,7 @@ function ClockIllustration() {
   );
 }
 
-// ── Feature Cards Data ────────────────────────────────────────────────────────
+// â”€â”€ Feature Cards Data â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const features = [
   {
     id: "recovery",
@@ -136,16 +136,16 @@ const features = [
   },
 ];
 
-// ── HomeHero ──────────────────────────────────────────────────────────────────
+// â”€â”€ HomeHero â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export default function HomeHero({ onAction }: { onAction: (action: 'standard' | 'recovery' | 'restaurants' | 'saved') => void }) {
   return (
     <div className="relative flex flex-col items-center justify-start min-h-[85vh] pt-10 pb-32 overflow-hidden">
 
-      {/* ── Ambient background blobs ── */}
+      {/* â”€â”€ Ambient background blobs â”€â”€ */}
       <div className="pointer-events-none absolute -top-32 left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full bg-indigo-500/10 blur-[120px]" />
       <div className="pointer-events-none absolute top-60 -right-20 w-[300px] h-[300px] rounded-full bg-emerald-500/8 blur-[100px]" />
 
-      {/* ── Hero Text ── */}
+      {/* â”€â”€ Hero Text â”€â”€ */}
       <motion.div
         initial={{ opacity: 0, y: 24 }}
         animate={{ opacity: 1, y: 0 }}
@@ -165,7 +165,7 @@ export default function HomeHero({ onAction }: { onAction: (action: 'standard' |
         </p>
       </motion.div>
 
-      {/* ── Hero Illustration Card ── */}
+      {/* â”€â”€ Hero Illustration Card â”€â”€ */}
       <motion.div
         initial={{ opacity: 0, scale: 0.94 }}
         animate={{ opacity: 1, scale: 1 }}
@@ -205,7 +205,7 @@ export default function HomeHero({ onAction }: { onAction: (action: 'standard' |
         >
           <p className="text-[10px] text-muted-foreground">BMI</p>
           <p className="text-base font-bold text-foreground">22.4</p>
-          <p className="text-[10px] text-indigo-400">Healthy ✓</p>
+          <p className="text-[10px] text-indigo-400">Healthy âœ“</p>
         </motion.div>
 
         <motion.div
@@ -222,7 +222,7 @@ export default function HomeHero({ onAction }: { onAction: (action: 'standard' |
         </motion.div>
       </motion.div>
 
-      {/* ── Feature Shortcut Cards ── */}
+      {/* â”€â”€ Feature Shortcut Cards â”€â”€ */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -250,10 +250,11 @@ export default function HomeHero({ onAction }: { onAction: (action: 'standard' |
         ))}
       </motion.div>
 
-      {/* ── Bottom blur fade ── */}
+      {/* â”€â”€ Bottom blur fade â”€â”€ */}
       <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#1A1D1E] to-transparent" />
     </div>
   );
 }
+
 
 

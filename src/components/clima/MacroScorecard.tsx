@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState } from "react";
 import { type PlanResponse } from "@/lib/mock";
@@ -42,7 +42,7 @@ export default function MacroScorecard({ plan }: { plan: PlanResponse }) {
           <div>
             <h2 id="calculated-summary-title" className="editorial-title text-xl">Your Daily Targets</h2>
             <p className="mt-1 text-sm text-muted-foreground">
-              {patient.age} years � {patient.gender} � {patient.weight} kg � {patient.height} cm � {patient.goal}
+              {patient.age} years ï¿½ {patient.gender} ï¿½ {patient.weight} kg ï¿½ {patient.height} cm ï¿½ {patient.goal}
             </p>
           </div>
         </div>
@@ -79,4 +79,5 @@ export default function MacroScorecard({ plan }: { plan: PlanResponse }) {
     </div>
   );
 }
+
 

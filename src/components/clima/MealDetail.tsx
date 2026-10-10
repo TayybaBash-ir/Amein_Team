@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect } from "react";
 import { MdChevronLeft, MdChevronRight, MdAutoAwesome, MdRestaurant, MdPlayArrow } from "react-icons/md";
@@ -92,7 +92,7 @@ export default function MealDetail({
             onClick={onClose}
             className="absolute top-3 right-3 w-8 h-8 flex items-center justify-center rounded-full bg-black/60 text-white hover:bg-black/80 text-sm font-bold"
           >
-            ✕
+            âœ•
           </button>
         </div>
 

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
@@ -165,7 +165,7 @@ const handleGenerate = async (data: IntakeData) => {
     <div className="min-h-screen bg-background text-foreground selection:bg-indigo-500/30">
       <nav className="sticky top-0 z-50 flex items-center justify-between border-b border-border bg-background/85 px-4 py-3 backdrop-blur-xl print:hidden sm:px-8">
         <div className="flex items-center gap-3">
-          {/* Back arrow — shown when not on home screen */}
+          {/* Back arrow â€” shown when not on home screen */}
           {step !== "home" && activeTab === "generate" && (
             <button
               onClick={() => { setStep("home"); }}
@@ -225,7 +225,7 @@ const handleGenerate = async (data: IntakeData) => {
       <main className="mx-auto max-w-5xl p-4 sm:p-8">
         {(savedProfile?.is_post_discharge || savedProfile?.spice_tolerance === "Bland") && (
           <div role="status" className="mb-6 flex items-center gap-3 rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm font-semibold text-amber-200">
-            <span aria-hidden="true">🏥</span>
+            <span aria-hidden="true">ðŸ¥</span>
             <span>Active Protocol: Post-Discharge Recovery (Bland &amp; Soft Foods Enforced)</span>
           </div>
         )}
@@ -312,7 +312,7 @@ const handleGenerate = async (data: IntakeData) => {
                     <div>
                       <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight text-foreground mb-1">Your Health Overview</h2>
                       <p className="text-xs sm:text-sm text-muted-foreground">
-                        Perfectly balanced for {plan.patient.age}y {plan.patient.gender} â€¢ {plan.patient.goal}
+                        Perfectly balanced for {plan.patient.age}y {plan.patient.gender} Ã¢â‚¬Â¢ {plan.patient.goal}
                       </p>
                     </div>
                     <div className="flex items-center gap-2">
@@ -335,5 +335,6 @@ const handleGenerate = async (data: IntakeData) => {
     </div>
   );
 }
+
 
 

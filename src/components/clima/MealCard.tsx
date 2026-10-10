@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { motion } from "framer-motion";
 import { MdChevronRight } from "react-icons/md";
@@ -41,7 +41,7 @@ export default function MealCard({
           {meal.name}
         </h4>
         <div className="mb-2 font-mono text-xs text-muted-foreground print:inline-block print:ml-2 print:text-black print:mb-0 print:text-xs">
-          ({meal.calories} kcal • {meal.protein}g protein)
+          ({meal.calories} kcal â€¢ {meal.protein}g protein)
         </div>
         <p className="mb-3 line-clamp-2 flex-1 text-xs leading-relaxed text-muted-foreground print:line-clamp-none print:block print:text-black print:mb-0 print:mt-1">
           Portion to eat: {meal.why}
@@ -53,3 +53,4 @@ export default function MealCard({
     </motion.button>
   );
 }
+

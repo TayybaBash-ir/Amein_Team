@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+﻿import type { ReactNode } from "react";
 
 /** Circular progress ring used in the meal detail screen. */
 export default function Ring({
@@ -18,3 +18,4 @@ export default function Ring({
     </div>
   );
 }
+

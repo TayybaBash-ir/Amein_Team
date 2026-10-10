@@ -1,4 +1,4 @@
-import React from "react";
+﻿import React from "react";
 
 interface Props {
   restaurantName: string;
@@ -61,4 +61,5 @@ export const RestaurantRecommendationCard: React.FC<Props> = ({
     </article>
   );
 };
+
 

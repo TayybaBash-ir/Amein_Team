@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
@@ -152,7 +152,7 @@ export default function ProfilePage() {
               {profile.name || "Your Profile"}
             </h1>
             <p className="mt-1 text-sm text-muted-foreground">
-              Saved locally — used automatically in every plan you generate.
+              Saved locally â€” used automatically in every plan you generate.
             </p>
           </div>
           <button
@@ -174,7 +174,7 @@ export default function ProfilePage() {
               initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}
               className="mb-6 flex items-center gap-3 rounded-2xl border border-emerald-500/20 bg-emerald-500/10 px-4 py-3 text-sm font-semibold text-emerald-400"
             >
-              ✓ Profile saved successfully
+              âœ“ Profile saved successfully
             </motion.div>
           )}
         </AnimatePresence>
@@ -186,7 +186,7 @@ export default function ProfilePage() {
         >
           {statTile("Age", `${profile.age}y`)}
           {statTile("Weight", `${profile.weight} kg`)}
-          {statTile("BMI", bmi ? bmi.toFixed(1) : "—", bmiCategory?.label)}
+          {statTile("BMI", bmi ? bmi.toFixed(1) : "â€”", bmiCategory?.label)}
         </motion.div>
 
         {/* Physical Metrics */}
@@ -208,7 +208,7 @@ export default function ProfilePage() {
               <div><label className={labelClass}>Weight (kg)</label><input type="number" className={inputClass} value={profile.weight} onChange={e => setProfile({ ...profile, weight: +e.target.value })} /></div>
               <div>
                 <label className={labelClass}>BMI</label>
-                <input readOnly className={`${inputClass} text-muted-foreground`} value={bmi ? bmi.toFixed(1) : "—"} />
+                <input readOnly className={`${inputClass} text-muted-foreground`} value={bmi ? bmi.toFixed(1) : "â€”"} />
               </div>
             </div>
           ) : (
@@ -217,7 +217,7 @@ export default function ProfilePage() {
                 ["Name", profile.name], ["Age", `${profile.age} years`],
                 ["Gender", profile.gender], ["Height", `${profile.height} cm`],
                 ["Weight", `${profile.weight} kg`],
-                ["BMI", bmi ? `${bmi.toFixed(1)} — ${bmiCategory?.label}` : "—"],
+                ["BMI", bmi ? `${bmi.toFixed(1)} â€” ${bmiCategory?.label}` : "â€”"],
               ].map(([k, v]) => (
                 <div key={k} className="rounded-xl border border-border bg-surface p-3">
                   <p className="text-[10px] font-bold uppercase tracking-wider text-neutral-600 mb-1">{k}</p>
@@ -333,5 +333,6 @@ export default function ProfilePage() {
       </div>
     );
   }
+
 
 
