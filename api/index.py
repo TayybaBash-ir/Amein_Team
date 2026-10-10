@@ -325,7 +325,7 @@ def generate_meal_plan(patient: PatientIntake):
     )
 
     from api.db_manager import get_safe_dishes, contains_forbidden_ingredient
-    from api.matching_engine import find_best_meal_plan
+    from api.matching_engine import find_best_meal_plan, estimate_dish_cost
     
     allergies = list(patient.allergies or [])
     if ai_rules.forbidden_ingredients:
@@ -343,6 +343,18 @@ def generate_meal_plan(patient: PatientIntake):
             allergies.append('fish')
         
     dietary_restrictions = list(patient.dietary_restrictions or [])
+
+    # Parse weekly budget into a daily limit
+    daily_budget = None
+    if hasattr(intake, 'weekly_budget') and intake.weekly_budget:
+        b = intake.weekly_budget.lower()
+        if 'under 5,000' in b:
+            daily_budget = 5000 / 7
+        elif '5,000 - 10,000' in b:
+            daily_budget = 10000 / 7
+        elif '10,000 - 15,000' in b:
+            daily_budget = 15000 / 7
+
     categorized = get_safe_dishes(
         allergies,
         dietary_restrictions,
@@ -431,7 +443,13 @@ def generate_meal_plan(patient: PatientIntake):
                 "?width=800&height=600&nologo=true"
             )
 
+
+            # Calculate estimated cost
+            from api.matching_engine import estimate_dish_cost
+            dish_cost = estimate_dish_cost(d, name)
+            
             meal_obj = Meal(
+                estimated_cost=dish_cost,
                 id=f"day{day_num}-{slot.lower()}",
                 day=f"Day {day_num}",
                 slot=slot,
@@ -525,6 +543,18 @@ def swap_meal(req: SwapRequest):
     from api.db_manager import get_safe_dishes, contains_forbidden_ingredient
     pantry_items = [item.strip() for item in (req.patient.pantry_items or []) if item.strip()]
     forbidden_items = _forbidden_proteins(pantry_items)
+
+    # Parse weekly budget into a daily limit
+    daily_budget = None
+    if hasattr(intake, 'weekly_budget') and intake.weekly_budget:
+        b = intake.weekly_budget.lower()
+        if 'under 5,000' in b:
+            daily_budget = 5000 / 7
+        elif '5,000 - 10,000' in b:
+            daily_budget = 10000 / 7
+        elif '10,000 - 15,000' in b:
+            daily_budget = 15000 / 7
+
     categorized = get_safe_dishes(
         allergies,
         dietary_restrictions,
@@ -607,7 +637,11 @@ def swap_meal(req: SwapRequest):
             "?width=800&height=600&nologo=true"
         )
         
+        
+        from api.matching_engine import estimate_dish_cost
+        dish_cost = estimate_dish_cost(cand['candidate'], name)
         final_meal = Meal(
+            estimated_cost=dish_cost,
             id=f"swap-{uuid.uuid4().hex[:8]}",
             day="",
             slot=req.slot,

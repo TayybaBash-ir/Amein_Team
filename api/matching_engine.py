@@ -2,6 +2,43 @@ from __future__ import annotations
 import random
 from typing import List, Dict
 
+
+def estimate_dish_cost(macros, name=""):
+    name = name.lower()
+    protein_g = macros.get('protein_g', macros.get('protein', 0))
+    carbs_g = macros.get('carbs_g', macros.get('carbs', 0))
+    fat_g = macros.get('fat_g', macros.get('fat', 0))
+
+    cost = 0.0
+
+    if 'chicken' in name or 'murg' in name:
+        cost += (protein_g / 0.25) * 0.7 
+    elif 'beef' in name or 'gosht' in name:
+        cost += (protein_g / 0.25) * 1.2
+    elif 'mutton' in name:
+        cost += (protein_g / 0.25) * 2.0
+    elif 'egg' in name or 'omelette' in name:
+        cost += (protein_g / 6.0) * 20.8
+    elif 'milk' in name or 'shake' in name or 'chai' in name:
+        cost += (protein_g / 0.034) * 0.35
+    elif 'fish' in name:
+        cost += (protein_g / 0.25) * 1.5
+    else:
+        cost += (protein_g / 0.25) * 0.4
+
+    cost += carbs_g * 0.4
+    cost += fat_g * 0.6
+    cost += 30 # Overhead
+    return cost
+
+def estimate_plan_cost(dishes, mult=1.0):
+    total = 0
+    for d in dishes:
+        if isinstance(d, dict):
+            cost = estimate_dish_cost(d, d.get('name', ''))
+            total += cost * mult
+    return total
+
 def calculate_penalty(plan_macros, target_macros):
     cal_diff = abs(plan_macros['calories'] - target_macros['target_calories'])
     pro_diff = abs(plan_macros['protein'] - target_macros['protein_g']) * 4
@@ -31,7 +68,7 @@ def clean_name(dish):
         dish['name'] = name.replace('Fitness ', '').replace('Fitness', '')
     return dish
 
-def find_best_meal_plan(categorized, target_macros, preferences=None, iterations=2500, previously_selected=None):
+def find_best_meal_plan(categorized, target_macros, preferences=None, iterations=2500, previously_selected=None, daily_budget=None):
     best_plan = None
     best_score = float('inf')
     best_mult = 1.0

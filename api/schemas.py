@@ -23,6 +23,7 @@ class PatientIntake(BaseModel):
     city: str = Field(default="Unknown", description="City for weather forecast")
     country: str = Field(default="Unknown", description="Country for weather forecast")
     start_date: Optional[str] = Field(default=None, description="Start date YYYY-MM-DD")
+    weekly_budget: Optional[str] = Field(default='No Limit', description='e.g., No Limit, Under 5,000 PKR, 5,000 - 10,000 PKR')
     allow_external_dining: bool = Field(
         default=False,
         description="Include optional external dining recommendations such as Foodpanda",
@@ -50,6 +51,7 @@ class Meal(BaseModel):
     fat: float = Field(..., description="Fat in grams")
     why: str = Field(..., description="Why this fits the local real-time weather and their conditions")
     benefits: List[str] = Field(..., description="3-4 short points on why this meal helps them")
+    estimated_cost: Optional[float] = Field(None, description="Estimated cost in PKR")
 
 # --- Final API Response Models ---
 

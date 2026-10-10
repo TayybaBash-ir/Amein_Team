@@ -19,6 +19,7 @@ export type Meal = {
   protein: number;
   carbs: number;
   fat: number;
+  estimated_cost?: number;
   why: string;
   benefits: string[];
 };
@@ -43,7 +44,8 @@ export type PatientIntake = {
   country?: string;
   pantry_items?: string[];
   strict_pantry_mode?: boolean;
-  allow_external_dining?: boolean;
+  weekly_budget?: string;
+    allow_external_dining?: boolean;
   preferences?: { cuisine: string; carb: string; snack: string; strictness: string; };
 };
 export type IntakeData = PatientIntake;
@@ -119,7 +121,8 @@ export const MOCK_PLAN: PlanResponse = {
     goal: "Weight Maintenance",
     goal_amount: "Maintain current weight",
     dietary_restrictions: ["Low Sodium"],
-    allow_external_dining: true,
+    weekly_budget: "No Limit",
+      allow_external_dining: true,
     preferences: {
       cuisine: "Mediterranean",
       carb: "Moderate",

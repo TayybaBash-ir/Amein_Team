@@ -45,7 +45,7 @@ export default function MealPlanView({ plan: initialPlan }: { plan: PlanResponse
             <div className="flex flex-col gap-2 mt-3">
               {day.meals.map((meal) => (
                 <div key={meal.id} className="text-base lowercase mb-1">
-                  {meal.name}
+                  {meal.name} {meal.estimated_cost ? <span className="text-neutral-500 font-normal ml-1">({Math.round(meal.estimated_cost)} PKR)</span> : ""}
                 </div>
               ))}
             </div>
@@ -146,7 +146,7 @@ export default function MealPlanView({ plan: initialPlan }: { plan: PlanResponse
 
                 <div className="flex flex-1 flex-col p-4">
                   <h4 className="editorial-title mb-1 text-lg font-bold">{meal.name}</h4>
-                  <div className="mb-3 font-mono text-xs text-neutral-400">{meal.calories} kcal • {meal.protein}g protein</div>
+                  <div className="mb-3 font-mono text-xs text-neutral-400">{meal.calories} kcal • {meal.protein}g protein {meal.estimated_cost ? ` • ~Rs. ${Math.round(meal.estimated_cost)}` : ""}</div>
                   <p className="mb-4 line-clamp-2 flex-1 text-xs text-neutral-400">
                     {meal.why}
                   </p>
